@@ -41,7 +41,7 @@ const CartDrawer = () => {
                   <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-md" />
                   <div className="flex-grow">
                     <p className="font-semibold text-slate-800 dark:text-slate-100">{item.name}</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">₹{item.price.toLocaleString()}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">৳{item.price.toLocaleString()}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <button onClick={() => updateItemQuantity(item.id, item.quantity - 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700">
                         <MinusIcon className="h-4 w-4" />
@@ -70,7 +70,7 @@ const CartDrawer = () => {
             <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-4">
               <div className="flex justify-between font-bold text-lg text-slate-800 dark:text-white">
                 <span>Total:</span>
-                <span>₹{total.toLocaleString()}</span>
+                <span>৳{total.toLocaleString()}</span>
               </div>
               <Link
                 href="/checkout"

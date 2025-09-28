@@ -91,7 +91,7 @@ const CheckoutPage = () => {
                       <p className="text-sm text-slate-500 dark:text-slate-400">Qty: {item.quantity}</p>
                     </div>
                   </div>
-                  <p className="font-semibold text-right flex-shrink-0">₹{(item.price * item.quantity).toLocaleString()}</p>
+                  <p className="font-semibold text-right flex-shrink-0">৳{(item.price * item.quantity).toLocaleString()}</p>
                 </div>
               ))}
             </div>
@@ -99,20 +99,20 @@ const CheckoutPage = () => {
             <div className="space-y-3">
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Subtotal</span>
-                <span>₹{total.toLocaleString()}</span>
+                <span>৳{total.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Shipping</span>
-                <span>₹{shippingCost.toLocaleString()}</span>
+                <span>৳{shippingCost.toLocaleString()}</span>
               </div>
               <div className="border-t border-slate-200 dark:border-slate-700 my-3"></div>
               <div className="flex justify-between text-xl font-bold">
                 <span>Total</span>
-                <span>₹{grandTotal.toLocaleString()}</span>
+                <span>৳{grandTotal.toLocaleString()}</span>
               </div>
             </div>
             <button className="w-full mt-8 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors font-semibold">
-              Place Order
+              Place Order (Cash on Delivery)
             </button>
           </div>
         </div>

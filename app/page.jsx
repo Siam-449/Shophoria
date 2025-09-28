@@ -32,7 +32,7 @@ export default function Home() {
                 <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{product.name}</h3>
                 <p className="text-slate-500 dark:text-slate-400 mt-2 flex-grow">{product.description}</p>
                 <div className="mt-4 flex justify-between items-center">
-                  <span className="text-2xl font-bold text-slate-900 dark:text-white">₹{product.price.toLocaleString()}</span>
+                  <span className="text-2xl font-bold text-slate-900 dark:text-white">৳{product.price.toLocaleString()}</span>
                   <button 
                     onClick={() => addItemToCart(product)}
                     className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
