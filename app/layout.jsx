@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar.jsx';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Naki E-commerce',
+  title: 'SHOPHORIA',
   description: 'Your one-stop shop for everything amazing. Explore our collections.',
 };
 
