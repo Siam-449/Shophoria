@@ -8,7 +8,7 @@ export default function Home() {
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">Welcome to Naki</h1>
         <p className="text-lg text-gray-600">Your one-stop shop for everything amazing. Explore our collections.</p>
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300">
               <img src={`https://picsum.photos/400/300?random=${index}`} alt="Product" className="w-full h-48 object-cover" />
