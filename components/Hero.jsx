@@ -7,7 +7,7 @@ const Hero = () => {
       {/* Background Image Container */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9e?q=80&w=2070&auto=format&fit=crop"
+          src="/banner.jpg"
           alt="Luxury shopping bags and boxes"
           className="w-full h-full object-cover"
         />
