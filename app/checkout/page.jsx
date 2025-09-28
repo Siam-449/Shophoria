@@ -159,10 +159,19 @@ const CheckoutPage = () => {
                 <span>৳{grandTotal.toLocaleString()}</span>
               </div>
             </div>
+            <div className="mt-8">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+                <h3 className="font-semibold text-slate-800 dark:text-slate-100">Cash on Delivery Available</h3>
+              </div>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                Pay when your order is delivered to your doorstep. No advance payment required.
+              </p>
+            </div>
             <button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full mt-8 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mt-4 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Placing Order...' : 'Place Order (Cash on Delivery)'}
             </button>
