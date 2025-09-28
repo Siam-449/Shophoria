@@ -82,14 +82,14 @@ const ContactPage = () => {
                   <EmailIcon className="flex-shrink-0 h-6 w-6 text-slate-500 dark:text-slate-400" />
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold">Email</h3>
-                    <a href="mailto:hello@shophoria.com" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">hello@shophoria.com</a>
+                    <a href="mailto:sami221754bcic@gmail.com" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">sami221754bcic@gmail.com</a>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <PhoneIcon className="flex-shrink-0 h-6 w-6 text-slate-500 dark:text-slate-400" />
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold">Phone</h3>
-                    <p className="text-slate-600 dark:text-slate-400">+91 98765 43210</p>
+                    <p className="text-slate-600 dark:text-slate-400">+8801897-784882</p>
                   </div>
                 </div>
                 <div className="flex items-start">
@@ -97,9 +97,9 @@ const ContactPage = () => {
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold">Address</h3>
                     <p className="text-slate-600 dark:text-slate-400">
-                      123 Luxury Street<br />
-                      Mumbai, Maharashtra 400001<br />
-                      India
+                      Mirpur-1<br />
+                      Dhaka<br />
+                      Bangladesh
                     </p>
                   </div>
                 </div>
@@ -111,16 +111,12 @@ const ContactPage = () => {
               <h2 className="text-2xl font-bold mb-6">Store Hours</h2>
               <div className="space-y-3">
                 <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                  <span>Monday - Friday</span>
-                  <span>10:00 AM - 8:00 PM</span>
+                  <span>Saturday - Thursday</span>
+                  <span>10:00 AM - 10:00 PM</span>
                 </div>
                 <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                  <span>Saturday</span>
-                  <span>10:00 AM - 6:00 PM</span>
-                </div>
-                <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                  <span>Sunday</span>
-                  <span>12:00 PM - 5:00 PM</span>
+                  <span>Friday</span>
+                  <span>12:00 PM - 10:00 PM</span>
                 </div>
               </div>
             </div>
