@@ -1,12 +1,27 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { EmailIcon } from '../../components/icons/EmailIcon';
 import { PhoneIcon } from '../../components/icons/PhoneIcon';
 import { LocationIcon } from '../../components/icons/LocationIcon';
 
 const ContactPage = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formSubmittedRef = useRef(false);
+
+  const handleSubmit = () => {
+    formSubmittedRef.current = true;
+    setIsSubmitting(true);
+  };
+
+  const handleIframeLoad = () => {
+    if (formSubmittedRef.current) {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }
+  };
+
 
   return (
     <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200">
@@ -33,12 +48,12 @@ const ContactPage = () => {
               </div>
             ) : (
               <>
-                <iframe name="hidden_iframe" id="hidden_iframe" style={{ display: 'none' }}></iframe>
+                <iframe name="hidden_iframe" id="hidden_iframe" style={{ display: 'none' }} onLoad={handleIframeLoad}></iframe>
                 <form 
                   action="https://docs.google.com/forms/d/1a8gpJc3Gz5RqjjQAlFAh1VR_wlcWMWNeQR3Y70ipnog/formResponse" 
                   method="POST" 
                   target="hidden_iframe"
-                  onSubmit={() => setTimeout(() => setSubmitted(true), 100)}
+                  onSubmit={handleSubmit}
                   className="space-y-6"
                 >
                   <div>
@@ -87,9 +102,10 @@ const ContactPage = () => {
                   <div>
                     <button
                       type="submit"
-                      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                      disabled={isSubmitting}
+                      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Send Message
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
                     </button>
                   </div>
                 </form>
