@@ -1,21 +1,69 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
 
 const CheckoutPage = () => {
-  const { cartItems, total, isCartOpen, toggleCart } = useCart();
+  const { cartItems, total, clearCart, isCartOpen, toggleCart } = useCart();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  
   const shippingCost = total > 0 ? 500 : 0;
   const grandTotal = total + shippingCost;
 
-  // Close the cart drawer if it's open when navigating to checkout
   React.useEffect(() => {
     if (isCartOpen) {
       toggleCart();
     }
   }, [isCartOpen, toggleCart]);
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.target);
+    
+    // Format cart items for Google Form fields
+    const productNames = cartItems.map(item => `${item.name} (x${item.quantity})`).join('\n');
+    const productQuantities = cartItems.map(item => item.quantity).join(', ');
+    const productIds = cartItems.map(item => item.id).join(', ');
+
+    formData.append('entry.111115754', productNames);
+    formData.append('entry.1362617278', productQuantities);
+    formData.append('entry.723655692', grandTotal.toString());
+    formData.append('entry.1503885896', productIds);
+    
+    try {
+      await fetch('https://docs.google.com/forms/u/3/d/1p_63-EOQIeRIj5UvMWre1s1h2ZYyGC2YSCyviNsnmZ0/formResponse', {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors', // Important: Google Forms will throw a CORS error but the data will be submitted.
+      });
+
+      setSubmitted(true);
+      clearCart();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error placing your order. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+       <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-[60vh] flex items-center justify-center">
+        <div className="text-center p-4">
+          <h1 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">Thank You for Your Order!</h1>
+          <p className="text-slate-600 dark:text-slate-400 mb-8">Your order has been placed successfully. We will contact you shortly with confirmation.</p>
+          <Link href="/" className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+            Continue Shopping
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -35,29 +83,29 @@ const CheckoutPage = () => {
     <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <h1 className="text-center text-4xl sm:text-5xl font-bold tracking-tight mb-12">Checkout</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16">
           {/* Left Side: Form */}
           <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800">
-            <form className="space-y-8">
+            <div className="space-y-8">
               {/* Shipping Information */}
               <div>
                 <h2 className="text-2xl font-bold mb-6">Shipping Information</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="sm:col-span-2">
                     <label htmlFor="fullName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
-                    <input type="text" id="fullName" name="fullName" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="text" id="fullName" name="entry.2046529921" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div className="sm:col-span-2">
                     <label htmlFor="address" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
-                    <input type="text" id="address" name="address" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="text" id="address" name="entry.840182848" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                    <div>
                     <label htmlFor="city" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">City</label>
-                    <input type="text" id="city" name="city" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="text" id="city" name="entry.1886815229" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div>
                     <label htmlFor="postalCode" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Postal Code</label>
-                    <input type="text" id="postalCode" name="postalCode" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="text" id="postalCode" name="entry.1516143116" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                 </div>
               </div>
@@ -67,15 +115,15 @@ const CheckoutPage = () => {
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                    <div>
                     <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
-                    <input type="email" id="email" name="email" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="email" id="email" name="entry.2031731440" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="tel" id="phone" name="entry.1625432820" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                  </div>
               </div>
-            </form>
+            </div>
           </div>
 
           {/* Right Side: Order Summary */}
@@ -111,11 +159,15 @@ const CheckoutPage = () => {
                 <span>৳{grandTotal.toLocaleString()}</span>
               </div>
             </div>
-            <button className="w-full mt-8 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors font-semibold">
-              Place Order (Cash on Delivery)
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="w-full mt-8 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Placing Order...' : 'Place Order (Cash on Delivery)'}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
