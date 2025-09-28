@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
+import { useCart } from '../context/CartContext.jsx';
 import { SearchIcon } from './icons/SearchIcon.jsx';
 import { MoonIcon } from './icons/MoonIcon.jsx';
 import { SunIcon } from './icons/SunIcon.jsx';
@@ -14,6 +15,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { toggleCart, cartItems } = useCart();
 
   useEffect(() => {
     setMounted(true);
@@ -77,9 +79,14 @@ const Navbar = () => {
             <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
               {renderThemeChanger()}
             </button>
-            <Link href="/cart" aria-label="Open cart" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
+            <button onClick={toggleCart} aria-label="Open cart" className="relative p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
               <CartIcon className="h-6 w-6" />
-            </Link>
+              {cartItems.length > 0 && (
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                  {cartItems.length}
+                </span>
+              )}
+            </button>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -127,9 +134,14 @@ const Navbar = () => {
               <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
                   {renderThemeChanger()}
               </button>
-              <Link href="/cart" aria-label="Open cart" onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
+              <button onClick={() => { toggleCart(); setIsMobileMenuOpen(false); }} aria-label="Open cart" className="relative p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
                   <CartIcon className="h-6 w-6" />
-              </Link>
+                   {cartItems.length > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                      {cartItems.length}
+                    </span>
+                  )}
+              </button>
             </div>
         </div>
       </div>
