@@ -28,15 +28,12 @@ const CheckoutPage = () => {
     // Format cart items for Google Form fields
     const productNames = cartItems.map(item => `${item.name} (x${item.quantity})`).join('\n');
     const productQuantities = cartItems.map(item => item.quantity).join(', ');
-    const productIds = cartItems.map(item => item.id).join(', ');
     const shippingInfo = `${shippingLocation === 'inside-dhaka' ? 'Inside Dhaka' : 'Outside Dhaka'} - ৳${shippingCost}`;
 
     formData.append('entry.111115754', productNames);
     formData.append('entry.1362617278', productQuantities);
     formData.append('entry.723655692', grandTotal.toString());
-    formData.append('entry.1503885896', productIds);
-    // NOTE: Using a placeholder entry ID. You may need to create a new field in your Google Form and replace this ID.
-    formData.append('entry.1000000000', shippingInfo); 
+    formData.append('entry.464718279', shippingInfo);
     
     try {
       await fetch('https://docs.google.com/forms/u/3/d/1p_63-EOQIeRIj5UvMWre1s1h2ZYyGC2YSCyviNsnmZ0/formResponse', {
