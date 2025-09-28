@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
 
@@ -9,7 +9,8 @@ const CheckoutPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [shippingLocation, setShippingLocation] = useState('inside-dhaka');
-  
+  const formSubmittedRef = useRef(false);
+
   const shippingCost = total > 0 ? (shippingLocation === 'inside-dhaka' ? 60 : 110) : 0;
   const grandTotal = total + shippingCost;
 
@@ -19,42 +20,22 @@ const CheckoutPage = () => {
     }
   }, [isCartOpen, toggleCart]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = () => {
+    formSubmittedRef.current = true;
     setIsSubmitting(true);
+  };
 
-    const formData = new FormData(event.target);
-    
-    // Format cart items for Google Form fields
-    const productNames = cartItems.map(item => `${item.name} (x${item.quantity})`).join('\n');
-    const productQuantities = cartItems.map(item => item.quantity).join(', ');
-    const shippingInfo = `${shippingLocation === 'inside-dhaka' ? 'Inside Dhaka' : 'Outside Dhaka'} - ৳${shippingCost}`;
-
-    formData.append('entry.111115754', productNames);
-    formData.append('entry.1362617278', productQuantities);
-    formData.append('entry.723655692', grandTotal.toString());
-    formData.append('entry.464718279', shippingInfo);
-    
-    try {
-      await fetch('https://docs.google.com/forms/u/3/d/1p_63-EOQIeRIj5UvMWre1s1h2ZYyGC2YSCyviNsnmZ0/formResponse', {
-        method: 'POST',
-        body: formData,
-        mode: 'no-cors', // Important: Google Forms will throw a CORS error but the data will be submitted.
-      });
-
+  const handleIframeLoad = () => {
+    if (formSubmittedRef.current) {
+      setIsSubmitting(false);
       setSubmitted(true);
       clearCart();
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('There was an error placing your order. Please try again.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   if (submitted) {
     return (
-       <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-[60vh] flex items-center justify-center">
+      <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-[60vh] flex items-center justify-center">
         <div className="text-center p-4">
           <h1 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">Thank You for Your Order!</h1>
           <p className="text-slate-600 dark:text-slate-400 mb-8">Your order has been placed successfully. We will contact you shortly with confirmation.</p>
@@ -63,10 +44,10 @@ const CheckoutPage = () => {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
-  if (cartItems.length === 0) {
+  if (cartItems.length === 0 && !submitted) {
     return (
       <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-[60vh] flex items-center justify-center">
         <div className="text-center p-4">
@@ -82,9 +63,21 @@ const CheckoutPage = () => {
 
   return (
     <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200">
+      <iframe name="hidden_iframe" id="hidden_iframe" style={{ display: 'none' }} onLoad={handleIframeLoad}></iframe>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <h1 className="text-center text-4xl sm:text-5xl font-bold tracking-tight mb-12">Checkout</h1>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16">
+        <form
+          action="https://docs.google.com/forms/u/3/d/1p_63-EOQIeRIj5UvMWre1s1h2ZYyGC2YSCyviNsnmZ0/formResponse"
+          method="POST"
+          target="hidden_iframe"
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16"
+        >
+          {/* Hidden fields for data not in form inputs */}
+          <input type="hidden" name="entry.111115754" value={cartItems.map(item => `${item.name} (x${item.quantity})`).join('\n')} />
+          <input type="hidden" name="entry.1362617278" value={cartItems.map(item => item.quantity).join(', ')} />
+          <input type="hidden" name="entry.723655692" value={grandTotal.toString()} />
+
           {/* Left Side: Form */}
           <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800">
             <div className="space-y-8">
@@ -114,9 +107,9 @@ const CheckoutPage = () => {
                       <div className="flex items-center">
                         <input
                           id="inside-dhaka"
-                          name="shippingLocation"
+                          name="entry.464718279"
                           type="radio"
-                          value="inside-dhaka"
+                          value="Inside Dhaka"
                           checked={shippingLocation === 'inside-dhaka'}
                           onChange={() => setShippingLocation('inside-dhaka')}
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700"
@@ -128,9 +121,9 @@ const CheckoutPage = () => {
                       <div className="flex items-center">
                         <input
                           id="outside-dhaka"
-                          name="shippingLocation"
+                          name="entry.464718279"
                           type="radio"
-                          value="outside-dhaka"
+                          value="Outside Dhaka"
                           checked={shippingLocation === 'outside-dhaka'}
                           onChange={() => setShippingLocation('outside-dhaka')}
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700"
@@ -202,8 +195,8 @@ const CheckoutPage = () => {
                 Pay when your order is delivered to your doorstep. No advance payment required.
               </p>
             </div>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isSubmitting}
               className="w-full mt-4 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
