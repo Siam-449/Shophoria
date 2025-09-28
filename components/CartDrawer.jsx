@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { useCart } from '../context/CartContext.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
 import { PlusIcon } from './icons/PlusIcon.jsx';
@@ -71,9 +72,13 @@ const CartDrawer = () => {
                 <span>Total:</span>
                 <span>₹{total.toLocaleString()}</span>
               </div>
-              <button className="w-full py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">
+              <Link
+                href="/checkout"
+                onClick={toggleCart}
+                className="w-full block text-center py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors"
+              >
                 Proceed to Checkout
-              </button>
+              </Link>
             </div>
           )}
         </div>
