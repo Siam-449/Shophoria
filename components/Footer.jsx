@@ -27,19 +27,16 @@ const Footer = () => {
             <p className="font-bold text-white dark:text-slate-900">Customer Service</p>
             <ul className="mt-6 space-y-4 text-sm">
               <li><Link href="/contact" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Contact Us</Link></li>
-              <li><Link href="/shipping" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Shipping Info</Link></li>
-              <li><Link href="/returns" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Returns</Link></li>
-              <li><Link href="/size-guide" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Size Guide</Link></li>
             </ul>
           </div>
 
           <div>
             <p className="font-bold text-white dark:text-slate-900">Connect</p>
             <ul className="mt-6 space-y-4 text-sm">
-              <li><a href="#" target="_blank" rel="noopener noreferrer" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Instagram</a></li>
-              <li><a href="#" target="_blank" rel="noopener noreferrer" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Facebook</a></li>
-              <li><a href="#" target="_blank" rel="noopener noreferrer" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Twitter</a></li>
-              <li><Link href="/newsletter" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Newsletter</Link></li>
+              <li><a href="https://www.instagram.com/__shophoria__" target="_blank" rel="noopener noreferrer" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Instagram</a></li>
+              <li><a href="https://www.facebook.com/saeedakhansumai" target="_blank" rel="noopener noreferrer" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Facebook</a></li>
+              <li><a href="https://s.daraz.com.bd/s.ZscSw" target="_blank" rel="noopener noreferrer" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Daraz</a></li>
+              <li><a href="https://www.tiktok.com/@shophoria26?_t=ZS-906nScpkuVc&_r=1" target="_blank" rel="noopener noreferrer" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">TikTok</a></li>
             </ul>
           </div>
         </div>
@@ -48,9 +45,18 @@ const Footer = () => {
           <p className="text-sm text-slate-400 dark:text-slate-500">
             &copy; {new Date().getFullYear()} SHOPHORIA. All rights reserved.
           </p>
-          <div className="mt-4 flex gap-x-6 sm:mt-0">
-            <Link href="/privacy" className="text-sm text-slate-400 dark:text-slate-500 transition hover:text-white dark:hover:text-slate-900">Privacy Policy</Link>
-            <Link href="/terms" className="text-sm text-slate-400 dark:text-slate-500 transition hover:text-white dark:hover:text-slate-900">Terms of Service</Link>
+          <div className="mt-4 sm:mt-0">
+            <p className="text-sm text-slate-400 dark:text-slate-500">
+              Developed by{' '}
+              <a 
+                href="https://siamdev.netlify.app/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="font-medium underline transition hover:text-white dark:hover:text-slate-900"
+              >
+                SIAM
+              </a>.
+            </p>
           </div>
         </div>
       </div>
