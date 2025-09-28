@@ -2,20 +2,18 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Hero from '../components/Hero.jsx';
-import { useCart } from '../context/CartContext.jsx';
-import { products } from '../data/products.js';
+import { useCart } from '../../context/CartContext.jsx';
+import { products } from '../../data/products.js';
 
-export default function Home() {
+export default function AllProductsPage() {
   const { addItemToCart } = useCart();
 
   return (
     <div className="bg-white dark:bg-slate-950">
-      <Hero />
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
          <div className="text-center my-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Our Collections</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400">Explore our curated selection of amazing products.</p>
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">All Products</h1>
+            <p className="text-lg text-slate-600 dark:text-slate-400">Browse our entire collection of amazing products.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {products.map((product) => (
@@ -24,7 +22,7 @@ export default function Home() {
                 <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
               </Link>
               <div className="p-6 flex flex-col flex-grow">
-                <Link href={`/products/${product.id}`}>
+                 <Link href={`/products/${product.id}`}>
                   <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{product.name}</h3>
                 </Link>
                 <p className="text-slate-500 dark:text-slate-400 mt-2 flex-grow">{product.description}</p>
