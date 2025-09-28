@@ -8,8 +8,9 @@ const CheckoutPage = () => {
   const { cartItems, total, clearCart, isCartOpen, toggleCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [shippingLocation, setShippingLocation] = useState('inside-dhaka');
   
-  const shippingCost = total > 0 ? 500 : 0;
+  const shippingCost = total > 0 ? (shippingLocation === 'inside-dhaka' ? 60 : 110) : 0;
   const grandTotal = total + shippingCost;
 
   React.useEffect(() => {
@@ -28,11 +29,14 @@ const CheckoutPage = () => {
     const productNames = cartItems.map(item => `${item.name} (x${item.quantity})`).join('\n');
     const productQuantities = cartItems.map(item => item.quantity).join(', ');
     const productIds = cartItems.map(item => item.id).join(', ');
+    const shippingInfo = `${shippingLocation === 'inside-dhaka' ? 'Inside Dhaka' : 'Outside Dhaka'} - ৳${shippingCost}`;
 
     formData.append('entry.111115754', productNames);
     formData.append('entry.1362617278', productQuantities);
     formData.append('entry.723655692', grandTotal.toString());
     formData.append('entry.1503885896', productIds);
+    // NOTE: Using a placeholder entry ID. You may need to create a new field in your Google Form and replace this ID.
+    formData.append('entry.1000000000', shippingInfo); 
     
     try {
       await fetch('https://docs.google.com/forms/u/3/d/1p_63-EOQIeRIj5UvMWre1s1h2ZYyGC2YSCyviNsnmZ0/formResponse', {
@@ -106,6 +110,39 @@ const CheckoutPage = () => {
                   <div>
                     <label htmlFor="postalCode" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Postal Code</label>
                     <input type="text" id="postalCode" name="entry.1516143116" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Delivery Location</label>
+                    <div className="flex flex-col sm:flex-row gap-4 mt-2">
+                      <div className="flex items-center">
+                        <input
+                          id="inside-dhaka"
+                          name="shippingLocation"
+                          type="radio"
+                          value="inside-dhaka"
+                          checked={shippingLocation === 'inside-dhaka'}
+                          onChange={() => setShippingLocation('inside-dhaka')}
+                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700"
+                        />
+                        <label htmlFor="inside-dhaka" className="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                          Inside Dhaka <span className="text-slate-500 dark:text-slate-400">(৳60)</span>
+                        </label>
+                      </div>
+                      <div className="flex items-center">
+                        <input
+                          id="outside-dhaka"
+                          name="shippingLocation"
+                          type="radio"
+                          value="outside-dhaka"
+                          checked={shippingLocation === 'outside-dhaka'}
+                          onChange={() => setShippingLocation('outside-dhaka')}
+                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700"
+                        />
+                        <label htmlFor="outside-dhaka" className="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                          Outside Dhaka <span className="text-slate-500 dark:text-slate-400">(৳110)</span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
