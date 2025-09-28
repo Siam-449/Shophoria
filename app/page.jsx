@@ -1,12 +1,16 @@
 import React from 'react';
+import Hero from '../components/Hero.jsx';
 
 export default function Home() {
   return (
     <div className="bg-white dark:bg-slate-950">
+      <Hero />
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Welcome to SHOPHORIA</h1>
-        <p className="text-lg text-slate-600 dark:text-slate-400">Your one-stop shop for everything amazing. Explore our collections.</p>
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+         <div className="text-center my-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Our Collections</h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400">Explore our curated selection of amazing products.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="bg-white dark:bg-slate-900 rounded-lg shadow-md dark:shadow-none dark:border dark:border-slate-800 overflow-hidden transform hover:scale-105 transition-transform duration-300">
               <img src={`https://picsum.photos/400/300?random=${index}`} alt="Product" className="w-full h-48 object-cover" />
