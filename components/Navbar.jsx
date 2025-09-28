@@ -12,6 +12,57 @@ import { CartIcon } from './icons/CartIcon.jsx';
 import { MenuIcon } from './icons/MenuIcon.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
 
+// Moved SearchBar outside of Navbar to prevent re-mounting on every render, which was causing focus loss.
+const SearchBar = ({ 
+  isMobile = false,
+  searchQuery,
+  onSearchChange,
+  onSearchFocus,
+  isFocused,
+  searchResults,
+  onItemClick
+}) => {
+  return (
+    <>
+      <form onSubmit={(e) => e.preventDefault()} className="relative">
+        <span className={`absolute inset-y-0 left-0 flex items-center ${isMobile ? 'pl-5' : 'pl-3'}`}>
+          <SearchIcon className="h-5 w-5 text-slate-400" />
+        </span>
+        <input
+          type="search"
+          name="search"
+          placeholder="Search by name or ID..."
+          value={searchQuery}
+          onChange={onSearchChange}
+          onFocus={onSearchFocus}
+          className={`w-full py-2 pl-10 pr-4 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${!isMobile && 'w-64 xl:w-80 transition-all'}`}
+        />
+      </form>
+      {isFocused && (
+        <div className="absolute top-full mt-2 w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-lg z-20 max-h-96 overflow-y-auto">
+          <ul>
+            {searchResults.length > 0 ? searchResults.map(product => (
+              <li key={product.id}>
+                <Link href={`/products/${product.id}`} onClick={onItemClick} className="flex items-center gap-4 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                  <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
+                  <div>
+                    <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">{product.name}</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400">ID: {product.id}</p>
+                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300">৳{product.price.toLocaleString()}</p>
+                  </div>
+                </Link>
+              </li>
+            )) : (
+                <li className="p-3 text-center text-sm text-slate-500 dark:text-slate-400">No products found.</li>
+             )}
+          </ul>
+        </div>
+      )}
+    </>
+  );
+};
+
+
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -67,6 +118,12 @@ const Navbar = () => {
     setIsSearchFocused(e.target.value.trim() !== '');
   }
 
+  const handleSearchFocus = () => {
+    if (searchQuery.trim()) {
+        setIsSearchFocused(true);
+    }
+  }
+
   const navLinks = [
     { name: 'All Products', href: '/products' },
     { name: 'Fashion', href: '/fashion' },
@@ -85,45 +142,6 @@ const Navbar = () => {
       return <MoonIcon className="h-6 w-6" onClick={() => setTheme('dark')} />;
     }
   };
-
-  const SearchBar = ({ isMobile = false }) => (
-    <>
-      <form onSubmit={(e) => e.preventDefault()} className="relative">
-        <span className={`absolute inset-y-0 left-0 flex items-center ${isMobile ? 'pl-5' : 'pl-3'}`}>
-          <SearchIcon className="h-5 w-5 text-slate-400" />
-        </span>
-        <input
-          type="search"
-          name="search"
-          placeholder="Search by name or ID..."
-          value={searchQuery}
-          onChange={handleSearchInputChange}
-          onFocus={() => { if(searchQuery.trim()) setIsSearchFocused(true); }}
-          className={`w-full py-2 pl-10 pr-4 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${!isMobile && 'w-64 xl:w-80 transition-all'}`}
-        />
-      </form>
-      {isSearchFocused && (
-        <div className="absolute top-full mt-2 w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-lg z-20 max-h-96 overflow-y-auto">
-          <ul>
-            {searchResults.length > 0 ? searchResults.map(product => (
-              <li key={product.id}>
-                <Link href={`/products/${product.id}`} onClick={handleSearchItemClick} className="flex items-center gap-4 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                  <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
-                  <div>
-                    <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">{product.name}</p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">ID: {product.id}</p>
-                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300">৳{product.price.toLocaleString()}</p>
-                  </div>
-                </Link>
-              </li>
-            )) : (
-                <li className="p-3 text-center text-sm text-slate-500 dark:text-slate-400">No products found.</li>
-             )}
-          </ul>
-        </div>
-      )}
-    </>
-  );
 
   return (
     <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
@@ -150,7 +168,14 @@ const Navbar = () => {
           {/* Right section: Search and Icons (Desktop) */}
           <div className="hidden xl:flex items-center gap-4">
             <div className="relative" ref={!isMobileMenuOpen ? searchContainerRef : null}>
-                <SearchBar />
+                <SearchBar 
+                    searchQuery={searchQuery}
+                    onSearchChange={handleSearchInputChange}
+                    onSearchFocus={handleSearchFocus}
+                    isFocused={isSearchFocused}
+                    searchResults={searchResults}
+                    onItemClick={handleSearchItemClick}
+                />
             </div>
             <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
               {renderThemeChanger()}
@@ -187,7 +212,15 @@ const Navbar = () => {
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <div className="relative p-2" ref={isMobileMenuOpen ? searchContainerRef : null}>
-            <SearchBar isMobile={true} />
+            <SearchBar 
+                isMobile={true} 
+                searchQuery={searchQuery}
+                onSearchChange={handleSearchInputChange}
+                onSearchFocus={handleSearchFocus}
+                isFocused={isSearchFocused}
+                searchResults={searchResults}
+                onItemClick={handleSearchItemClick}
+            />
           </div>
           {navLinks.map((link) => (
             <Link
