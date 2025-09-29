@@ -1,14 +1,34 @@
 "use client";
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import Hero from '../components/Hero.jsx';
 import CategoryShowcase from '../components/CategoryShowcase.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { products } from '../data/products.js';
 
+const getRandomProductsByCategory = (allProducts, category, count) => {
+  const categoryProducts = allProducts.filter(p => p.category === category);
+  // Shuffle the array to get random products
+  const shuffled = categoryProducts.sort(() => 0.5 - Math.random());
+  // Return the specified number of products
+  return shuffled.slice(0, count);
+};
+
 export default function Home() {
   const { addItemToCart } = useCart();
+
+  const collectionsProducts = useMemo(() => {
+    const fashion = getRandomProductsByCategory(products, 'Fashion & Beauty', 4);
+    const electronics = getRandomProductsByCategory(products, 'Electronics', 4);
+    const homeToys = getRandomProductsByCategory(products, 'Home & Toys', 4);
+    const books = getRandomProductsByCategory(products, 'Books & Paints', 4);
+    
+    const allSelected = [...fashion, ...electronics, ...homeToys, ...books];
+    
+    // Shuffle the final combined list for a mixed display
+    return allSelected.sort(() => 0.5 - Math.random());
+  }, []);
 
   return (
     <div className="bg-slate-50 dark:bg-slate-900">
@@ -20,7 +40,7 @@ export default function Home() {
             <p className="text-lg text-slate-600 dark:text-slate-400">Explore our curated selection of amazing products.</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
-          {products.map((product) => (
+          {collectionsProducts.map((product) => (
             <div key={product.id} className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
               <Link href={`/products/${product.id}`} aria-label={`View details for ${product.name}`}>
                 <div className="overflow-hidden aspect-square">
