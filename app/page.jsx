@@ -12,11 +12,47 @@ export default function Home() {
   const [collectionsProducts, setCollectionsProducts] = useState([]);
 
   useEffect(() => {
-    // Shuffle all products to get a random selection
-    const shuffled = [...products].sort(() => 0.5 - Math.random());
-    // Select the first 12 products for the collection
-    const selectedProducts = shuffled.slice(0, 12);
-    setCollectionsProducts(selectedProducts);
+    const shuffleArray = (array) => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    };
+
+    const categories = ['Fashion & Beauty', 'Electronics', 'Home & Toys', 'Books & Paints'];
+    const numToSelectPerCategory = 2;
+    const totalProductsToShow = 12;
+
+    let guaranteedProducts = [];
+    const selectedIds = new Set();
+
+    // 1. Get guaranteed products from each category
+    categories.forEach(category => {
+      const categoryProducts = products.filter(p => p.category === category);
+      const shuffledCategoryProducts = shuffleArray([...categoryProducts]);
+      const selectedFromCategory = shuffledCategoryProducts.slice(0, numToSelectPerCategory);
+      
+      selectedFromCategory.forEach(product => {
+        if (!selectedIds.has(product.id)) {
+          guaranteedProducts.push(product);
+          selectedIds.add(product.id);
+        }
+      });
+    });
+
+    let finalProducts = [...guaranteedProducts];
+
+    // 2. Fill remaining spots with products from any category
+    if (finalProducts.length < totalProductsToShow) {
+      const remainingProducts = products.filter(p => !selectedIds.has(p.id));
+      const shuffledRemaining = shuffleArray([...remainingProducts]);
+      const needed = totalProductsToShow - finalProducts.length;
+      finalProducts.push(...shuffledRemaining.slice(0, needed));
+    }
+    
+    // 3. Final shuffle to mix everything up for display
+    setCollectionsProducts(shuffleArray(finalProducts));
   }, []);
 
   return (
