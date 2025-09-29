@@ -26,11 +26,10 @@ export default function HomeAndToyPage() {
                 </div>
               </Link>
               <div className="p-3 flex flex-col flex-grow">
-                <div className="flex-grow">
-                  <Link href={`/products/${product.id}`} title={product.name}>
-                    <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2 h-10">{product.name}</h3>
-                  </Link>
-                </div>
+                <Link href={`/products/${product.id}`} className="flex-grow">
+                  <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">{product.name}</h3>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-3">{product.description}</p>
+                </Link>
                 <div className="mt-2">
                   <p className="text-base font-bold text-slate-900 dark:text-slate-100">৳{product.price.toLocaleString()}</p>
                    <button 

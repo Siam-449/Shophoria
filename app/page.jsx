@@ -28,6 +28,7 @@ export default function Home() {
               <div className="p-6 flex flex-col flex-grow">
                 <Link href={`/products/${product.id}`} className="flex-grow">
                   <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{product.name}</h3>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 line-clamp-3">{product.description}</p>
                 </Link>
                 <div className="mt-4 flex justify-between items-center">
                   <span className="text-2xl font-bold text-slate-900 dark:text-white">৳{product.price.toLocaleString()}</span>

@@ -39,11 +39,14 @@ const SearchResults = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {filteredProducts.map((product) => (
                 <div key={product.id} className="bg-white dark:bg-slate-900 rounded-lg shadow-md dark:shadow-none dark:border dark:border-slate-800 overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col">
-                  <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
+                  <Link href={`/products/${product.id}`} aria-label={`View details for ${product.name}`}>
+                    <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
+                  </Link>
                   <div className="p-6 flex flex-col flex-grow">
-                    <div className="flex-grow">
-                        <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{product.name}</h3>
-                    </div>
+                    <Link href={`/products/${product.id}`} className="flex-grow">
+                        <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{product.name}</h3>
+                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 line-clamp-3">{product.description}</p>
+                    </Link>
                     <div className="mt-4 flex justify-between items-center">
                       <span className="text-2xl font-bold text-slate-900 dark:text-white">৳{product.price.toLocaleString()}</span>
                       <button 
