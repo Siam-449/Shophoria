@@ -55,4 +55,6 @@ export const products = [
   { id: 402, name: '"Lightning McQueen Toy Car – Mini Die-Cast Model (7cm)"', price: 335, image: '/lightning-mcqueen-car.jpeg', description: 'A 7cm mini die-cast model of the beloved character Lightning McQueen. Great for play or display.', category: 'Home & Toys' },
   { id: 403, name: '"Red Racing Buggy Toy Car – High-Speed Pull-Back Off-Road Vehicle"', price: 349, image: '/red-racing-buggy.jpeg', description: 'A rugged off-road buggy with high-speed pull-back action. Ready for any adventure.', category: 'Home & Toys' },
   { id: 404, name: '"1:36 Scale Alloy Die-Cast SUV Model Car with Openable Doors & Pull-Back"', price: 579, image: '/die-cast-suv-model.jpeg', description: 'A detailed 1:36 scale alloy SUV model with openable doors and pull-back functionality.', category: 'Home & Toys' },
+  { id: 405, name: 'UNO NO MERCY', price: 159, image: '/uno-no-mercy.jpeg', description: 'The most brutal UNO game yet. Get ready for no mercy with tougher penalties and new rules designed to make you stack, swap, and draw like never before!', category: 'Home & Toys' },
+  { id: 406, name: '108 PLASTIC UNO CARD BOX', price: 350, image: '/plastic-uno-card-box.jpeg', description: 'A durable plastic case containing a full set of 108 classic UNO cards. Perfect for travel and keeping your cards safe.', category: 'Home & Toys' },
 ];
