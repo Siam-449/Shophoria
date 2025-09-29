@@ -35,6 +35,7 @@ const SearchBar = ({
           value={searchQuery}
           onChange={onSearchChange}
           onFocus={onSearchFocus}
+          autoComplete="off"
           className={`w-full py-2 pl-10 pr-4 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${!isMobile && 'w-64 xl:w-80 transition-all'}`}
         />
       </form>
@@ -126,7 +127,7 @@ const Navbar = () => {
     { name: 'All Products', href: '/products' },
     { name: 'Fashion', href: '/fashion' },
     { name: 'Electronics', href: '/electronics' },
-    { name: 'Home & Garden', href: '/home-garden' },
+    { name: 'Home & Toy', href: '/home-toy' },
     { name: 'Books', href: '/books' },
     { name: 'Contact', href: '/contact' },
   ];
