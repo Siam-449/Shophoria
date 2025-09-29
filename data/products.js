@@ -96,4 +96,12 @@ export const products = [
     description: 'A stylish and cute thermos bottle featuring adorable cat ears on the lid. Made with high-quality materials to keep your beverages at the perfect temperature. A fun and fashionable accessory.',
     category: 'Home & Toys'
   },
+  {
+    id: 432,
+    name: 'Note pad set for children',
+    price: 150,
+    image: '/note-pad-set-for-children.jpeg',
+    description: 'A fun and colorful notepad set for children, including a notepad, a multi-color pen, an eraser, and a sharpener. Perfect for school or creative play.',
+    category: 'Books & Paints'
+  },
 ];
