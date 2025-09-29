@@ -46,4 +46,9 @@ export const products = [
   { id: 303, name: 'Cartoon Note Pad Set', price: 180, image: '/cartoon-note-pad-set-1.jpeg', description: 'A cute cartoon notepad set, complete with a notepad, pens, and other stationery items in a decorative box.', category: 'Books & Paints' },
   { id: 304, name: 'Amazing Cartoon Note Pad Set', price: 220, image: '/amazing-cartoon-note-pad-set.jpeg', description: 'An amazing cartoon notepad gift set. Includes a spiral notepad and various matching stationery accessories.', category: 'Books & Paints' },
   { id: 305, name: 'Kuromi Amazing Note Pad', price: 150, image: '/kuromi-amazing-note-pad.jpeg', description: 'An amazing and cute Kuromi themed notepad. Perfect for Sanrio fans to write down their thoughts.', category: 'Books & Paints' },
+  { id: 306, name: 'Camel Water Colour Set', price: 250, image: '/camel-water-colour-set.jpeg', description: 'A vibrant set of Camel water colours in tubes, perfect for artists of all levels.', category: 'Books & Paints' },
+  { id: 307, name: 'Water Colour Palette', price: 120, image: '/water-colour-palette.jpeg', description: 'A compact and convenient water colour palette with a range of essential colours and a brush.', category: 'Books & Paints' },
+  { id: 308, name: 'Vneeds Water Colour Set', price: 150, image: '/vneeds-water-colour-set.jpeg', description: 'A colorful water colour set from Vneeds, including a palette and brushes for creative fun.', category: 'Books & Paints' },
+  { id: 309, name: 'Doms Poster Colours', price: 350, image: '/doms-poster-colours.jpeg', description: 'A set of rich and opaque Doms poster colours, ideal for bold paintings and projects.', category: 'Books & Paints' },
+  { id: 310, name: 'Camel Water Colour Tubes', price: 250, image: '/camel-water-colour-tubes.jpeg', description: 'A high-quality set of Camel water colour tubes, providing brilliant colours and smooth application.', category: 'Books & Paints' },
 ];
