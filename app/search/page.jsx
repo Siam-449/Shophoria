@@ -18,8 +18,7 @@ const SearchResults = () => {
     }
     const lowerCaseQuery = query.toLowerCase();
     return products.filter(product => 
-      product.name.toLowerCase().includes(lowerCaseQuery) || 
-      String(product.id).includes(lowerCaseQuery)
+      product.name.toLowerCase().includes(lowerCaseQuery)
     );
   }, [query]);
 

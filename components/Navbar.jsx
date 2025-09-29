@@ -31,7 +31,7 @@ const SearchBar = ({
         <input
           type="search"
           name="search"
-          placeholder="Search by name or ID..."
+          placeholder="Search by name..."
           value={searchQuery}
           onChange={onSearchChange}
           onFocus={onSearchFocus}
@@ -47,7 +47,6 @@ const SearchBar = ({
                   <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
                   <div>
                     <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">{product.name}</p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">ID: {product.id}</p>
                     <p className="text-sm font-bold text-slate-700 dark:text-slate-300">৳{product.price.toLocaleString()}</p>
                   </div>
                 </Link>
@@ -86,8 +85,7 @@ const Navbar = () => {
 
     const lowerCaseQuery = searchQuery.toLowerCase();
     const filtered = products.filter(product =>
-      product.name.toLowerCase().includes(lowerCaseQuery) ||
-      String(product.id).includes(lowerCaseQuery)
+      product.name.toLowerCase().includes(lowerCaseQuery)
     ).slice(0, 5); // Limit results to 5
     setSearchResults(filtered);
   }, [searchQuery]);
