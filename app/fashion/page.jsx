@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { products } from '../../data/products.js';
+import { products } from '../../data/products.js'; 
 import { useCart } from '../../context/CartContext.jsx';
 
 const fashionProducts = products.filter(p => p.category === 'Fashion & Beauty');
