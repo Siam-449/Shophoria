@@ -3,10 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { products } from '../../data/products.js';
+import { useCart } from '../../context/CartContext.jsx';
 
 const toyProducts = products.filter(p => p.category === 'Home & Toy');
 
 export default function HomeAndToyPage() {
+  const { addItemToCart } = useCart();
+
   return (
     <div className="bg-slate-50 dark:bg-slate-950">
       <main className="container mx-auto p-4 sm:p-6 lg:p-8 min-h-[60vh]">
@@ -16,16 +19,28 @@ export default function HomeAndToyPage() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
           {toyProducts.map((product) => (
-            <div key={product.id} className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800">
+            <div key={product.id} className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
               <Link href={`/products/${product.id}`} aria-label={`View details for ${product.name}`}>
                 <div className="overflow-hidden aspect-square">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                </div>
-                <div className="p-3">
-                  <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">{product.name}</h3>
-                  <p className="text-base font-bold text-slate-900 dark:text-slate-100 mt-1">৳{product.price.toLocaleString()}</p>
+                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
               </Link>
+              <div className="p-3 flex flex-col flex-grow">
+                <div className="flex-grow">
+                  <Link href={`/products/${product.id}`} title={product.name}>
+                    <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2 h-10">{product.name}</h3>
+                  </Link>
+                </div>
+                <div className="mt-2">
+                  <p className="text-base font-bold text-slate-900 dark:text-slate-100">৳{product.price.toLocaleString()}</p>
+                   <button 
+                      onClick={() => addItemToCart(product)}
+                      className="w-full mt-2 px-3 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors"
+                    >
+                      Add to Cart
+                    </button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
