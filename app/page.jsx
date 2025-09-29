@@ -67,6 +67,14 @@ export default function Home() {
             </div>
           ))}
         </div>
+        <div className="mt-12 text-center">
+            <Link 
+                href="/products" 
+                className="inline-block px-8 py-3 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium"
+            >
+                View All Products
+            </Link>
+        </div>
       </main>
     </div>
   );
