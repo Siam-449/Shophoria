@@ -11,28 +11,28 @@ const categories = [
     description: 'Premium apparel and accessories',
     href: '/fashion',
     icon: TshirtIcon,
-    image: 'https://images.unsplash.com/photo-1581338834647-b0fb40704e21?q=80&w=600&auto=format&fit=crop',
+    image: '/Fashion-&-Clothing.jpeg',
   },
   {
     name: 'Electronics & Gadgets',
     description: 'Latest tech and smart devices',
     href: '/electronics',
     icon: GadgetIcon,
-    image: 'https://images.unsplash.com/photo-1582298538104-fe2e74c27f59?q=80&w=600&auto=format&fit=crop',
+    image: '/Electronics-&-Gadgets.jpeg',
   },
   {
     name: 'Home & Toy',
     description: 'Elegant home decor, Playable games and Toy',
     href: '/home-toy',
     icon: HomeIcon,
-    image: 'https://images.unsplash.com/photo-1557173612-c8f5835c225a?q=80&w=600&auto=format&fit=crop',
+    image: '/Home-&-Toy.jpeg',
   },
   {
     name: 'Books & Media',
     description: 'Curated collection of premium books',
     href: '/books',
     icon: BookIcon,
-    image: 'https://images.unsplash.com/photo-1624562522009-c8a73a873831?q=80&w=600&auto=format&fit=crop',
+    image: '/Books-&-Media.jpeg',
   },
 ];
 
