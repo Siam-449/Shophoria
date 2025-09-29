@@ -7,29 +7,16 @@ import CategoryShowcase from '../components/CategoryShowcase.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { products } from '../data/products.js';
 
-const getRandomProductsByCategory = (allProducts, category, count) => {
-  const categoryProducts = allProducts.filter(p => p.category === category);
-  // Shuffle the array to get random products
-  const shuffled = categoryProducts.sort(() => 0.5 - Math.random());
-  // Return the specified number of products
-  return shuffled.slice(0, count);
-};
-
 export default function Home() {
   const { addItemToCart } = useCart();
   const [collectionsProducts, setCollectionsProducts] = useState([]);
 
   useEffect(() => {
-    const fashion = getRandomProductsByCategory(products, 'Fashion & Beauty', 4);
-    const electronics = getRandomProductsByCategory(products, 'Electronics', 4);
-    const homeToys = getRandomProductsByCategory(products, 'Home & Toys', 4);
-    const books = getRandomProductsByCategory(products, 'Books & Paints', 4);
-    
-    const allSelected = [...fashion, ...electronics, ...homeToys, ...books];
-    
-    // Shuffle the final combined list for a mixed display
-    const shuffledProducts = allSelected.sort(() => 0.5 - Math.random());
-    setCollectionsProducts(shuffledProducts);
+    // Shuffle all products to get a random selection
+    const shuffled = [...products].sort(() => 0.5 - Math.random());
+    // Select the first 12 products for the collection
+    const selectedProducts = shuffled.slice(0, 12);
+    setCollectionsProducts(selectedProducts);
   }, []);
 
   return (
