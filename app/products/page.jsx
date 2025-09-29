@@ -22,10 +22,9 @@ export default function AllProductsPage() {
                 <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
               </Link>
               <div className="p-6 flex flex-col flex-grow">
-                 <Link href={`/products/${product.id}`}>
+                 <Link href={`/products/${product.id}`} className="flex-grow">
                   <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{product.name}</h3>
                 </Link>
-                <p className="text-slate-500 dark:text-slate-400 mt-2 flex-grow">{product.description}</p>
                 <div className="mt-4 flex justify-between items-center">
                   <span className="text-2xl font-bold text-slate-900 dark:text-white">৳{product.price.toLocaleString()}</span>
                   <button 
