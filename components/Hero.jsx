@@ -23,7 +23,7 @@ const Hero = () => {
           </h1>
 
           <p className="mt-4 max-w-lg sm:text-xl/relaxed">
-            Discover luxury in every category. Fashion, Electronics, Home & Garden, Books.
+            Discover luxury in every category. Fashion, Electronics, Home & Toys, Books & Paints.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4 justify-center sm:justify-start">
