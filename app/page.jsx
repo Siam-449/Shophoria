@@ -19,7 +19,7 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Our Collections</h2>
             <p className="text-lg text-slate-600 dark:text-slate-400">Explore our curated selection of amazing products.</p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
           {products.map((product) => (
             <div key={product.id} className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
               <Link href={`/products/${product.id}`} aria-label={`View details for ${product.name}`}>
