@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Hero from '../components/Hero.jsx';
 import CategoryShowcase from '../components/CategoryShowcase.jsx';
@@ -17,8 +17,9 @@ const getRandomProductsByCategory = (allProducts, category, count) => {
 
 export default function Home() {
   const { addItemToCart } = useCart();
+  const [collectionsProducts, setCollectionsProducts] = useState([]);
 
-  const collectionsProducts = useMemo(() => {
+  useEffect(() => {
     const fashion = getRandomProductsByCategory(products, 'Fashion & Beauty', 4);
     const electronics = getRandomProductsByCategory(products, 'Electronics', 4);
     const homeToys = getRandomProductsByCategory(products, 'Home & Toys', 4);
@@ -27,7 +28,8 @@ export default function Home() {
     const allSelected = [...fashion, ...electronics, ...homeToys, ...books];
     
     // Shuffle the final combined list for a mixed display
-    return allSelected.sort(() => 0.5 - Math.random());
+    const shuffledProducts = allSelected.sort(() => 0.5 - Math.random());
+    setCollectionsProducts(shuffledProducts);
   }, []);
 
   return (
