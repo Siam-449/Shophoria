@@ -11,7 +11,7 @@ const ContactPage = () => {
   const formSubmittedRef = useRef(false);
 
   const handleSubmit = () => {
-    formSubmittedRef.current = true;
+    formSubmittedRef.current = true; 
     setIsSubmitting(true);
   };
 
