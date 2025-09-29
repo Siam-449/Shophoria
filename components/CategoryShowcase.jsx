@@ -58,7 +58,7 @@ const CategoryShowcase = () => {
                         className="group block bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1.5"
                     >
                         <div className="relative">
-                            <div className="h-48 w-full">
+                            <div className="w-full aspect-square">
                                 <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
                             </div>
                             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
