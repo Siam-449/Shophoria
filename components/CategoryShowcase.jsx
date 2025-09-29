@@ -7,8 +7,8 @@ import { BookIcon } from './icons/BookIcon';
 
 const categories = [
   {
-    name: 'Fashion & Clothing',
-    description: 'Premium apparel and accessories',
+    name: 'Fashion & Beauty',
+    description: 'Stylish apparel, accessories, and beauty products',
     href: '/fashion',
     icon: TshirtIcon,
     image: '/Fashion-&-Clothing.jpeg',

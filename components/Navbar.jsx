@@ -128,7 +128,7 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'All Products', href: '/products' },
-    { name: 'Fashion', href: '/fashion' },
+    { name: 'Fashion & Beauty', href: '/fashion' },
     { name: 'Electronics', href: '/electronics' },
     { name: 'Home & Toys', href: '/home-toy' },
     { name: 'Books & Paints', href: '/books' },
