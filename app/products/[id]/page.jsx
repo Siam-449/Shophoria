@@ -32,7 +32,7 @@ const ProductDetailPage = ({ params }) => {
                         <img 
                             src={product.image} 
                             alt={product.name} 
-                            className="w-full h-auto object-cover aspect-square" 
+                            className="w-full h-auto object-contain aspect-square" 
                         />
                     </div>
                     <div>

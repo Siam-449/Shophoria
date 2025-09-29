@@ -22,7 +22,7 @@ export default function HomeAndToyPage() {
             <div key={product.id} className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
               <Link href={`/products/${product.id}`} aria-label={`View details for ${product.name}`}>
                 <div className="overflow-hidden aspect-square">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <img src={product.image} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                 </div>
               </Link>
               <div className="p-3 flex flex-col flex-grow">
