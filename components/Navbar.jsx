@@ -84,9 +84,10 @@ const Navbar = () => {
       return;
     }
 
-    const lowerCaseQuery = searchQuery.toLowerCase();
+    const lowerCaseQuery = searchQuery.trim().toLowerCase();
     const filtered = products.filter(product =>
-      product.name.toLowerCase().includes(lowerCaseQuery)
+      product.name.toLowerCase().includes(lowerCaseQuery) ||
+      String(product.id).includes(lowerCaseQuery)
     ).slice(0, 5); // Limit results to 5
     setSearchResults(filtered);
   }, [searchQuery]);

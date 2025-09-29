@@ -16,9 +16,10 @@ const SearchResults = () => {
     if (!query) {
       return [];
     }
-    const lowerCaseQuery = query.toLowerCase();
+    const lowerCaseQuery = query.trim().toLowerCase();
     return products.filter(product => 
-      product.name.toLowerCase().includes(lowerCaseQuery)
+      product.name.toLowerCase().includes(lowerCaseQuery) ||
+      String(product.id).includes(lowerCaseQuery)
     );
   }, [query]);
 
