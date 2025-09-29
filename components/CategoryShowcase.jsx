@@ -28,8 +28,8 @@ const categories = [
     image: '/Home-&-Toy.jpeg',
   },
   {
-    name: 'Books & Media',
-    description: 'Curated collection of premium books',
+    name: 'Books & Paints',
+    description: 'Notepads, stationery, and art supplies',
     href: '/books',
     icon: BookIcon,
     image: '/Books-&-Media.jpeg',
