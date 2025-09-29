@@ -37,7 +37,7 @@ const SearchBar = ({
           onChange={onSearchChange}
           onFocus={onSearchFocus}
           autoComplete="off"
-          className={`w-full py-2 pl-10 pr-4 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${!isMobile && 'w-64 xl:w-80 transition-all'}`}
+          className={`w-full py-2 pl-10 pr-4 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${!isMobile && 'w-56 lg:w-64 transition-all'}`}
         />
       </form>
       {isFocused && (
@@ -154,7 +154,7 @@ const Navbar = () => {
             <Link href="/" className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               SHOPHORIA
             </Link>
-            <div className="hidden xl:flex items-center gap-6">
+            <div className="hidden lg:flex items-center gap-6">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href || (link.href === '/products' && pathname.startsWith('/products/'));
                 return (
@@ -175,7 +175,7 @@ const Navbar = () => {
           </div>
 
           {/* Right section: Search and Icons (Desktop) */}
-          <div className="hidden xl:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             <div className="relative" ref={!isMobileMenuOpen ? searchContainerRef : null}>
                 <SearchBar 
                     searchQuery={searchQuery}
@@ -200,7 +200,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="xl:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 focus:outline-none"
@@ -217,7 +217,7 @@ const Navbar = () => {
       {/* Mobile Menu */}
       <div 
         id="mobile-menu" 
-        className={`xl:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen ? 'max-h-screen' : 'max-h-0'}`}
+        className={`lg:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen ? 'max-h-screen' : 'max-h-0'}`}
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <div className="relative p-2" ref={isMobileMenuOpen ? searchContainerRef : null}>
@@ -259,7 +259,7 @@ const Navbar = () => {
                       {cartItems.length}
                     </span>
                   )}
-              </button>
+              </button>  
             </div>
         </div>
       </div>
