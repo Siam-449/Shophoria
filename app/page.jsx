@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Hero from '../components/Hero.jsx';
+import CategoryShowcase from '../components/CategoryShowcase.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { products } from '../data/products.js';
 
@@ -10,8 +11,9 @@ export default function Home() {
   const { addItemToCart } = useCart();
 
   return (
-    <div className="bg-white dark:bg-slate-950">
+    <div className="bg-slate-50 dark:bg-slate-900">
       <Hero />
+      <CategoryShowcase />
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
          <div className="text-center my-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Our Collections</h2>
@@ -19,7 +21,7 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {products.map((product) => (
-            <div key={product.id} className="bg-white dark:bg-slate-900 rounded-lg shadow-md dark:shadow-none dark:border dark:border-slate-800 overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col">
+            <div key={product.id} className="bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col">
               <Link href={`/products/${product.id}`} aria-label={`View details for ${product.name}`}>
                 <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
               </Link>
