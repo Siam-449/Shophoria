@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useCart } from '../context/CartContext.jsx';
 import { products } from '../data/products.js';
+import { usePathname } from 'next/navigation';
 import { SearchIcon } from './icons/SearchIcon.jsx';
 import { MoonIcon } from './icons/MoonIcon.jsx';
 import { SunIcon } from './icons/SunIcon.jsx';
@@ -68,6 +69,7 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { toggleCart, cartItems } = useCart();
+  const pathname = usePathname();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -153,15 +155,22 @@ const Navbar = () => {
               SHOPHORIA
             </Link>
             <div className="hidden xl:flex items-center gap-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || (link.href === '/products' && pathname.startsWith('/products/'));
+                return (
+                    <Link
+                    key={link.name}
+                    href={link.href}
+                    className={`text-sm font-medium transition-colors ${
+                        isActive
+                        ? 'text-slate-900 dark:text-white font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                    }`}
+                    >
+                    {link.name}
+                    </Link>
+                );
+              })}
             </div>
           </div>
 
@@ -222,16 +231,23 @@ const Navbar = () => {
                 onItemClick={handleSearchItemClick}
             />
           </div>
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href || (link.href === '/products' && pathname.startsWith('/products/'));
+            return (
+                <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    isActive
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800'
+                }`}
+                >
+                {link.name}
+                </Link>
+            );
+          })}
             <div className="border-t border-slate-200 dark:border-slate-700 mt-4 pt-4 flex justify-around">
               <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
                   {renderThemeChanger()}
