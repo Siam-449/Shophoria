@@ -18,7 +18,7 @@ const Footer = () => {
             <ul className="mt-6 space-y-4 text-sm">
               <li><Link href="/fashion" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Fashion</Link></li>
               <li><Link href="/electronics" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Electronics</Link></li>
-              <li><Link href="/home-toy" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Home & Toy</Link></li>
+              <li><Link href="/home-toy" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Home & Toys</Link></li>
               <li><Link href="/books" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Books & Paints</Link></li>
             </ul>
           </div>

@@ -21,8 +21,8 @@ const categories = [
     image: '/Electronics-&-Gadgets.jpeg',
   },
   {
-    name: 'Home & Toy',
-    description: 'Elegant home decor, Playable games and Toy',
+    name: 'Home & Toys',
+    description: 'Elegant home decor, playable games, and toys',
     href: '/home-toy',
     icon: HomeIcon,
     image: '/Home-&-Toy.jpeg',

@@ -130,7 +130,7 @@ const Navbar = () => {
     { name: 'All Products', href: '/products' },
     { name: 'Fashion', href: '/fashion' },
     { name: 'Electronics', href: '/electronics' },
-    { name: 'Home & Toy', href: '/home-toy' },
+    { name: 'Home & Toys', href: '/home-toy' },
     { name: 'Books & Paints', href: '/books' },
     { name: 'Contact', href: '/contact' },
   ];
