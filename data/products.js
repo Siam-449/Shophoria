@@ -78,4 +78,22 @@ export const products = [
   { id: 425, name: 'Unisex Sneakers for Women - Breathable Mesh', price: 1499, image: '/unisex-sneakers-breathable-mesh.jpeg', description: 'Comfortable and breathable mesh sneakers for women. The stylish pastel design makes them a versatile addition to your wardrobe.', category: 'Fashion & Beauty' },
   { id: 426, name: 'Curious Minds Science Box', price: 220, image: '/curious-minds-science-box.jpeg', description: 'A science kit for kids to learn about basic electronics and build simple circuits.', category: 'Electronics' },
   { id: 427, name: 'Basic Electricity Project Kit for Kids (XS8-Q820-77)', price: 249, image: '/basic-electricity-project-kit.jpeg', description: 'An educational kit for children to explore the fundamentals of electricity with hands-on projects.', category: 'Electronics' },
+  { id: 428, name: 'Pencil Box with Calculator', price: 199, image: '/pencil-box-with-calculator.jpeg', description: 'A multi-functional pencil box for kids, featuring fun cartoon designs and a built-in calculator for schoolwork. Keeps stationery organized and makes learning fun.', category: 'Books & Paints' },
+  { id: 429, name: 'Smart Drawing Pen Case', price: 300, image: '/smart-drawing-pen-case.jpeg', description: 'An innovative pen case that doubles as an LCD drawing tablet. Perfect for doodling, taking notes, or practicing writing, all in one convenient package.', category: 'Books & Paints' },
+  {
+    id: 430,
+    name: '850ml Stainless Steel Vacuum Insulated Sports Water Bottle',
+    price: 399,
+    image: '/water-bottle-sport.jpeg',
+    description: 'Premium stainless steel water bottle with vacuum insulation to keep drinks hot or cold. Features a durable steel build, an additional belt for easy carrying, and a leak-proof design. Perfect for sports and outdoor activities.',
+    category: 'Home & Toys'
+  },
+  {
+    id: 431,
+    name: 'HelloDream Cat Ear Thermos Bottle - 500ml Stylish',
+    price: 605,
+    image: '/water-bottle-cat-ear.jpeg',
+    description: 'A stylish and cute thermos bottle featuring adorable cat ears on the lid. Made with high-quality materials to keep your beverages at the perfect temperature. A fun and fashionable accessory.',
+    category: 'Home & Toys'
+  },
 ];
