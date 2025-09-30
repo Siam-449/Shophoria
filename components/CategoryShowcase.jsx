@@ -11,28 +11,28 @@ const categories = [
     description: 'Stylish apparel, accessories, and beauty products',
     href: '/fashion',
     icon: TshirtIcon,
-    image: 'https://res.cloudinary.com/dp90if0kf/image/upload/c_fill,w_600,h_600,f_auto,q_auto/shophoria/Fashion-&-Clothing.jpeg',
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_fill,w_600,h_600,f_auto,q_auto/v1759251677/Fashion-_-Clothing_n26a59.jpg',
   },
   {
     name: 'Electronics & Gadgets',
     description: 'Latest tech and smart devices',
     href: '/electronics',
     icon: GadgetIcon,
-    image: 'https://res.cloudinary.com/dp90if0kf/image/upload/c_fill,w_600,h_600,f_auto,q_auto/shophoria/Electronics-&-Gadgets.jpeg',
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_fill,w_600,h_600,f_auto,q_auto/v1759251676/Electronics-_-Gadgets_awvtfq.jpg',
   },
   {
     name: 'Home & Toys',
     description: 'Elegant home decor, playable games, and toys',
     href: '/home-toy',
     icon: HomeIcon,
-    image: 'https://res.cloudinary.com/dp90if0kf/image/upload/c_fill,w_600,h_600,f_auto,q_auto/shophoria/Home-&-Toy.jpeg',
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_fill,w_600,h_600,f_auto,q_auto/v1759251693/Home-_-Toy_qvbwoc.jpg',
   },
   {
     name: 'Books & Paints',
     description: 'Notepads, stationery, and art supplies',
     href: '/books',
     icon: BookIcon,
-    image: 'https://res.cloudinary.com/dp90if0kf/image/upload/c_fill,w_600,h_600,f_auto,q_auto/shophoria/Books-&-Media.jpeg',
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_fill,w_600,h_600,f_auto,q_auto/v1759251669/Books-_-Media_s6tyex.jpg',
   },
 ];
 
