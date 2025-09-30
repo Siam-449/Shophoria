@@ -11,28 +11,28 @@ const categories = [
     description: 'Stylish apparel, accessories, and beauty products',
     href: '/fashion',
     icon: TshirtIcon,
-    image: '/Fashion-&-Clothing.jpeg',
+    image: 'https://res.cloudinary.com/dp90if0kf/image/upload/c_fill,w_600,h_600,f_auto,q_auto/shophoria/Fashion-&-Clothing.jpeg',
   },
   {
     name: 'Electronics & Gadgets',
     description: 'Latest tech and smart devices',
     href: '/electronics',
     icon: GadgetIcon,
-    image: '/Electronics-&-Gadgets.jpeg',
+    image: 'https://res.cloudinary.com/dp90if0kf/image/upload/c_fill,w_600,h_600,f_auto,q_auto/shophoria/Electronics-&-Gadgets.jpeg',
   },
   {
     name: 'Home & Toys',
     description: 'Elegant home decor, playable games, and toys',
     href: '/home-toy',
     icon: HomeIcon,
-    image: '/Home-&-Toy.jpeg',
+    image: 'https://res.cloudinary.com/dp90if0kf/image/upload/c_fill,w_600,h_600,f_auto,q_auto/shophoria/Home-&-Toy.jpeg',
   },
   {
     name: 'Books & Paints',
     description: 'Notepads, stationery, and art supplies',
     href: '/books',
     icon: BookIcon,
-    image: '/Books-&-Media.jpeg',
+    image: 'https://res.cloudinary.com/dp90if0kf/image/upload/c_fill,w_600,h_600,f_auto,q_auto/shophoria/Books-&-Media.jpeg',
   },
 ];
 

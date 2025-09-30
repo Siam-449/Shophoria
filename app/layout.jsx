@@ -12,7 +12,7 @@ export const metadata = {
   title: 'SHOPHORIA',
   description: 'Your one-stop shop for everything amazing. Explore our collections.',
   icons: {
-    icon: '/shophoria.jpeg',
+    icon: 'https://res.cloudinary.com/dp90if0kf/image/upload/w_128,f_auto,q_auto/shophoria/shophoria.jpeg',
   },
 };
 
