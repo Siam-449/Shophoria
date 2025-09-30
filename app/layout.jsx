@@ -14,6 +14,9 @@ export const metadata = {
   icons: {
     icon: '/shophoria.jpeg',
   },
+  verification: {
+    google: 'ps7tDPlns9KwY4J3aAN5Ua0mDMYVBehC7TY5D0s2Sys',
+  },
 };
 
 export default function RootLayout({ children }) {
