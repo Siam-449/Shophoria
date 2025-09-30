@@ -14,8 +14,8 @@ export const metadata = {
   icons: {
     icon: '/shophoria.jpeg',
   },
-  verification: {
-    google: 'ps7tDPlns9KwY4J3aAN5Ua0mDMYVBehC7TY5D0s2Sys',
+  other: {
+    'google-site-verification': 'ps7tDPlns9KwY4J3aAN5Ua0mDMYVBehC7TY5D0s2Sys',
   },
 };
 
