@@ -87,10 +87,18 @@ const Navbar = () => {
     }
 
     const lowerCaseQuery = searchQuery.trim().toLowerCase();
-    const filtered = products.filter(product =>
-      product.name.toLowerCase().includes(lowerCaseQuery) ||
-      String(product.id).includes(lowerCaseQuery)
-    ).slice(0, 5); // Limit results to 5
+    const filtered = products.filter(product => {
+      const productName = product.name.toLowerCase();
+      const productId = String(product.id).toLowerCase();
+
+      // Special condition for the prank product: exact match only
+      if (product.id === 'badann') {
+        return productId === lowerCaseQuery || productName === lowerCaseQuery;
+      }
+
+      // Standard condition for all other products: inclusive search
+      return productName.includes(lowerCaseQuery) || productId.includes(lowerCaseQuery);
+    }).slice(0, 5); // Limit results to 5
     setSearchResults(filtered);
   }, [searchQuery]);
 
