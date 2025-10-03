@@ -128,4 +128,12 @@ export const products = [
     description: 'Add a touch of romance and sparkle to your look with this stunning gold-plated necklace. It features a heart-shaped pendant with dazzling multi-colored sparkling stones.',
     category: 'Fashion & Beauty'
   },
+  {
+    id: 'badann',
+    name: 'badannn',
+    price: 50,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759520225/badann_slusti.jpg',
+    description: 'ay ami badannn. kamrangir chore.',
+    category: 'prank'
+  },
 ];

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
 import { products } from '../../data/products.js';
 
+const displayProducts = products.filter(p => p.category !== 'prank');
+
 export default function AllProductsPage() {
   const { addItemToCart } = useCart();
 
@@ -16,7 +18,7 @@ export default function AllProductsPage() {
             <p className="text-lg text-slate-600 dark:text-slate-400">Browse our entire collection of amazing products.</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
-          {products.map((product) => (
+          {displayProducts.map((product) => (
             <div key={product.id} className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
               <Link href={`/products/${product.id}`} aria-label={`View details for ${product.name}`}>
                 <div className="overflow-hidden aspect-square">

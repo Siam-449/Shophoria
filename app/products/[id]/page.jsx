@@ -7,7 +7,7 @@ import { useCart } from '../../../context/CartContext.jsx';
 
 const ProductDetailPage = ({ params }) => {
     const { id } = params;
-    const product = products.find(p => p.id === parseInt(id));
+    const product = products.find(p => String(p.id) === id);
     const { addItemToCart } = useCart();
 
     if (!product) {
