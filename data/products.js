@@ -104,4 +104,28 @@ export const products = [
     description: 'A fun and colorful notepad set for children, including a notepad, a multi-color pen, an eraser, and a sharpener. Perfect for school or creative play.',
     category: 'Books & Paints'
   },
+  {
+    id: 433,
+    name: 'DOCTOR Set For Future Dr.',
+    price: 250,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759519504/doctor_set_for_future_dr_wkojwc.jpg',
+    description: 'A complete toy doctor kit for kids. This playset includes a variety of medical tools and a carrying case, perfect for inspiring imaginative play and future doctors.',
+    category: 'Home & Toys'
+  },
+  {
+    id: 434,
+    name: '“Elegant Four-Leaf Clover Pendant Necklace – Gold & Silver Plated”',
+    price: 199,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759520045/elegant_four_leaf_clover_necklace_pendant_yqkfz9_loavpg.jpg',
+    description: 'A beautiful and versatile four-leaf clover pendant necklace. This elegant piece is plated in both gold and silver, making it a perfect lucky charm accessory for any outfit.',
+    category: 'Fashion & Beauty'
+  },
+  {
+    id: 435,
+    name: 'Necklace for Women – Gold Plated with Sparkling Stones',
+    price: 199,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759520045/sparkling_heart_stones_necklace_wz7hxq_xxtxeh.jpg',
+    description: 'Add a touch of romance and sparkle to your look with this stunning gold-plated necklace. It features a heart-shaped pendant with dazzling multi-colored sparkling stones.',
+    category: 'Fashion & Beauty'
+  },
 ];
