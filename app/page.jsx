@@ -12,6 +12,8 @@ export default function Home() {
   const [collectionsProducts, setCollectionsProducts] = useState([]);
 
   useEffect(() => {
+    const displayableProducts = products.filter(p => p.category !== 'prank');
+
     const shuffleArray = (array) => {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -29,7 +31,7 @@ export default function Home() {
 
     // 1. Get guaranteed products from each category
     categories.forEach(category => {
-      const categoryProducts = products.filter(p => p.category === category);
+      const categoryProducts = displayableProducts.filter(p => p.category === category);
       const shuffledCategoryProducts = shuffleArray([...categoryProducts]);
       const selectedFromCategory = shuffledCategoryProducts.slice(0, numToSelectPerCategory);
       
@@ -45,7 +47,7 @@ export default function Home() {
 
     // 2. Fill remaining spots with products from any category
     if (finalProducts.length < totalProductsToShow) {
-      const remainingProducts = products.filter(p => !selectedIds.has(p.id));
+      const remainingProducts = displayableProducts.filter(p => !selectedIds.has(p.id));
       const shuffledRemaining = shuffleArray([...remainingProducts]);
       const needed = totalProductsToShow - finalProducts.length;
       finalProducts.push(...shuffledRemaining.slice(0, needed));
