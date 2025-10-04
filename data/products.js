@@ -129,11 +129,51 @@ export const products = [
     category: 'Fashion & Beauty'
   },
   {
+    id: 436,
+    name: 'Mini GPS Tracker GF-07',
+    price: 600,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759585786/Mini_GPS_Tracker_GF-07_Real-Time_Location_Tracking_for_Car_Kids_Pets_Personal_Security_clur4b.jpg',
+    description: 'Real-Time Location Tracking for Car, Kids, Pets, Personal Security. This compact and portable GPS tracker allows you to monitor location with ease.',
+    category: 'Electronics'
+  },
+  {
+    id: 437,
+    name: 'Rechargeable LED Flashlight',
+    price: 750,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759585786/Rechargeable_LED_Flashlight_Super_Bright_Torch_with_Strong_Weak_Flash_Modes_One-Button_Operation_yqynnf.jpg',
+    description: 'A super bright, rechargeable LED flashlight with three modes: strong, weak, and flash. Features one-button operation for ease of use. Ideal for camping, emergencies, and everyday use.',
+    category: 'Electronics'
+  },
+  {
+    id: 438,
+    name: 'Smart EMS Ab Stimulator',
+    price: 199,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759585787/Smart_EMS_Ab_Stimulator_Portable_Abs_Trainer_for_Fat_Burn_Muscle_Toning_wueb2v.jpg',
+    description: 'Portable abs trainer for fat burning and muscle toning. Uses EMS technology to stimulate your abdominal muscles, helping you achieve a stronger core. Small size, big energy.',
+    category: 'Electronics'
+  },
+  {
+    id: 439,
+    name: 'Adjustable Back Stretcher',
+    price: 320,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759585787/Adjustable_Back_Stretcher_with_3-Level_Lumbar_Support_Massage_Points_Pain_Relief_Posture_Corrector_jhsnwu.jpg',
+    description: 'Relieve back pain and improve posture with this adjustable back stretcher. It features 3 levels of lumbar support and massage points to help relax your muscles and correct your spinal alignment.',
+    category: 'Home & Toys'
+  },
+  {
+    id: 440,
+    name: 'Adjustable Knee Support Brace',
+    price: 220,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759585786/Adjustable_Knee_Support_Brace_with_Double_Strap_Compression_rvlqet.jpg',
+    description: 'Get extra support and protection for your knees with this adjustable brace. The double strap design provides targeted compression to reduce pain and improve stability during physical activities.',
+    category: 'Home & Toys'
+  },
+  {
     id: 'badann',
     name: 'badannn',
     price: 50,
     image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759520225/badann_slusti.jpg',
-    description: 'ay ami badannn. kamrangir chore.',
+    description: 'ay ami badannn. kamrangir chor.',
     category: 'prank'
   },
 ];
