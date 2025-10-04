@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useCart } from '../context/CartContext.jsx';
 import { products } from '../data/products.js';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { SearchIcon } from './icons/SearchIcon.jsx';
 import { MoonIcon } from './icons/MoonIcon.jsx';
 import { SunIcon } from './icons/SunIcon.jsx';
@@ -45,13 +45,16 @@ const SearchBar = ({
           <ul>
             {searchResults.length > 0 ? searchResults.map(product => (
               <li key={product.id}>
-                <Link href={`/products/${product.id}`} onClick={onItemClick} className="flex items-center gap-4 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                <button 
+                  onClick={() => onItemClick(`/products/${product.id}`)} 
+                  className="flex items-center gap-4 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors w-full text-left"
+                >
                   <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
                   <div>
                     <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">{product.name}</p>
                     <p className="text-sm font-bold text-slate-700 dark:text-slate-300">৳{product.price.toLocaleString()}</p>
                   </div>
-                </Link>
+                </button>
               </li>
             )) : (
                 <li className="p-3 text-center text-sm text-slate-500 dark:text-slate-400">No products found.</li>
@@ -70,6 +73,7 @@ const Navbar = () => {
   const [mounted, setMounted] = useState(false);
   const { toggleCart, cartItems } = useCart();
   const pathname = usePathname();
+  const router = useRouter();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -114,7 +118,8 @@ const Navbar = () => {
     };
   }, [searchContainerRef]);
 
-  const handleSearchItemClick = () => {
+  const handleSearchItemClick = (href) => {
+    router.push(href);
     setSearchQuery('');
     setSearchResults([]);
     setIsSearchFocused(false);
