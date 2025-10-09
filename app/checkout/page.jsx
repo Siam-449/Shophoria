@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useRef } from 'react';
@@ -11,7 +12,10 @@ const CheckoutPage = () => {
   const [shippingLocation, setShippingLocation] = useState('inside-dhaka');
   const formSubmittedRef = useRef(false);
 
-  const shippingCost = total > 0 ? (shippingLocation === 'inside-dhaka' ? 60 : 110) : 0;
+  const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const isFreeShipping = totalQuantity >= 2;
+  
+  const shippingCost = isFreeShipping ? 0 : (total > 0 ? (shippingLocation === 'inside-dhaka' ? 60 : 110) : 0);
   const grandTotal = total + shippingCost;
 
   React.useEffect(() => {
@@ -116,7 +120,7 @@ const CheckoutPage = () => {
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700"
                         />
                         <label htmlFor="inside-dhaka" className="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
-                          Inside Dhaka <span className="text-slate-500 dark:text-slate-400">(৳60)</span>
+                          Inside Dhaka {!isFreeShipping && <span className="text-slate-500 dark:text-slate-400">(৳60)</span>}
                         </label>
                       </div>
                       <div className="flex items-center">
@@ -130,7 +134,7 @@ const CheckoutPage = () => {
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700"
                         />
                         <label htmlFor="outside-dhaka" className="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
-                          Outside Dhaka <span className="text-slate-500 dark:text-slate-400">(৳110)</span>
+                          Outside Dhaka {!isFreeShipping && <span className="text-slate-500 dark:text-slate-400">(৳110)</span>}
                         </label>
                       </div>
                     </div>
@@ -179,7 +183,11 @@ const CheckoutPage = () => {
               </div>
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Shipping</span>
-                <span>৳{shippingCost.toLocaleString()}</span>
+                {isFreeShipping ? (
+                    <span className="font-semibold text-green-600 dark:text-green-400">Free</span>
+                ) : (
+                    <span>৳{shippingCost.toLocaleString()}</span>
+                )}
               </div>
               <div className="border-t border-slate-200 dark:border-slate-700 my-3"></div>
               <div className="flex justify-between text-xl font-bold">

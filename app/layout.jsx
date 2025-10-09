@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import { CartProvider } from '../context/CartContext.jsx';
 import CartDrawer from '../components/CartDrawer.jsx';
+import OfferBanner from '../components/OfferBanner.jsx';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
           enableSystem={false}
         >
           <CartProvider>
+            <OfferBanner />
             <Navbar />
             <CartDrawer />
             {children}
