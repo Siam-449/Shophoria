@@ -72,14 +72,9 @@ export const products = [
   { id: 419, name: 'Vizzina Premium Ladies Handbag – Fashionable & Functional', price: 252, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251737/vizzina-premium-ladies-handbag_mofhry.jpg', description: 'A premium ladies handbag from Vizzina that is both fashionable and functional. This pink wallet features beautiful embroidery and a convenient wrist strap.', category: 'Fashion & Beauty' },
   { id: 420, name: 'Trendy Flame Cutout Adjustable Rings – Unisex Punk Style', price: 49, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251719/trendy-flame-cutout-rings_iasve8.jpg', description: 'Express your unique style with these trendy flame cutout adjustable rings. A perfect punk accessory for both men and women.', category: 'Fashion & Beauty' },
   { id: 421, name: 'Royal Heart Stone Ring – Gold Plated with Crystal Halo', price: 39, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251709/royal-heart-stone-ring_vguuh9.jpg', description: 'A stunning royal heart stone ring. Gold plated and adorned with a crystal halo, this ring is perfect for adding a touch of elegance and romance.', category: 'Fashion & Beauty' },
-  { id: 422, name: 'YC Lemon Face Wash', price: 375, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251742/yc-lemon-face-wash_wai36p.jpg', description: 'Deep clean and control oil with YC Lemon Face Wash. Enriched with lemon extract, it whitens and refreshes your skin.', category: 'Fashion & Beauty' },
-  { id: 423, name: 'YC Neem Face Wash', price: 375, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251743/yc-neem-face-wash_patoos.jpg', description: 'Purify your skin with YC Neem Face Wash. Its natural neem extract helps control pimples and provides a clear, healthy-looking complexion.', category: 'Fashion & Beauty' },
   { id: 424, name: 'Female Sneakers - Pastel Color Block', price: 2000, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251688/female-sneakers-pastel_cwj11y.jpg', description: 'Step out in style with these trendy pastel color block sneakers. Comfortable and fashionable, they are perfect for any casual occasion.', category: 'Fashion & Beauty' },
   { id: 425, name: 'Unisex Sneakers for Women - Breathable Mesh', price: 1499, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251720/unisex-sneakers-breathable-mesh_b54bwj.jpg', description: 'Comfortable and breathable mesh sneakers for women. The stylish pastel design makes them a versatile addition to your wardrobe.', category: 'Fashion & Beauty' },
-  { id: 426, name: 'Curious Minds Science Box', price: 220, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251671/curious-minds-science-box_fjxcqn.jpg', description: 'A science kit for kids to learn about basic electronics and build simple circuits.', category: 'Electronics' },
   { id: 427, name: 'Basic Electricity Project Kit for Kids (XS8-Q820-77)', price: 249, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251669/basic-electricity-project-kit_zdsozh.jpg', description: 'An educational kit for children to explore the fundamentals of electricity with hands-on projects.', category: 'Electronics' },
-  { id: 428, name: 'Pencil Box with Calculator', price: 199, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251704/pencil-box-with-calculator_uradia.jpg', description: 'A multi-functional pencil box for kids, featuring fun cartoon designs and a built-in calculator for schoolwork. Keeps stationery organized and makes learning fun.', category: 'Books & Paints' },
-  { id: 429, name: 'Smart Drawing Pen Case', price: 300, image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759251710/smart-drawing-pen-case_eufceo.jpg', description: 'An innovative pen case that doubles as an LCD drawing tablet. Perfect for doodling, taking notes, or practicing writing, all in one convenient package.', category: 'Books & Paints' },
   {
     id: 430,
     name: '850ml Stainless Steel Vacuum Insulated Sports Water Bottle',
@@ -175,5 +170,37 @@ export const products = [
     image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1759520225/badann_slusti.jpg',
     description: 'ay ami badannn. kamrangir chor.',
     category: 'prank'
+  },
+  {
+    id: 441,
+    name: 'Smart Back Support Brace',
+    price: 350,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1760029889/Smart_Back_Support_Brace_Relieve_Pain_Improve_Posture_sxxegc.jpg',
+    description: 'An adjustable back support brace designed to help relieve pain and improve posture. Provides comfortable support for your lower back.',
+    category: 'Home & Toys'
+  },
+  {
+    id: 442,
+    name: 'Men\'s Professional Crossbody Sling Bag',
+    price: 600,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1760029888/Men_s_Professional_Crossbody_Sling_Bag_Waterproof_Stylish_Design_imq4sr.jpg',
+    description: 'A stylish and waterproof crossbody sling bag for men. Its professional design is perfect for work, travel, and daily use, keeping your essentials safe and organized.',
+    category: 'Fashion & Beauty'
+  },
+  {
+    id: 443,
+    name: 'Cute Animal Baby Sofa Seat',
+    price: 600,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1760029888/Cute_Animal_Baby_Sofa_Seat_Soft_Plush_Support_Chair_for_Infants_th8mee.jpg',
+    description: 'An adorable and soft plush baby sofa seat designed like a cute animal. Provides comfortable support for infants learning to sit up.',
+    category: 'Home & Toys'
+  },
+  {
+    id: 444,
+    name: 'Multi-Purpose Kitchen Cleaner Spray',
+    price: 350,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_pad,b_auto,w_500,h_500,f_auto,q_auto/v1760029888/Multi-Purpose_Kitchen_Cleaner_Removes_Grease_Oil_Stains_Instantly_cld4n9.jpg',
+    description: 'A powerful multi-purpose kitchen cleaner that instantly removes grease, oil, and tough stains from various surfaces. Leaves your kitchen sparkling clean.',
+    category: 'Home & Toys'
   },
 ];
