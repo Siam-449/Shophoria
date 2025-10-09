@@ -3,7 +3,7 @@
 import React from 'react';
 
 const OfferBanner = () => {
-  const offerText = "Buy 2 or more Products Together And Get Delivery Charge Free In Whole Bangladesh.";
+  const offerText = "Buy 2 Or More Products Together And Get Delivery Charge Free In Whole Bangladesh.";
 
   return (
     <div className="bg-black dark:bg-white text-white dark:text-black py-2.5 text-sm font-medium overflow-hidden">
