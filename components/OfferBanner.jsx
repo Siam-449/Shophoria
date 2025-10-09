@@ -14,7 +14,7 @@ const OfferBanner = () => {
         </div>
         {/* Desktop Centered Text */}
         <div className="hidden lg:block text-center">
-          <p>{offerText}</p>
+          <p className="animate-text-gradient">{offerText}</p>
         </div>
       </div>
     </div>
