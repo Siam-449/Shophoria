@@ -4,9 +4,12 @@
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
+import { PlusIcon } from '../../components/icons/PlusIcon.jsx';
+import { MinusIcon } from '../../components/icons/MinusIcon.jsx';
+import { RemoveIcon } from '../../components/icons/RemoveIcon.jsx';
 
 const CheckoutPage = () => {
-  const { cartItems, total, clearCart, isCartOpen, toggleCart } = useCart();
+  const { cartItems, total, clearCart, isCartOpen, toggleCart, updateItemQuantity, removeItemFromCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [shippingLocation, setShippingLocation] = useState('inside-dhaka');
@@ -163,15 +166,24 @@ const CheckoutPage = () => {
             <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
               {cartItems.map(item => (
-                <div key={item.id} className="flex justify-between items-center">
-                   <div className="flex items-center gap-4">
-                    <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-md flex-shrink-0" />
-                    <div>
-                      <p className="font-semibold leading-tight">{item.name}</p>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Qty: {item.quantity}</p>
-                    </div>
+                <div key={item.id} className="flex items-center gap-4">
+                  <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-md flex-shrink-0" />
+                  <div className="flex-grow">
+                      <p className="font-semibold text-slate-800 dark:text-slate-100 leading-tight">{item.name}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">৳{(item.price * item.quantity).toLocaleString()}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                          <button type="button" onClick={() => updateItemQuantity(item.id, item.quantity - 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50" disabled={isSubmitting}>
+                              <MinusIcon className="h-4 w-4" />
+                          </button>
+                          <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                          <button type="button" onClick={() => updateItemQuantity(item.id, item.quantity + 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50" disabled={isSubmitting}>
+                              <PlusIcon className="h-4 w-4" />
+                          </button>
+                      </div>
                   </div>
-                  <p className="font-semibold text-right flex-shrink-0">৳{(item.price * item.quantity).toLocaleString()}</p>
+                  <button type="button" onClick={() => removeItemFromCart(item.id)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400 self-start disabled:opacity-50" disabled={isSubmitting}>
+                      <RemoveIcon className="h-5 w-5" />
+                  </button>
                 </div>
               ))}
             </div>
