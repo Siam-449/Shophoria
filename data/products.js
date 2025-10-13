@@ -203,4 +203,36 @@ export const products = [
     description: 'A powerful multi-purpose kitchen cleaner that instantly removes grease, oil, and tough stains from various surfaces. Leaves your kitchen sparkling clean.',
     category: 'Home & Toys'
   },
+  {
+    id: 445,
+    name: 'Demon Slayer Collectible Card Pack - Tanjiro Edition',
+    price: 150,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/v1760375891/Demon_Slayer_Anime_Print_Card_Set_Limited_Edition_Design_rmi5od.jpg',
+    description: 'Unleash the power of the Demon Slayer Corps with this exclusive collectible card pack featuring Tanjiro. This limited edition set is a must-have for any fan. Hunt for ultra-rare SSR cards to complete your collection!',
+    category: 'Home & Toys'
+  },
+  {
+    id: 446,
+    name: 'Demon Slayer Collectible Card Pack - Nezuko Edition',
+    price: 150,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/v1760375886/Demon_Slayer_Anime_Print_Card_Set_Limited_Edition_Design_2_g5qoxq.jpg',
+    description: 'Join Nezuko on her journey with this special edition Demon Slayer collectible card pack. Discover rare SSR cards featuring beautiful artwork of Nezuko and other beloved characters to add to your Demon Slayer arsenal!',
+    category: 'Home & Toys'
+  },
+  {
+    id: 447,
+    name: 'Demon Slayer Collectible Card Pack - Shinobu Edition',
+    price: 150,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/v1760375886/Demon_Slayer_Anime_Print_Card_Set_Limited_Edition_Design_3_kukemh.jpg',
+    description: 'Dance like a butterfly, sting like a bee with this Shinobu Kocho edition Demon Slayer card pack. Featuring the elegant Insect Hashira, this pack is a beautiful addition to any collection. Uncover rare cards and celebrate the world of Demon Slayer.',
+    category: 'Home & Toys'
+  },
+  {
+    id: 448,
+    name: 'Demon Slayer Hashira Collection Card Pack',
+    price: 150,
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/v1760375886/Demon_Slayer_Anime_Print_Card_Set_Limited_Edition_Design_4_fnzdyc.jpg',
+    description: 'Assemble the most powerful swordsmen with the Demon Slayer Hashira Collection card pack. This set features the elite Demon Slayer Corps Hashira with dynamic artwork. A great addition for any fan looking to collect all the pillars of the Corps.',
+    category: 'Home & Toys'
+  },
 ];
