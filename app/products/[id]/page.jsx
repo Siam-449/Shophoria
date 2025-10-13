@@ -5,6 +5,24 @@ import Link from 'next/link';
 import { products } from '../../../data/products.js';
 import { useCart } from '../../../context/CartContext.jsx';
 
+
+export async function generateMetadata({ params }) {
+    const { id } = params;
+    const product = products.find(p => String(p.id) === id);
+
+    if (!product) {
+        return {
+            title: 'Product Not Found - SHOPHORIA',
+            description: "Sorry, we couldn't find the product you're looking for.",
+        };
+    }
+
+    return {
+        title: `${product.name} - SHOPHORIA`,
+        description: product.description,
+    };
+}
+
 const ProductDetailPage = ({ params }) => {
     const { id } = params;
     const product = products.find(p => String(p.id) === id);
