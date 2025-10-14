@@ -3,13 +3,12 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBpjC1SbmhR1EXcqv8CQVsFAX0yOeHfMmE",
-  authDomain: "shophoria-4aa13.firebaseapp.com",
-  projectId: "shophoria-4aa13",
-  storageBucket: "shophoria-4aa13.appspot.com",
-  messagingSenderId: "18412437215",
-  appId: "1:18412437215:web:3e45d4f611d6952025336a",
-  measurementId: "G-G5WMSPNZ3W"
+  apiKey: "AIzaSyBLI5RTzB1rY1DNFTsColl04-EwMUPWKG8",
+  authDomain: "shophoria-86f4c.firebaseapp.com",
+  projectId: "shophoria-86f4c",
+  storageBucket: "shophoria-86f4c.appspot.com",
+  messagingSenderId: "106590869929",
+  appId: "1:106590869929:web:c8f5e9c6270ca61d01ccb8"
 };
 
 
