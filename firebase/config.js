@@ -1,16 +1,17 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-// TODO: Replace with your own Firebase project configuration.
-// You can find this in your Firebase project settings.
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSy...YOUR_API_KEY",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "your-sender-id",
-  appId: "1:your-sender-id:web:your-app-id"
+  apiKey: "AIzaSyBpjC1SbmhR1EXcqv8CQVsFAX0yOeHfMmE",
+  authDomain: "shophoria-4aa13.firebaseapp.com",
+  projectId: "shophoria-4aa13",
+  storageBucket: "shophoria-4aa13.appspot.com",
+  messagingSenderId: "18412437215",
+  appId: "1:18412437215:web:3e45d4f611d6952025336a",
+  measurementId: "G-G5WMSPNZ3W"
 };
+
 
 // Initialize Firebase
 let app;
