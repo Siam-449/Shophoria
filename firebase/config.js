@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
@@ -11,9 +11,8 @@ const firebaseConfig = {
   appId: "1:106590869929:web:c8f5e9c6270ca61d01ccb8"
 };
 
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase for SSR and SSG, and prevent re-initialization on hot reloads.
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
 export default app;

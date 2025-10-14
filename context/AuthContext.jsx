@@ -19,16 +19,36 @@ export const AuthProvider = ({ children }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   useEffect(() => {
-    // This effect handles the result after a user is redirected back from Google sign-in
+    // This combined effect handles both the initial auth state and the redirect result.
+    setLoading(true);
+
+    // First, process the potential redirect result from Google Sign-In.
     getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          // This confirms the redirect was processed successfully.
+          console.log("✅ Sign-in redirect result successful:", result);
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          console.log("OAuth Access Token:", token);
+          console.log("User from Redirect:", result.user);
+        }
+      })
       .catch((error) => {
-        console.error("Error processing sign-in redirect", error);
+        // This is the most important part for debugging.
+        // It will catch errors if Firebase fails to create the user on the backend.
+        console.error("🚨 CRITICAL ERROR from getRedirectResult:", error);
+        console.error("Error Code:", error.code);
+        console.error("Error Message:", error.message);
       });
-      
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+
+    // Set up the listener for auth state changes. This is the source of truth for the UI.
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log("Auth state changed. Current user:", currentUser);
+      setUser(currentUser);
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
   
@@ -38,10 +58,9 @@ export const AuthProvider = ({ children }) => {
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      // We use signInWithRedirect which is more robust than a popup.
       await signInWithRedirect(auth, provider);
     } catch (error) {
-      console.error("Error initiating sign in with Google redirect", error);
+      console.error("Error initiating sign-in with Google redirect:", error);
     }
   };
 
