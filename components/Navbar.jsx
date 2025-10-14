@@ -5,7 +5,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useCart } from '../context/CartContext.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
 import { products } from '../data/products.js';
 import { usePathname, useRouter } from 'next/navigation';
 import { SearchIcon } from './icons/SearchIcon.jsx';
@@ -15,7 +14,6 @@ import { CartIcon } from './icons/CartIcon.jsx';
 import { MenuIcon } from './icons/MenuIcon.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
 import { UserIcon } from './icons/UserIcon.jsx';
-import { SignOutIcon } from './icons/SignOutIcon.jsx';
 
 // Moved SearchBar outside of Navbar to prevent re-mounting on every render, which was causing focus loss.
 const SearchBar = ({ 
@@ -76,16 +74,13 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { toggleCart, cartItems } = useCart();
-  const { user, openAuthModal, logOut } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const searchContainerRef = useRef(null);
-  const profileMenuRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
@@ -116,15 +111,12 @@ const Navbar = () => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
         setIsSearchFocused(false);
       }
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
-        setIsProfileMenuOpen(false);
-      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [searchContainerRef, profileMenuRef]);
+  }, [searchContainerRef]);
 
   const handleSearchItemClick = (href) => {
     router.push(href);
@@ -163,61 +155,14 @@ const Navbar = () => {
       : <MoonIcon className="h-6 w-6" onClick={() => setTheme('dark')} />;
   };
 
-  const renderUserActions = () => {
-    if (user) {
-      return (
-        <div className="relative" ref={profileMenuRef}>
-          <button
-            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-            aria-label="Open user menu"
-            className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
-          >
-            {user.photoURL ? (
-              <img src={user.photoURL} alt="User profile" className="h-7 w-7 rounded-full" />
-            ) : (
-              <UserIcon className="h-6 w-6" />
-            )}
-          </button>
-          {isProfileMenuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg z-20">
-              <div className="p-2 border-b border-slate-200 dark:border-slate-700">
-                 <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{user.displayName || 'User'}</p>
-                 <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
-              </div>
-               <Link
-                href="/profile"
-                onClick={() => setIsProfileMenuOpen(false)}
-                className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700 flex items-center gap-2"
-              >
-                <UserIcon className="h-4 w-4" />
-                Profile
-              </Link>
-              <button
-                onClick={() => {
-                  logOut();
-                  setIsProfileMenuOpen(false);
-                }}
-                className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700 flex items-center gap-2"
-              >
-                <SignOutIcon className="h-4 w-4" />
-                Sign Out
-              </button>
-            </div>
-          )}
-        </div>
-      );
-    } else {
-      return (
-        <button
-          onClick={openAuthModal}
-          aria-label="Sign In"
-          className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
-        >
-          <UserIcon className="h-6 w-6" />
-        </button>
-      );
-    }
-  };
+  const renderUserIcon = () => (
+    <button
+      aria-label="User account"
+      className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
+    >
+      <UserIcon className="h-6 w-6" />
+    </button>
+  );
 
   return (
     <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
@@ -261,7 +206,7 @@ const Navbar = () => {
             <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
               {renderThemeChanger()}
             </button>
-            {renderUserActions()}
+            {renderUserIcon()}
             <button onClick={toggleCart} aria-label="Open cart" className="relative p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
               <CartIcon className="h-6 w-6" />
               {cartItems.length > 0 && (
@@ -323,7 +268,7 @@ const Navbar = () => {
               <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
                   {renderThemeChanger()}
               </button>
-              {renderUserActions()}
+              {renderUserIcon()}
               <button onClick={() => { toggleCart(); setIsMobileMenuOpen(false); }} aria-label="Open cart" className="relative p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
                   <CartIcon className="h-6 w-6" />
                    {cartItems.length > 0 && (

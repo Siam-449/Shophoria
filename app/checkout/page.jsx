@@ -3,14 +3,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
-import { useAuth } from '../../context/AuthContext.jsx';
 import { PlusIcon } from '../../components/icons/PlusIcon.jsx';
 import { MinusIcon } from '../../components/icons/MinusIcon.jsx';
 import { RemoveIcon } from '../../components/icons/RemoveIcon.jsx';
 
 const CheckoutPage = () => {
   const { cartItems, total, clearCart, isCartOpen, toggleCart, updateItemQuantity, removeItemFromCart } = useCart();
-  const { user, openAuthModal, loading } = useAuth();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -41,28 +39,6 @@ const CheckoutPage = () => {
       clearCart();
     }
   };
-
-  if (loading) {
-    return (
-      <div className="bg-white dark:bg-slate-950 min-h-[60vh] flex items-center justify-center">
-        <p className="text-lg text-slate-600 dark:text-slate-400">Loading...</p>
-      </div>
-    );
-  }
-  
-  if (!user) {
-    return (
-      <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-[60vh] flex items-center justify-center">
-          <div className="text-center p-4">
-              <h1 className="text-3xl font-bold mb-4">Please Sign In</h1>
-              <p className="text-slate-600 dark:text-slate-400 mb-8">You need to sign in to your account to place an order.</p>
-              <button onClick={openAuthModal} className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                  Sign In / Sign Up
-              </button>
-          </div>
-      </div>
-    );
-  }
 
   if (submitted) {
     return (
@@ -116,7 +92,7 @@ const CheckoutPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="sm:col-span-2">
                     <label htmlFor="fullName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
-                    <input type="text" id="fullName" name="entry.1215558562" defaultValue={user?.displayName || ''} required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="text" id="fullName" name="entry.1215558562" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div className="sm:col-span-2">
                     <label htmlFor="address" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
@@ -170,7 +146,7 @@ const CheckoutPage = () => {
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                    <div>
                     <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
-                    <input type="email" id="email" name="entry.1424517618" defaultValue={user?.email || ''} readOnly required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="email" id="email" name="entry.1424517618" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
