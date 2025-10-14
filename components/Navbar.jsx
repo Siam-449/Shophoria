@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -183,6 +184,14 @@ const Navbar = () => {
                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{user.displayName || 'User'}</p>
                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
               </div>
+               <Link
+                href="/profile"
+                onClick={() => setIsProfileMenuOpen(false)}
+                className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700 flex items-center gap-2"
+              >
+                <UserIcon className="h-4 w-4" />
+                Profile
+              </Link>
               <button
                 onClick={() => {
                   logOut();
