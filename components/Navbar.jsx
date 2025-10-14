@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useCart } from '../context/CartContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import { products } from '../data/products.js';
 import { usePathname, useRouter } from 'next/navigation';
 import { SearchIcon } from './icons/SearchIcon.jsx';
@@ -12,6 +13,8 @@ import { SunIcon } from './icons/SunIcon.jsx';
 import { CartIcon } from './icons/CartIcon.jsx';
 import { MenuIcon } from './icons/MenuIcon.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
+import { UserIcon } from './icons/UserIcon.jsx';
+import { SignOutIcon } from './icons/SignOutIcon.jsx';
 
 // Moved SearchBar outside of Navbar to prevent re-mounting on every render, which was causing focus loss.
 const SearchBar = ({ 
@@ -72,13 +75,16 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { toggleCart, cartItems } = useCart();
+  const { user, openAuthModal, logOut } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const searchContainerRef = useRef(null);
+  const profileMenuRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
@@ -95,14 +101,12 @@ const Navbar = () => {
       const productName = product.name.toLowerCase();
       const productId = String(product.id).toLowerCase();
 
-      // Special condition for the prank product: exact match only
       if (product.id === 'badann') {
         return productId === lowerCaseQuery || productName === lowerCaseQuery;
       }
 
-      // Standard condition for all other products: inclusive search
       return productName.includes(lowerCaseQuery) || productId.includes(lowerCaseQuery);
-    }).slice(0, 5); // Limit results to 5
+    }).slice(0, 5);
     setSearchResults(filtered);
   }, [searchQuery]);
 
@@ -111,12 +115,15 @@ const Navbar = () => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
         setIsSearchFocused(false);
       }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setIsProfileMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [searchContainerRef]);
+  }, [searchContainerRef, profileMenuRef]);
 
   const handleSearchItemClick = (href) => {
     router.push(href);
@@ -150,11 +157,56 @@ const Navbar = () => {
 
   const renderThemeChanger = () => {
     if (!mounted) return null;
+    return theme === 'dark' 
+      ? <SunIcon className="h-6 w-6" onClick={() => setTheme('light')} /> 
+      : <MoonIcon className="h-6 w-6" onClick={() => setTheme('dark')} />;
+  };
 
-    if (theme === 'dark') {
-      return <SunIcon className="h-6 w-6" onClick={() => setTheme('light')} />;
+  const renderUserActions = () => {
+    if (user) {
+      return (
+        <div className="relative" ref={profileMenuRef}>
+          <button
+            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+            aria-label="Open user menu"
+            className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
+          >
+            {user.photoURL ? (
+              <img src={user.photoURL} alt="User profile" className="h-7 w-7 rounded-full" />
+            ) : (
+              <UserIcon className="h-6 w-6" />
+            )}
+          </button>
+          {isProfileMenuOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg z-20">
+              <div className="p-2 border-b border-slate-200 dark:border-slate-700">
+                 <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{user.displayName || 'User'}</p>
+                 <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
+              </div>
+              <button
+                onClick={() => {
+                  logOut();
+                  setIsProfileMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700 flex items-center gap-2"
+              >
+                <SignOutIcon className="h-4 w-4" />
+                Sign Out
+              </button>
+            </div>
+          )}
+        </div>
+      );
     } else {
-      return <MoonIcon className="h-6 w-6" onClick={() => setTheme('dark')} />;
+      return (
+        <button
+          onClick={openAuthModal}
+          aria-label="Sign In"
+          className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
+        >
+          <UserIcon className="h-6 w-6" />
+        </button>
+      );
     }
   };
 
@@ -162,7 +214,6 @@ const Navbar = () => {
     <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
       <nav className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left section: Logo and Nav Links */}
           <div className="flex items-center gap-8">
             <Link href="/" className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               SHOPHORIA
@@ -187,7 +238,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Right section: Search and Icons (Desktop) */}
           <div className="hidden lg:flex items-center gap-4">
             <div className="relative" ref={!isMobileMenuOpen ? searchContainerRef : null}>
                 <SearchBar 
@@ -202,6 +252,7 @@ const Navbar = () => {
             <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
               {renderThemeChanger()}
             </button>
+            {renderUserActions()}
             <button onClick={toggleCart} aria-label="Open cart" className="relative p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
               <CartIcon className="h-6 w-6" />
               {cartItems.length > 0 && (
@@ -212,7 +263,6 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
           <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -227,7 +277,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <div 
         id="mobile-menu" 
         className={`lg:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen ? 'max-h-screen' : 'max-h-0'}`}
@@ -261,10 +310,11 @@ const Navbar = () => {
                 </Link>
             );
           })}
-            <div className="border-t border-slate-200 dark:border-slate-700 mt-4 pt-4 flex justify-around">
+            <div className="border-t border-slate-200 dark:border-slate-700 mt-4 pt-4 flex justify-around items-center">
               <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
                   {renderThemeChanger()}
               </button>
+              {renderUserActions()}
               <button onClick={() => { toggleCart(); setIsMobileMenuOpen(false); }} aria-label="Open cart" className="relative p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
                   <CartIcon className="h-6 w-6" />
                    {cartItems.length > 0 && (

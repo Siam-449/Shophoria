@@ -1,15 +1,17 @@
-
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
 import { PlusIcon } from '../../components/icons/PlusIcon.jsx';
 import { MinusIcon } from '../../components/icons/MinusIcon.jsx';
 import { RemoveIcon } from '../../components/icons/RemoveIcon.jsx';
 
 const CheckoutPage = () => {
   const { cartItems, total, clearCart, isCartOpen, toggleCart, updateItemQuantity, removeItemFromCart } = useCart();
+  const { user, openAuthModal, loading } = useAuth();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [shippingLocation, setShippingLocation] = useState('inside-dhaka');
@@ -21,7 +23,7 @@ const CheckoutPage = () => {
   const shippingCost = isFreeShipping ? 0 : (total > 0 ? (shippingLocation === 'inside-dhaka' ? 60 : 110) : 0);
   const grandTotal = total + shippingCost;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isCartOpen) {
       toggleCart();
     }
@@ -39,6 +41,28 @@ const CheckoutPage = () => {
       clearCart();
     }
   };
+
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-slate-950 min-h-[60vh] flex items-center justify-center">
+        <p className="text-lg text-slate-600 dark:text-slate-400">Loading...</p>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return (
+      <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-[60vh] flex items-center justify-center">
+          <div className="text-center p-4">
+              <h1 className="text-3xl font-bold mb-4">Please Sign In</h1>
+              <p className="text-slate-600 dark:text-slate-400 mb-8">You need to sign in to your account to place an order.</p>
+              <button onClick={openAuthModal} className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                  Sign In / Sign Up
+              </button>
+          </div>
+      </div>
+    );
+  }
 
   if (submitted) {
     return (
@@ -80,22 +104,19 @@ const CheckoutPage = () => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16"
         >
-          {/* Hidden fields for data not in form inputs */}
           <input type="hidden" name="entry.1732198711" value={cartItems.map(item => `${item.name} (x${item.quantity})`).join('\n')} />
           <input type="hidden" name="entry.1456663501" value={cartItems.map(item => item.quantity).join(', ')} />
           <input type="hidden" name="entry.1102557289" value={cartItems.map(item => item.id).join(', ')} />
           <input type="hidden" name="entry.1649969003" value={grandTotal.toString()} />
 
-          {/* Left Side: Form */}
           <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800">
             <div className="space-y-8">
-              {/* Shipping Information */}
               <div>
                 <h2 className="text-2xl font-bold mb-6">Shipping Information</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="sm:col-span-2">
                     <label htmlFor="fullName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
-                    <input type="text" id="fullName" name="entry.1215558562" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="text" id="fullName" name="entry.1215558562" defaultValue={user?.displayName || ''} required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div className="sm:col-span-2">
                     <label htmlFor="address" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
@@ -144,13 +165,12 @@ const CheckoutPage = () => {
                   </div>
                 </div>
               </div>
-              {/* Contact Information */}
               <div>
                 <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                    <div>
                     <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
-                    <input type="email" id="email" name="entry.1424517618" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="email" id="email" name="entry.1424517618" defaultValue={user?.email || ''} readOnly required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
@@ -161,7 +181,6 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          {/* Right Side: Order Summary */}
           <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800 self-start">
             <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">

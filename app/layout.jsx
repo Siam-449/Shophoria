@@ -4,8 +4,10 @@ import { ThemeProvider } from '../components/ThemeProvider';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import { CartProvider } from '../context/CartContext.jsx';
+import { AuthProvider } from '../context/AuthContext.jsx';
 import CartDrawer from '../components/CartDrawer.jsx';
 import OfferBanner from '../components/OfferBanner.jsx';
+import AuthModal from '../components/AuthModal.jsx';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,13 +28,16 @@ export default function RootLayout({ children }) {
           defaultTheme="light"
           enableSystem={false}
         >
-          <CartProvider>
-            <OfferBanner />
-            <Navbar />
-            <CartDrawer />
-            {children}
-            <Footer />
-          </CartProvider>
+          <AuthProvider>
+            <CartProvider>
+              <OfferBanner />
+              <Navbar />
+              <CartDrawer />
+              <AuthModal />
+              {children}
+              <Footer />
+            </CartProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
