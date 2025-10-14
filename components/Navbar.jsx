@@ -13,7 +13,6 @@ import { SunIcon } from './icons/SunIcon.jsx';
 import { CartIcon } from './icons/CartIcon.jsx';
 import { MenuIcon } from './icons/MenuIcon.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
-import { UserIcon } from './icons/UserIcon.jsx';
 
 // Moved SearchBar outside of Navbar to prevent re-mounting on every render, which was causing focus loss.
 const SearchBar = ({ 
@@ -155,15 +154,6 @@ const Navbar = () => {
       : <MoonIcon className="h-6 w-6" onClick={() => setTheme('dark')} />;
   };
 
-  const renderUserIcon = () => (
-    <button
-      aria-label="User account"
-      className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
-    >
-      <UserIcon className="h-6 w-6" />
-    </button>
-  );
-
   return (
     <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
       <nav className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -206,7 +196,6 @@ const Navbar = () => {
             <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
               {renderThemeChanger()}
             </button>
-            {renderUserIcon()}
             <button onClick={toggleCart} aria-label="Open cart" className="relative p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
               <CartIcon className="h-6 w-6" />
               {cartItems.length > 0 && (
@@ -268,7 +257,6 @@ const Navbar = () => {
               <button aria-label="Toggle theme" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
                   {renderThemeChanger()}
               </button>
-              {renderUserIcon()}
               <button onClick={() => { toggleCart(); setIsMobileMenuOpen(false); }} aria-label="Open cart" className="relative p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
                   <CartIcon className="h-6 w-6" />
                    {cartItems.length > 0 && (
