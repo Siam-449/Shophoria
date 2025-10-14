@@ -3,7 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   onAuthStateChanged,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
@@ -18,6 +19,12 @@ export const AuthProvider = ({ children }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   useEffect(() => {
+    // This effect handles the result after a user is redirected back from Google sign-in
+    getRedirectResult(auth)
+      .catch((error) => {
+        console.error("Error processing sign-in redirect", error);
+      });
+      
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -31,10 +38,10 @@ export const AuthProvider = ({ children }) => {
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      closeAuthModal();
+      // We use signInWithRedirect which is more robust than a popup.
+      await signInWithRedirect(auth, provider);
     } catch (error) {
-      console.error("Error signing in with Google", error);
+      console.error("Error initiating sign in with Google redirect", error);
     }
   };
 
