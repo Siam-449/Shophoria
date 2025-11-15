@@ -3,9 +3,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
+import { getCoupon } from '../../lib/firebase.js';
 import { PlusIcon } from '../../components/icons/PlusIcon.jsx';
 import { MinusIcon } from '../../components/icons/MinusIcon.jsx';
 import { RemoveIcon } from '../../components/icons/RemoveIcon.jsx';
+import { CloseIcon } from '../../components/icons/CloseIcon.jsx';
+
 
 const CheckoutPage = () => {
   const { cartItems, total, clearCart, isCartOpen, toggleCart, updateItemQuantity, removeItemFromCart } = useCart();
@@ -15,11 +18,22 @@ const CheckoutPage = () => {
   const [shippingLocation, setShippingLocation] = useState('inside-dhaka');
   const formSubmittedRef = useRef(false);
 
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponMessage, setCouponMessage] = useState({ text: '', type: '' });
+  const [isCouponLoading, setIsCouponLoading] = useState(false);
+
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const isFreeShipping = totalQuantity >= 2;
   
   const shippingCost = isFreeShipping ? 0 : (total > 0 ? (shippingLocation === 'inside-dhaka' ? 60 : 110) : 0);
-  const grandTotal = total + shippingCost;
+  
+  const discountAmount = appliedCoupon
+    ? (total * appliedCoupon.discountPercentage) / 100
+    : 0;
+  
+  const grandTotal = total - discountAmount + shippingCost;
+
 
   useEffect(() => {
     if (isCartOpen) {
@@ -38,6 +52,31 @@ const CheckoutPage = () => {
       setSubmitted(true);
       clearCart();
     }
+  };
+
+  const handleApplyCoupon = async (e) => {
+    e.preventDefault();
+    if (!couponCode.trim()) return;
+
+    setIsCouponLoading(true);
+    setCouponMessage({ text: '', type: '' });
+
+    const couponData = await getCoupon(couponCode.trim());
+
+    if (couponData && couponData.discountPercentage > 0) {
+      setAppliedCoupon(couponData);
+      setCouponMessage({ text: 'Coupon applied successfully!', type: 'success' });
+      setCouponCode('');
+    } else {
+      setAppliedCoupon(null);
+      setCouponMessage({ text: 'Invalid or expired coupon code.', type: 'error' });
+    }
+    setIsCouponLoading(false);
+  };
+  
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponMessage({ text: 'Coupon removed.', type: '' });
   };
 
   if (submitted) {
@@ -84,6 +123,10 @@ const CheckoutPage = () => {
           <input type="hidden" name="entry.1456663501" value={cartItems.map(item => item.quantity).join(', ')} />
           <input type="hidden" name="entry.1102557289" value={cartItems.map(item => item.id).join(', ')} />
           <input type="hidden" name="entry.1649969003" value={grandTotal.toString()} />
+           {/* Add a hidden input for the coupon code. You'll need to create a corresponding field in your Google Form and get its 'name' attribute. */}
+          {appliedCoupon && (
+            <input type="hidden" name="entry.1804245973" value={appliedCoupon.id} />
+          )}
 
           <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800">
             <div className="space-y-8">
@@ -196,12 +239,57 @@ const CheckoutPage = () => {
                     <span>৳{shippingCost.toLocaleString()}</span>
                 )}
               </div>
-              <div className="border-t border-slate-200 dark:border-slate-700 my-3"></div>
-              <div className="flex justify-between text-xl font-bold">
-                <span>Total</span>
-                <span>৳{grandTotal.toLocaleString()}</span>
-              </div>
+              {appliedCoupon && (
+                <div className="flex justify-between text-green-600 dark:text-green-400">
+                  <span>Discount ({appliedCoupon.id})</span>
+                  <span>-৳{discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                </div>
+              )}
             </div>
+
+            <div className="border-t border-slate-200 dark:border-slate-700 my-6"></div>
+            
+            {!appliedCoupon ? (
+              <form onSubmit={handleApplyCoupon} className="space-y-2 mb-6">
+                <label htmlFor="coupon" className="text-sm font-medium text-slate-700 dark:text-slate-300">Have a coupon?</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    id="coupon"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter coupon code"
+                    className="w-full px-4 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    disabled={isCouponLoading}
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-sm font-semibold rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
+                    disabled={isCouponLoading}
+                  >
+                    {isCouponLoading ? '...' : 'Apply'}
+                  </button>
+                </div>
+                 {couponMessage.text && (
+                  <p className={`text-sm mt-2 ${couponMessage.type === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+                    {couponMessage.text}
+                  </p>
+                )}
+              </form>
+            ) : (
+               <div className="flex justify-between items-center mb-6">
+                  <p className="text-sm text-slate-700 dark:text-slate-300">Coupon Applied: <span className="font-bold text-green-600 dark:text-green-400">{appliedCoupon.id}</span></p>
+                   <button onClick={handleRemoveCoupon} title="Remove coupon" className="text-red-500 hover:text-red-700 dark:hover:text-red-400 p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50">
+                     <CloseIcon className="h-4 w-4" />
+                   </button>
+               </div>
+            )}
+            
+            <div className="flex justify-between text-xl font-bold">
+              <span>Total</span>
+              <span>৳{grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+            </div>
+
             <div className="mt-8">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 bg-green-500 rounded-full"></span>
