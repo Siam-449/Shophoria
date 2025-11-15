@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -55,7 +56,8 @@ const CheckoutPage = () => {
   };
 
   const handleApplyCoupon = async (e) => {
-    e.preventDefault();
+    // Prevent the main form from submitting
+    if(e) e.preventDefault();
     if (!couponCode.trim()) return;
 
     setIsCouponLoading(true);
@@ -123,7 +125,6 @@ const CheckoutPage = () => {
           <input type="hidden" name="entry.1456663501" value={cartItems.map(item => item.quantity).join(', ')} />
           <input type="hidden" name="entry.1102557289" value={cartItems.map(item => item.id).join(', ')} />
           <input type="hidden" name="entry.1649969003" value={grandTotal.toString()} />
-           {/* Add a hidden input for the coupon code. You'll need to create a corresponding field in your Google Form and get its 'name' attribute. */}
           {appliedCoupon && (
             <input type="hidden" name="entry.1804245973" value={appliedCoupon.id} />
           )}
@@ -250,7 +251,7 @@ const CheckoutPage = () => {
             <div className="border-t border-slate-200 dark:border-slate-700 my-6"></div>
             
             {!appliedCoupon ? (
-              <form onSubmit={handleApplyCoupon} className="space-y-2 mb-6">
+              <div className="space-y-2 mb-6">
                 <label htmlFor="coupon" className="text-sm font-medium text-slate-700 dark:text-slate-300">Have a coupon?</label>
                 <div className="flex gap-2">
                   <input
@@ -258,12 +259,14 @@ const CheckoutPage = () => {
                     id="coupon"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon(e)}
                     placeholder="Enter coupon code"
                     className="w-full px-4 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     disabled={isCouponLoading}
                   />
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={handleApplyCoupon}
                     className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-sm font-semibold rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
                     disabled={isCouponLoading}
                   >
@@ -275,11 +278,11 @@ const CheckoutPage = () => {
                     {couponMessage.text}
                   </p>
                 )}
-              </form>
+              </div>
             ) : (
                <div className="flex justify-between items-center mb-6">
                   <p className="text-sm text-slate-700 dark:text-slate-300">Coupon Applied: <span className="font-bold text-green-600 dark:text-green-400">{appliedCoupon.id}</span></p>
-                   <button onClick={handleRemoveCoupon} title="Remove coupon" className="text-red-500 hover:text-red-700 dark:hover:text-red-400 p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50">
+                   <button type="button" onClick={handleRemoveCoupon} title="Remove coupon" className="text-red-500 hover:text-red-700 dark:hover:text-red-400 p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50">
                      <CloseIcon className="h-4 w-4" />
                    </button>
                </div>
