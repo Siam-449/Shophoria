@@ -1,10 +1,11 @@
 
+
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
-import { getCoupon } from '../../lib/firebase.js';
+import { getCoupon, createSale } from '../../lib/firebase.js';
 import { PlusIcon } from '../../components/icons/PlusIcon.jsx';
 import { MinusIcon } from '../../components/icons/MinusIcon.jsx';
 import { RemoveIcon } from '../../components/icons/RemoveIcon.jsx';
@@ -16,8 +17,8 @@ const CheckoutPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submissionError, setSubmissionError] = useState(null);
   const [shippingLocation, setShippingLocation] = useState('inside-dhaka');
-  const formSubmittedRef = useRef(false);
 
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -42,16 +43,41 @@ const CheckoutPage = () => {
     }
   }, [isCartOpen, toggleCart]);
 
-  const handleSubmit = () => {
-    formSubmittedRef.current = true;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setIsSubmitting(true);
-  };
+    setSubmissionError(null);
 
-  const handleIframeLoad = () => {
-    if (formSubmittedRef.current) {
-      setIsSubmitting(false);
+    const formData = new FormData(e.target);
+    const orderData = {
+      customerName: formData.get('customerName'),
+      address: formData.get('address'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      deliveryLocation: formData.get('deliveryLocation'),
+      items: cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        originalPrice: item.originalPrice,
+        quantity: item.quantity,
+      })),
+      subtotal: total,
+      shippingCost,
+      coupon: appliedCoupon ? { code: appliedCoupon.code, discountAmount: discountAmount } : null,
+      grandTotal,
+      status: 'Pending',
+    };
+
+    try {
+      await createSale(orderData);
       setSubmitted(true);
       clearCart();
+    } catch (error) {
+      console.error("Failed to submit order:", error);
+      setSubmissionError("There was a problem placing your order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -111,24 +137,12 @@ const CheckoutPage = () => {
 
   return (
     <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200">
-      <iframe name="hidden_iframe" id="hidden_iframe" style={{ display: 'none' }} onLoad={handleIframeLoad}></iframe>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <h1 className="text-center text-4xl sm:text-5xl font-bold tracking-tight mb-12">Checkout</h1>
         <form
-          action="https://docs.google.com/forms/u/3/d/16ml85GlDtug5di5iT3ENtULzzHZrb1fSGIjE7pzgTa8/formResponse"
-          method="POST"
-          target="hidden_iframe"
           onSubmit={handleSubmit}
           className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16"
         >
-          <input type="hidden" name="entry.1732198711" value={cartItems.map(item => `${item.name} (x${item.quantity})`).join('\n')} />
-          <input type="hidden" name="entry.1456663501" value={cartItems.map(item => item.quantity).join(', ')} />
-          <input type="hidden" name="entry.1102557289" value={cartItems.map(item => item.id).join(', ')} />
-          <input type="hidden" name="entry.1649969003" value={grandTotal.toString()} />
-          {appliedCoupon && (
-            <input type="hidden" name="entry.1804245973" value={appliedCoupon.code} />
-          )}
-
           <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800">
             <div className="space-y-8">
               <div>
@@ -136,11 +150,11 @@ const CheckoutPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="sm:col-span-2">
                     <label htmlFor="fullName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Customer Name</label>
-                    <input type="text" id="fullName" name="entry.1215558562" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="text" id="fullName" name="customerName" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div className="sm:col-span-2">
                     <label htmlFor="address" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
-                    <input type="text" id="address" name="entry.940526712" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="text" id="address" name="address" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Delivery Location</label>
@@ -148,7 +162,7 @@ const CheckoutPage = () => {
                       <div className="flex items-center">
                         <input
                           id="inside-dhaka"
-                          name="entry.629155689"
+                          name="deliveryLocation"
                           type="radio"
                           value="Inside Dhaka"
                           checked={shippingLocation === 'inside-dhaka'}
@@ -162,7 +176,7 @@ const CheckoutPage = () => {
                       <div className="flex items-center">
                         <input
                           id="outside-dhaka"
-                          name="entry.629155689"
+                          name="deliveryLocation"
                           type="radio"
                           value="Outside Dhaka"
                           checked={shippingLocation === 'outside-dhaka'}
@@ -182,11 +196,11 @@ const CheckoutPage = () => {
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                    <div>
                     <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
-                    <input type="email" id="email" name="entry.1424517618" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="email" id="email" name="email" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
-                    <input type="tel" id="phone" name="entry.421084696" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    <input type="tel" id="phone" name="phone" required className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                  </div>
               </div>
@@ -294,6 +308,11 @@ const CheckoutPage = () => {
                 Pay when your order is delivered to your doorstep. No advance payment required.
               </p>
             </div>
+             {submissionError && (
+              <div className="mt-4 text-center text-red-500 dark:text-red-400 bg-red-100 dark:bg-red-900/50 p-3 rounded-md">
+                {submissionError}
+              </div>
+            )}
             <button
               type="submit"
               disabled={isSubmitting}
