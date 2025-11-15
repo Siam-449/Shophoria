@@ -1,15 +1,14 @@
+
+"use client";
+
 import React from 'react';
 import ProductCard from '../../components/ProductCard.jsx';
-import { getProducts } from '../../lib/firebase.js';
+import ProductSkeleton from '../../components/ProductSkeleton.jsx';
+import { useProducts } from '../../context/ProductsContext.jsx';
 
-const metadata = {
-  title: 'Fashion & Beauty - SHOPHORIA',
-  description: 'Discover our collection of stylish bags, accessories, and beauty products. High-quality fashion items just for you.',
-};
-
-export default async function FashionAndBeautyPage() {
-  const allProducts = await getProducts();
-  const fashionProducts = allProducts.filter(p => p.category === 'Fashion & Beauty');
+export default function FashionAndBeautyPage() {
+  const { products, loading } = useProducts();
+  const fashionProducts = products.filter(p => p.category === 'Fashion & Beauty');
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950">
@@ -19,9 +18,13 @@ export default async function FashionAndBeautyPage() {
             <p className="text-lg text-slate-600 dark:text-slate-400">Discover our collection of stylish bags, accessories, and beauty products.</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
-          {fashionProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {loading ? (
+            Array.from({ length: 8 }).map((_, index) => <ProductSkeleton key={index} />)
+          ) : (
+            fashionProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          )}
         </div>
       </main>
     </div>
