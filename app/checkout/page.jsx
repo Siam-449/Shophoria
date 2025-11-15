@@ -126,7 +126,7 @@ const CheckoutPage = () => {
           <input type="hidden" name="entry.1102557289" value={cartItems.map(item => item.id).join(', ')} />
           <input type="hidden" name="entry.1649969003" value={grandTotal.toString()} />
           {appliedCoupon && (
-            <input type="hidden" name="entry.1804245973" value={appliedCoupon.id} />
+            <input type="hidden" name="entry.1804245973" value={appliedCoupon.code} />
           )}
 
           <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800">
@@ -242,7 +242,7 @@ const CheckoutPage = () => {
               </div>
               {appliedCoupon && (
                 <div className="flex justify-between text-green-600 dark:text-green-400">
-                  <span>Discount ({appliedCoupon.id})</span>
+                  <span>Discount ({appliedCoupon.code})</span>
                   <span>-৳{discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                 </div>
               )}
@@ -281,7 +281,7 @@ const CheckoutPage = () => {
               </div>
             ) : (
                <div className="flex justify-between items-center mb-6">
-                  <p className="text-sm text-slate-700 dark:text-slate-300">Coupon Applied: <span className="font-bold text-green-600 dark:text-green-400">{appliedCoupon.id}</span></p>
+                  <p className="text-sm text-slate-700 dark:text-slate-300">Coupon Applied: <span className="font-bold text-green-600 dark:text-green-400">{appliedCoupon.code}</span></p>
                    <button type="button" onClick={handleRemoveCoupon} title="Remove coupon" className="text-red-500 hover:text-red-700 dark:hover:text-red-400 p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50">
                      <CloseIcon className="h-4 w-4" />
                    </button>
