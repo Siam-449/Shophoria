@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useCart } from '../context/CartContext.jsx';
-import { products } from '../data/products.js';
+import { useProducts } from '../context/ProductsContext.jsx';
 import { usePathname, useRouter } from 'next/navigation';
 import { SearchIcon } from './icons/SearchIcon.jsx';
 import { MoonIcon } from './icons/MoonIcon.jsx';
@@ -73,6 +73,7 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { toggleCart, cartItems } = useCart();
+  const { products } = useProducts();
   const pathname = usePathname();
   const router = useRouter();
   
@@ -86,7 +87,7 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (searchQuery.trim() === '') {
+    if (searchQuery.trim() === '' || products.length === 0) {
       setSearchResults([]);
       return;
     }
@@ -103,7 +104,7 @@ const Navbar = () => {
       return productName.includes(lowerCaseQuery) || productId.includes(lowerCaseQuery);
     }).slice(0, 5);
     setSearchResults(filtered);
-  }, [searchQuery]);
+  }, [searchQuery, products]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

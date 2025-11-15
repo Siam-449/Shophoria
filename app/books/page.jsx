@@ -1,15 +1,16 @@
 import React from 'react';
-import { products } from '../../data/products.js';
 import ProductCard from '../../components/ProductCard.jsx';
-
-const bookProducts = products.filter(p => p.category === 'Books & Paints');
+import { getProducts } from '../../lib/firebase.js';
 
 export const metadata = {
   title: 'Books & Paints - SHOPHORIA',
   description: 'Browse our collection of notepads, stationery, and art supplies. Get creative with our quality products.',
 };
 
-export default function BooksPage() {
+export default async function BooksPage() {
+  const allProducts = await getProducts();
+  const bookProducts = allProducts.filter(p => p.category === 'Books & Paints');
+
   return (
     <div className="bg-slate-50 dark:bg-slate-950">
       <main className="container mx-auto p-4 sm:p-6 lg:p-8 min-h-[60vh]">

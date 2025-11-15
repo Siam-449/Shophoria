@@ -1,19 +1,21 @@
+
 "use client";
 
 import React, { Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
-import { products } from '../../data/products.js';
-import { useCart } from '../../context/CartContext.jsx';
+import { useProducts } from '../../context/ProductsContext.jsx';
+import ProductSkeleton from '../../components/ProductSkeleton.jsx';
+import ProductCard from '../../components/ProductCard.jsx';
 
 const SearchResults = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
-  const { addItemToCart } = useCart();
+  const { products, loading } = useProducts();
 
   const filteredProducts = useMemo(() => {
-    if (!query) {
+    if (!query || products.length === 0) {
       return [];
     }
     const lowerCaseQuery = query.trim().toLowerCase();
@@ -21,15 +23,27 @@ const SearchResults = () => {
       const productName = product.name.toLowerCase();
       const productId = String(product.id).toLowerCase();
 
-      // Special condition for the prank product: exact match only
       if (product.id === 'badann') {
         return productId === lowerCaseQuery || productName === lowerCaseQuery;
       }
 
-      // Standard condition for all other products: inclusive search
       return productName.includes(lowerCaseQuery) || productId.includes(lowerCaseQuery);
     });
-  }, [query]);
+  }, [query, products]);
+
+  if (loading) {
+     return (
+        <main className="container mx-auto p-4 sm:p-6 lg:p-8 min-h-[60vh]">
+            <div className="text-center my-12">
+                 <div className="h-10 bg-slate-200 dark:bg-slate-800 rounded w-1/2 mx-auto mb-4 animate-pulse"></div>
+                 <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-1/4 mx-auto animate-pulse"></div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+              {Array.from({ length: 8 }).map((_, index) => <ProductSkeleton key={index} />)}
+            </div>
+        </main>
+     )
+  }
 
   return (
     <main className="container mx-auto p-4 sm:p-6 lg:p-8 min-h-[60vh]">
@@ -47,28 +61,7 @@ const SearchResults = () => {
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
               {filteredProducts.map((product) => (
-                <div key={product.id} className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
-                  <Link href={`/products/${product.id}`} aria-label={`View details for ${product.name}`}>
-                    <div className="overflow-hidden aspect-square">
-                      <img src={product.image} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
-                    </div>
-                  </Link>
-                  <div className="p-3 flex flex-col flex-grow">
-                    <Link href={`/products/${product.id}`} className="flex-grow">
-                        <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">{product.name}</h3>
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-3">{product.description}</p>
-                    </Link>
-                    <div className="mt-2">
-                      <p className="text-base font-bold text-slate-900 dark:text-slate-100">৳{product.price.toLocaleString()}</p>
-                      <button 
-                        onClick={() => addItemToCart(product)}
-                        className="w-full mt-2 px-3 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           ) : (

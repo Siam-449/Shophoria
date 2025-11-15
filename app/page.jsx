@@ -5,10 +5,11 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Hero from '../components/Hero.jsx';
 import CategoryShowcase from '../components/CategoryShowcase.jsx';
-import { products } from '../data/products.js';
+import { useProducts } from '../context/ProductsContext.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import ProductSkeleton from '../components/ProductSkeleton.jsx';
 
-const getCollectionsProducts = () => {
+const getCollectionsProducts = (products) => {
   const displayableProducts = products.filter(p => p.category !== 'prank');
 
   const shuffleArray = (array) => {
@@ -54,31 +55,16 @@ const getCollectionsProducts = () => {
   return shuffleArray(finalProducts);
 };
 
-const ProductSkeleton = () => (
-    <div className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col animate-pulse">
-        <div className="aspect-square bg-slate-200 dark:bg-slate-800"></div>
-        <div className="p-3 flex flex-col flex-grow">
-            <div className="flex-grow">
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-full mb-1"></div>
-              <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-2/3"></div>
-            </div>
-            <div className="mt-2">
-              <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-1/3 mb-2"></div>
-              <div className="h-9 bg-slate-300 dark:bg-slate-700 rounded-md w-full"></div>
-            </div>
-        </div>
-    </div>
-);
-
-
 export default function Home() {
   const [collectionsProducts, setCollectionsProducts] = useState([]);
+  const { products, loading } = useProducts();
 
   useEffect(() => {
     // Shuffling products on the client-side after initial render to avoid hydration errors.
-    setCollectionsProducts(getCollectionsProducts());
-  }, []);
+    if (products.length > 0) {
+      setCollectionsProducts(getCollectionsProducts(products));
+    }
+  }, [products]);
 
   return (
     <div className="bg-slate-50 dark:bg-slate-900">
@@ -90,11 +76,11 @@ export default function Home() {
             <p className="text-lg text-slate-600 dark:text-slate-400">Explore our curated selection of amazing products.</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
-          {collectionsProducts.length > 0
-            ? collectionsProducts.map((product) => (
+          {loading
+            ? Array.from({ length: 12 }).map((_, index) => <ProductSkeleton key={index} />)
+            : collectionsProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))
-            : Array.from({ length: 12 }).map((_, index) => <ProductSkeleton key={index} />)
           }
         </div>
         <div className="mt-12 text-center">

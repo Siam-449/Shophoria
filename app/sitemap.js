@@ -1,9 +1,12 @@
-import { products } from '../data/products.js';
+
+import { getProducts } from '../lib/firebase';
 
 // Your live website domain
 const URL = 'https://shopshophoria.netlify.app';
 
-export default function sitemap() {
+export default async function sitemap() {
+  const products = await getProducts();
+
   const productUrls = products.map((product) => {
     return {
       url: `${URL}/products/${product.id}`,
