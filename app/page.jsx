@@ -57,12 +57,15 @@ const getCollectionsProducts = (products) => {
 
 export default function Home() {
   const [collectionsProducts, setCollectionsProducts] = useState([]);
+  const [discountProducts, setDiscountProducts] = useState([]);
   const { products, loading } = useProducts();
 
   useEffect(() => {
     // Shuffling products on the client-side after initial render to avoid hydration errors.
     if (products.length > 0) {
       setCollectionsProducts(getCollectionsProducts(products));
+      const discounted = products.filter(p => p.originalPrice !== null && p.price < p.originalPrice);
+      setDiscountProducts(discounted);
     }
   }, [products]);
 
@@ -83,6 +86,21 @@ export default function Home() {
               ))
           }
         </div>
+        
+        {!loading && discountProducts.length > 0 && (
+          <section className="mt-16">
+            <div className="text-center my-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Discount Offers</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400">Grab these amazing deals before they're gone!</p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+              {discountProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        )}
+        
         <div className="mt-12 text-center">
             <Link 
                 href="/products" 

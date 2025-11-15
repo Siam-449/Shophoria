@@ -7,9 +7,17 @@ import { useCart } from '../context/CartContext.jsx';
 
 const ProductCard = ({ product }) => {
   const { addItemToCart } = useCart();
+  const discountPercentage = product.originalPrice
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : null;
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
+    <div className="relative bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
+      {discountPercentage && (
+        <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
+          -{discountPercentage}%
+        </div>
+      )}
       <Link href={`/products/${product.id}`} aria-label={`View details for ${product.name}`}>
         <div className="overflow-hidden aspect-square">
             <img src={product.image} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
@@ -49,12 +57,20 @@ export default ProductCard;
 
 export const ProductDetailClient = ({ product }) => {
     const { addItemToCart } = useCart();
+    const discountPercentage = product.originalPrice
+      ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+      : null;
 
     return (
         <div className="bg-white dark:bg-slate-950 py-12 sm:py-16">
             <main className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                    <div className="bg-slate-100 dark:bg-slate-900 rounded-lg overflow-hidden">
+                    <div className="relative bg-slate-100 dark:bg-slate-900 rounded-lg overflow-hidden">
+                        {discountPercentage && (
+                          <div className="absolute top-4 left-4 bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-full z-10">
+                            -{discountPercentage}%
+                          </div>
+                        )}
                         <img 
                             src={product.image} 
                             alt={product.name} 
