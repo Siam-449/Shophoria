@@ -1,11 +1,33 @@
-<script type="importmap">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-commerce Navbar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {},
+        }
+      }
+    </script>
+  <script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react/": "https://aistudiocdn.com/react@^19.1.1/",
-    "next/": "https://aistudiocdn.com/next@^15.5.4/",
-    "next-themes": "https://aistudiocdn.com/next-themes@^0.4.6",
-    "firebase/": "https://aistudiocdn.com/firebase@^12.4.0/"
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "next/": "https://aistudiocdn.com/next@^16.0.3/",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/",
+    "next-themes": "https://aistudiocdn.com/next-themes@^0.4.6"
   }
 }
 </script>
+</head>
+  <body class="bg-slate-50 dark:bg-slate-950">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
