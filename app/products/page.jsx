@@ -1,6 +1,9 @@
+
 import React from 'react';
 import ProductCard from '../../components/ProductCard.jsx';
 import { getProducts } from '../../lib/firebase';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'All Products - SHOPHORIA',
