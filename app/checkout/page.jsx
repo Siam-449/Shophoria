@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
-import { getCoupon, createSale, getFreeDeliverySettings } from '../../lib/firebase.js';
+import { getCoupon, createSale, getFreeDeliverySettings, getDeliveryCharges } from '../../lib/firebase.js';
 import { PlusIcon } from '../../components/icons/PlusIcon.jsx';
 import { MinusIcon } from '../../components/icons/MinusIcon.jsx';
 import { RemoveIcon } from '../../components/icons/RemoveIcon.jsx';
@@ -25,12 +25,15 @@ const CheckoutPage = () => {
   const [couponMessage, setCouponMessage] = useState({ text: '', type: '' });
   const [isCouponLoading, setIsCouponLoading] = useState(false);
   
-  const [freeDeliveryThreshold, setFreeDeliveryThreshold] = useState(0); // Default to no free delivery
+  const [freeDeliveryThreshold, setFreeDeliveryThreshold] = useState(0); 
+  const [deliveryCharges, setDeliveryCharges] = useState({ inside: 60, outside: 110 });
 
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const isFreeShipping = freeDeliveryThreshold > 0 && totalQuantity >= freeDeliveryThreshold + 1;
   
-  const shippingCost = isFreeShipping ? 0 : (total > 0 ? (shippingLocation === 'inside-dhaka' ? 60 : 110) : 0);
+  const shippingCost = isFreeShipping 
+    ? 0 
+    : (total > 0 ? (shippingLocation === 'inside-dhaka' ? deliveryCharges.inside : deliveryCharges.outside) : 0);
   
   const discountAmount = appliedCoupon
     ? (total * appliedCoupon.discountPercentage) / 100
@@ -50,7 +53,12 @@ const CheckoutPage = () => {
       const settings = await getFreeDeliverySettings();
       setFreeDeliveryThreshold(settings.threshold);
     };
+    const fetchDeliveryCharges = async () => {
+      const charges = await getDeliveryCharges();
+      setDeliveryCharges(charges);
+    };
     fetchSettings();
+    fetchDeliveryCharges();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -180,7 +188,7 @@ const CheckoutPage = () => {
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700"
                         />
                         <label htmlFor="inside-dhaka" className="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
-                          Inside Dhaka {!isFreeShipping && <span className="text-slate-500 dark:text-slate-400">(৳60)</span>}
+                          Inside Dhaka {!isFreeShipping && <span className="text-slate-500 dark:text-slate-400">(৳{deliveryCharges.inside})</span>}
                         </label>
                       </div>
                       <div className="flex items-center">
@@ -194,7 +202,7 @@ const CheckoutPage = () => {
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700"
                         />
                         <label htmlFor="outside-dhaka" className="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
-                          Outside Dhaka {!isFreeShipping && <span className="text-slate-500 dark:text-slate-400">(৳110)</span>}
+                          Outside Dhaka {!isFreeShipping && <span className="text-slate-500 dark:text-slate-400">(৳{deliveryCharges.outside})</span>}
                         </label>
                       </div>
                     </div>
