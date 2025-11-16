@@ -67,24 +67,24 @@ export const ProductDetailClient = ({ product }) => {
         <div className="bg-white dark:bg-slate-950 py-12 sm:py-16">
             <main className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-                    <div className="relative bg-slate-100 dark:bg-slate-900 rounded-lg overflow-hidden">
-                        {discountPercentage && (
-                          <div className="absolute top-4 left-4 bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-full z-10">
-                            -{discountPercentage}%
-                          </div>
+                    <div className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-md border border-slate-200 dark:border-slate-800 flex flex-col">
+                        {product.expiresAt && (
+                           <CountdownTimer expiresAt={product.expiresAt} />
                         )}
-                        <img 
-                            src={product.image} 
-                            alt={product.name} 
-                            className="w-full h-auto object-contain aspect-square" 
-                        />
+                        <div className="relative bg-slate-100 dark:bg-slate-900">
+                            {discountPercentage && (
+                              <div className="absolute top-4 left-4 bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-full z-10">
+                                -{discountPercentage}%
+                              </div>
+                            )}
+                            <img 
+                                src={product.image} 
+                                alt={product.name} 
+                                className="w-full h-auto object-contain aspect-square" 
+                            />
+                        </div>
                     </div>
                     <div>
-                        {product.expiresAt && (
-                            <div className="mb-6">
-                                <CountdownTimer expiresAt={product.expiresAt} />
-                            </div>
-                        )}
                         <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100">{product.name}</h1>
                          <div className="flex items-baseline gap-4 mt-4">
                             <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">৳{product.price.toLocaleString()}</p>

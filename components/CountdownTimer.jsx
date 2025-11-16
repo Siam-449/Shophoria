@@ -28,20 +28,20 @@ const CountdownTimer = ({ expiresAt }) => {
     return () => clearInterval(timer);
   }, [expiresAt]);
 
-  if (Object.keys(timeLeft).length === 0) {
-    return <div className="text-center p-3 bg-slate-200 dark:bg-slate-800 text-red-600 dark:text-red-400 font-bold rounded-lg">Offer Expired!</div>;
-  }
-
   return (
-    <div className="p-3 bg-red-600 text-white text-center rounded-lg shadow-lg">
-      <h4 className="font-bold text-base mb-2">Time Left to Order!</h4>
-      <div className="flex justify-center gap-2 sm:gap-3">
-        {Object.entries(timeLeft).map(([unit, value]) => (
-          <div key={unit} className="flex flex-col items-center">
-            <span className="text-xl font-mono font-bold">{String(value).padStart(2, '0')}</span>
-            <span className="text-xs uppercase">{unit}</span>
-          </div>
-        ))}
+    <div className="p-3 bg-red-600 text-white text-center">
+      <h4 className="font-bold text-lg">Time Left to Order!</h4>
+      <div className="flex justify-center gap-3 mt-2">
+        {Object.keys(timeLeft).length > 0 ? (
+          Object.entries(timeLeft).map(([unit, value]) => (
+            <div key={unit} className="flex flex-col items-center">
+              <span className="text-xl font-mono font-bold">{String(value).padStart(2, '0')}</span>
+              <span className="text-xs uppercase">{unit}</span>
+            </div>
+          ))
+        ) : (
+          <span className="text-lg font-bold">Offer Expired!</span>
+        )}
       </div>
     </div>
   );
