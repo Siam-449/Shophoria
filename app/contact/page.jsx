@@ -1,24 +1,37 @@
+
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { EmailIcon } from '../../components/icons/EmailIcon';
 import { PhoneIcon } from '../../components/icons/PhoneIcon';
 import { LocationIcon } from '../../components/icons/LocationIcon';
+import { submitContactForm } from '../../lib/firebase.js';
 
 const ContactPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const formSubmittedRef = useRef(false);
+  const [submissionError, setSubmissionError] = useState(null);
 
-  const handleSubmit = () => {
-    formSubmittedRef.current = true; 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setIsSubmitting(true);
-  };
+    setSubmissionError(null);
 
-  const handleIframeLoad = () => {
-    if (formSubmittedRef.current) {
-      setIsSubmitting(false);
+    const formData = new FormData(e.target);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      subject: formData.get('subject'),
+      message: formData.get('message'),
+    };
+
+    try {
+      await submitContactForm(data);
       setSubmitted(true);
+    } catch (error) {
+      setSubmissionError(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -48,11 +61,7 @@ const ContactPage = () => {
               </div>
             ) : (
               <>
-                <iframe name="hidden_iframe" id="hidden_iframe" style={{ display: 'none' }} onLoad={handleIframeLoad}></iframe>
                 <form 
-                  action="https://docs.google.com/forms/d/1a8gpJc3Gz5RqjjQAlFAh1VR_wlcWMWNeQR3Y70ipnog/formResponse" 
-                  method="POST" 
-                  target="hidden_iframe"
                   onSubmit={handleSubmit}
                   className="space-y-6"
                 >
@@ -60,7 +69,7 @@ const ContactPage = () => {
                     <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Name</label>
                     <input
                       type="text"
-                      name="entry.1515168718"
+                      name="name"
                       id="name"
                       autoComplete="name"
                       required
@@ -71,7 +80,7 @@ const ContactPage = () => {
                     <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
                     <input
                       type="email"
-                      name="entry.685040257"
+                      name="email"
                       id="email"
                       autoComplete="email"
                       required
@@ -82,7 +91,7 @@ const ContactPage = () => {
                     <label htmlFor="subject" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Subject</label>
                     <input
                       type="text"
-                      name="entry.536629935"
+                      name="subject"
                       id="subject"
                       required
                       className="block w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -92,13 +101,18 @@ const ContactPage = () => {
                     <label htmlFor="message" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Message</label>
                     <textarea
                       id="message"
-                      name="entry.1948820010"
+                      name="message"
                       rows={4}
                       required
                       className="block w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       defaultValue={''}
                     />
                   </div>
+                  {submissionError && (
+                    <div className="text-red-500 dark:text-red-400 text-sm">
+                        {submissionError}
+                    </div>
+                  )}
                   <div>
                     <button
                       type="submit"
