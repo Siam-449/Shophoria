@@ -66,7 +66,7 @@ export const ProductDetailClient = ({ product }) => {
     return (
         <div className="bg-white dark:bg-slate-950 py-12 sm:py-16">
             <main className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-md border border-slate-200 dark:border-slate-800 flex flex-col">
                         {product.expiresAt && (
                            <CountdownTimer expiresAt={product.expiresAt} />
