@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
-import { getCoupon, createSale } from '../../lib/firebase.js';
+import { getCoupon, createSale, getFreeDeliverySettings } from '../../lib/firebase.js';
 import { PlusIcon } from '../../components/icons/PlusIcon.jsx';
 import { MinusIcon } from '../../components/icons/MinusIcon.jsx';
 import { RemoveIcon } from '../../components/icons/RemoveIcon.jsx';
@@ -24,9 +24,11 @@ const CheckoutPage = () => {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponMessage, setCouponMessage] = useState({ text: '', type: '' });
   const [isCouponLoading, setIsCouponLoading] = useState(false);
+  
+  const [freeDeliveryThreshold, setFreeDeliveryThreshold] = useState(0); // Default to no free delivery
 
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const isFreeShipping = totalQuantity >= 2;
+  const isFreeShipping = freeDeliveryThreshold > 0 && totalQuantity >= freeDeliveryThreshold + 1;
   
   const shippingCost = isFreeShipping ? 0 : (total > 0 ? (shippingLocation === 'inside-dhaka' ? 60 : 110) : 0);
   
@@ -42,6 +44,14 @@ const CheckoutPage = () => {
       toggleCart();
     }
   }, [isCartOpen, toggleCart]);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const settings = await getFreeDeliverySettings();
+      setFreeDeliveryThreshold(settings.threshold);
+    };
+    fetchSettings();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
