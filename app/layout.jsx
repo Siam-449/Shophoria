@@ -1,3 +1,4 @@
+
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '../components/ThemeProvider';
@@ -7,6 +8,7 @@ import { CartProvider } from '../context/CartContext.jsx';
 import CartDrawer from '../components/CartDrawer.jsx';
 import OfferBanner from '../components/OfferBanner.jsx';
 import { ProductsProvider } from '../context/ProductsContext.jsx';
+import MaintenanceGuard from '../components/MaintenanceGuard.jsx';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,15 +29,17 @@ export default function RootLayout({ children }) {
           defaultTheme="light"
           enableSystem={false}
         >
-          <ProductsProvider>
-            <CartProvider>
-              <OfferBanner />
-              <Navbar />
-              <CartDrawer />
-              {children}
-              <Footer />
-            </CartProvider>
-          </ProductsProvider>
+          <MaintenanceGuard>
+            <ProductsProvider>
+              <CartProvider>
+                <OfferBanner />
+                <Navbar />
+                <CartDrawer />
+                {children}
+                <Footer />
+              </CartProvider>
+            </ProductsProvider>
+          </MaintenanceGuard>
         </ThemeProvider>
       </body>
     </html>
