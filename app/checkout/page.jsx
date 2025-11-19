@@ -2,10 +2,10 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext.jsx';
-import { getCoupon, createSale, getFreeDeliverySettings, getDeliveryCharges } from '../../lib/firebase.js';
+import { getCoupon, createSale, getFreeDeliverySettings, getDeliveryCharges, getQuantityCoupons } from '../../lib/firebase.js';
 import { PlusIcon } from '../../components/icons/PlusIcon.jsx';
 import { MinusIcon } from '../../components/icons/MinusIcon.jsx';
 import { RemoveIcon } from '../../components/icons/RemoveIcon.jsx';
@@ -35,7 +35,16 @@ const CheckoutPage = () => {
     ? 0 
     : (total > 0 ? (shippingLocation === 'inside-dhaka' ? deliveryCharges.inside : deliveryCharges.outside) : 0);
   
-  const discountAmount = appliedCoupon
+  // Check if quantity requirements are still met (in case user removed items after applying)
+  const isCouponRequirementsMet = useMemo(() => {
+    if (!appliedCoupon) return false;
+    if (appliedCoupon.minItems) {
+      return totalQuantity >= appliedCoupon.minItems;
+    }
+    return true;
+  }, [appliedCoupon, totalQuantity]);
+  
+  const discountAmount = (appliedCoupon && isCouponRequirementsMet)
     ? (total * appliedCoupon.discountPercentage) / 100
     : 0;
   
@@ -82,7 +91,7 @@ const CheckoutPage = () => {
       })),
       subtotal: total,
       shippingCost,
-      coupon: appliedCoupon ? { code: appliedCoupon.code, discountAmount: discountAmount } : null,
+      coupon: (appliedCoupon && isCouponRequirementsMet) ? { code: appliedCoupon.code, discountAmount: discountAmount } : null,
       grandTotal,
       status: 'Pending',
     };
@@ -100,17 +109,52 @@ const CheckoutPage = () => {
   };
 
   const handleApplyCoupon = async (e) => {
-    // Prevent the main form from submitting
     if(e) e.preventDefault();
-    if (!couponCode.trim()) return;
+    const code = couponCode.trim().toUpperCase();
+    if (!code) return;
 
     setIsCouponLoading(true);
     setCouponMessage({ text: '', type: '' });
 
-    const couponData = await getCoupon(couponCode.trim());
+    let foundCoupon = null;
+    let isQtyCoupon = false;
 
-    if (couponData && couponData.discountPercentage > 0) {
-      setAppliedCoupon(couponData);
+    // 1. Check standard coupons
+    const standardCoupon = await getCoupon(code);
+    if (standardCoupon) {
+        foundCoupon = standardCoupon;
+    } else {
+        // 2. Check quantity coupons
+        const qtyCoupons = await getQuantityCoupons();
+        const qCoupon = qtyCoupons.find(c => c.code && c.code.toUpperCase() === code);
+        if (qCoupon) {
+            foundCoupon = {
+                code: qCoupon.code,
+                discountPercentage: Number(qCoupon.discountPercentage),
+                minItems: parseInt(qCoupon.minItems, 10) || 0
+            };
+            isQtyCoupon = true;
+        }
+    }
+
+    if (foundCoupon && foundCoupon.discountPercentage > 0) {
+      // Validate quantity requirement if it's a quantity coupon
+      if (isQtyCoupon && foundCoupon.minItems > 0) {
+          if (totalQuantity < foundCoupon.minItems) {
+              const missing = foundCoupon.minItems - totalQuantity;
+              const msg = `Add ${missing} more item${missing > 1 ? 's' : ''} to use this coupon code.`;
+              
+              setCouponMessage({ 
+                  text: msg, 
+                  type: 'error' 
+              });
+              setAppliedCoupon(null);
+              setIsCouponLoading(false);
+              return;
+          }
+      }
+
+      setAppliedCoupon(foundCoupon);
       setCouponMessage({ text: 'Coupon applied successfully!', type: 'success' });
       setCouponCode('');
     } else {
@@ -265,9 +309,16 @@ const CheckoutPage = () => {
                 )}
               </div>
               {appliedCoupon && (
-                <div className="flex justify-between text-green-600 dark:text-green-400">
-                  <span>Discount ({appliedCoupon.code})</span>
-                  <span>-৳{discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                <div className="flex flex-col">
+                  <div className="flex justify-between text-green-600 dark:text-green-400">
+                    <span>Discount ({appliedCoupon.code})</span>
+                    <span>-৳{discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  {!isCouponRequirementsMet && appliedCoupon.minItems && (
+                     <span className="text-xs text-red-500 text-right mt-1">
+                        Requirements not met: Add {Math.max(0, appliedCoupon.minItems - totalQuantity)} more item(s).
+                     </span>
+                  )}
                 </div>
               )}
             </div>
