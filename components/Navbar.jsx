@@ -14,7 +14,6 @@ import { CartIcon } from './icons/CartIcon.jsx';
 import { MenuIcon } from './icons/MenuIcon.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
 
-// Moved SearchBar outside of Navbar to prevent re-mounting on every render, which was causing focus loss.
 const SearchBar = ({ 
   isMobile = false,
   searchQuery,
@@ -47,7 +46,7 @@ const SearchBar = ({
             {searchResults.length > 0 ? searchResults.map(product => (
               <li key={product.id}>
                 <button 
-                  onClick={() => onItemClick(`/products/${product.id}`)} 
+                  onClick={() => onItemClick(`/products/${product.slug}`)} 
                   className="flex items-center gap-4 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors w-full text-left"
                 >
                   <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
@@ -66,7 +65,6 @@ const SearchBar = ({
     </>
   );
 };
-
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -96,11 +94,6 @@ const Navbar = () => {
     const filtered = products.filter(product => {
       const productName = product.name.toLowerCase();
       const productId = String(product.id).toLowerCase();
-
-      if (product.id === 'badann') {
-        return productId === lowerCaseQuery || productName === lowerCaseQuery;
-      }
-
       return productName.includes(lowerCaseQuery) || productId.includes(lowerCaseQuery);
     }).slice(0, 5);
     setSearchResults(filtered);

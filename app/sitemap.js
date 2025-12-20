@@ -9,7 +9,7 @@ export default async function sitemap() {
 
   const productUrls = products.map((product) => {
     return {
-      url: `${URL}/products/${product.id}`,
+      url: `${URL}/products/${product.slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -28,5 +28,3 @@ export default async function sitemap() {
 
   return [...staticUrls, ...productUrls];
 }
-
-
