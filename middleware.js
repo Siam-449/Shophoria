@@ -9,6 +9,10 @@ export function middleware(request) {
   if (host && host.includes('shopshophoria.netlify.app')) {
     // Perform a 301 Permanent Redirect to the new domain
     const newDomain = 'https://www.shophoriabd.com';
+    
+    // Add a flag so the new site knows they were redirected
+    url.searchParams.set('moved', 'true');
+    
     const newUrl = `${newDomain}${url.pathname}${url.search}`;
     
     return NextResponse.redirect(newUrl, 301);
@@ -17,16 +21,8 @@ export function middleware(request) {
   return NextResponse.next();
 }
 
-// Only run middleware on page routes, not static assets or API
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };

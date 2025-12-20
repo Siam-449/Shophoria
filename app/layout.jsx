@@ -9,18 +9,24 @@ import CartDrawer from '../components/CartDrawer.jsx';
 import OfferBanner from '../components/OfferBanner.jsx';
 import { ProductsProvider } from '../context/ProductsContext.jsx';
 import MaintenanceGuard from '../components/MaintenanceGuard.jsx';
+import MoveNotification from '../components/MoveNotification.jsx';
+import { Suspense } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   metadataBase: new URL('https://www.shophoriabd.com'),
   title: {
-    default: 'SHOPHORIA',
+    default: 'SHOPHORIA | Luxury Shopping',
     template: '%s | SHOPHORIA',
   },
-  description: 'Your one-stop shop for everything amazing. Explore our collections.',
+  description: 'Your one-stop shop for everything amazing. Explore our collections of Fashion, Electronics, Home & Toys.',
   alternates: {
     canonical: '/',
+  },
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.svg', // Professional look on iPhones
   },
   other: {
     'google-site-verification': 'ZjX56i_R8VsbzOZe1gsC6Nn0YyiQqXrjob-U19soXq0',
@@ -42,6 +48,9 @@ export default function RootLayout({ children }) {
                 <OfferBanner />
                 <Navbar />
                 <CartDrawer />
+                <Suspense fallback={null}>
+                  <MoveNotification />
+                </Suspense>
                 {children}
                 <Footer />
               </CartProvider>
