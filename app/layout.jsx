@@ -23,7 +23,7 @@ export const metadata = {
     canonical: '/',
   },
   other: {
-    'google-site-verification': 'ps7tDPlns9KwY4J3aAN5Ua0mDMYVBehC7TY5D0s2Sys',
+    'google-site-verification': 'ZjX56i_R8VsbzOZe1gsC6Nn0YyiQqXrjob-U19soXq0',
   },
 };
 
