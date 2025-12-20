@@ -2,7 +2,7 @@
 import { getProducts } from '../lib/firebase';
 
 // Your live website domain
-const URL = 'https://shopshophoria.netlify.app';
+const URL = 'https://www.shophoriabd.com';
 
 export default async function sitemap() {
   const products = await getProducts();

@@ -13,8 +13,15 @@ import MaintenanceGuard from '../components/MaintenanceGuard.jsx';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'SHOPHORIA',
+  metadataBase: new URL('https://www.shophoriabd.com'),
+  title: {
+    default: 'SHOPHORIA',
+    template: '%s | SHOPHORIA',
+  },
   description: 'Your one-stop shop for everything amazing. Explore our collections.',
+  alternates: {
+    canonical: '/',
+  },
   other: {
     'google-site-verification': 'ps7tDPlns9KwY4J3aAN5Ua0mDMYVBehC7TY5D0s2Sys',
   },

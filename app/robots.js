@@ -1,5 +1,6 @@
+
 // Your live website domain
-const URL = 'https://shopshophoria.netlify.app';
+const URL = 'https://www.shophoriabd.com';
 
 export default function robots() {
   return {
