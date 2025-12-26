@@ -25,8 +25,9 @@ export const metadata = {
     canonical: '/',
   },
   icons: {
-    icon: '/icon.svg',
-    apple: '/icon.svg', // Professional look on iPhones
+    icon: { url: '/icon.svg', type: 'image/svg+xml' },
+    shortcut: { url: '/icon.svg', type: 'image/svg+xml' },
+    apple: { url: '/icon.svg', type: 'image/svg+xml' },
   },
   other: {
     'google-site-verification': 'ZjX56i_R8VsbzOZe1gsC6Nn0YyiQqXrjob-U19soXq0',
