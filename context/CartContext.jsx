@@ -1,16 +1,39 @@
+
 "use client";
 
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 
 const CartContext = createContext();
+const CART_STORAGE_KEY = 'shophoria-cart-session';
 
 export const useCart = () => {
   return useContext(CartContext);
 };
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const storedCart = sessionStorage.getItem(CART_STORAGE_KEY);
+        return storedCart ? JSON.parse(storedCart) : [];
+      } catch (error) {
+        console.error("Error reading cart from sessionStorage:", error);
+        return [];
+      }
+    }
+    return [];
+  });
+  
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    } catch (error) {
+      console.error("Error saving cart to sessionStorage:", error);
+    }
+  }, [cartItems]);
+
 
   const toggleCart = () => {
     setIsCartOpen(prevState => !prevState);
