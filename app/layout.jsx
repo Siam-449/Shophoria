@@ -42,6 +42,7 @@ export default function RootLayout({ children }) {
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
+          storageKey="shophoria-theme"
         >
           <MaintenanceGuard>
             <ProductsProvider>
