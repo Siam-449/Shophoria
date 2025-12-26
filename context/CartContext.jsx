@@ -4,7 +4,7 @@
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 
 const CartContext = createContext();
-const CART_STORAGE_KEY = 'shophoria-cart-session';
+const CART_STORAGE_KEY = 'shophoria-cart'; // Changed from session to permanent
 
 export const useCart = () => {
   return useContext(CartContext);
@@ -12,25 +12,27 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const storedCart = sessionStorage.getItem(CART_STORAGE_KEY);
-        return storedCart ? JSON.parse(storedCart) : [];
-      } catch (error) {
-        console.error("Error reading cart from sessionStorage:", error);
-        return [];
-      }
+    // This function now runs only on the client-side, preventing hydration issues.
+    if (typeof window === 'undefined') {
+      return [];
     }
-    return [];
+    try {
+      const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+      return storedCart ? JSON.parse(storedCart) : [];
+    } catch (error) {
+      console.error("Error reading cart from localStorage:", error);
+      return [];
+    }
   });
   
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
+    // This effect runs only on the client-side, where localStorage is available.
     try {
-      sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
     } catch (error) {
-      console.error("Error saving cart to sessionStorage:", error);
+      console.error("Error saving cart to localStorage:", error);
     }
   }, [cartItems]);
 
