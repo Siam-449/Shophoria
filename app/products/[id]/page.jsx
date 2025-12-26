@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { getProduct, getProducts } from '../../../lib/firebase';
 import { ProductDetailClient } from '../../../components/ProductCard.jsx';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }) {
     const { id } = params;
     const product = await getProduct(id);
