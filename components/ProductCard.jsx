@@ -1,16 +1,25 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '../context/CartContext.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
+import { CheckIcon } from './icons/CheckIcon.jsx';
 
 const ProductCard = ({ product }) => {
   const { addItemToCart } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
+  
   const discountPercentage = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null;
+
+  const handleAddToCart = () => {
+    addItemToCart(product);
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 1500);
+  };
 
   return (
     <div className="relative bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
@@ -42,11 +51,23 @@ const ProductCard = ({ product }) => {
             </p>
           </div>
           <button 
-            onClick={() => addItemToCart(product)}
-            disabled={product.quantity <= 0}
-            className="w-full mt-2 px-3 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed"
+            onClick={handleAddToCart}
+            disabled={product.quantity <= 0 || isAdded}
+            className={`w-full mt-2 px-3 py-2 text-white text-sm rounded-md transition-colors duration-300 ${
+              isAdded 
+              ? 'bg-green-500 dark:bg-green-600' 
+              : 'bg-indigo-600 hover:bg-indigo-700'
+            } disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed`}
           >
-            {product.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
+            {isAdded ? (
+                <span className="flex items-center justify-center gap-2">
+                    <CheckIcon className="h-4 w-4" /> Added!
+                </span>
+            ) : product.quantity > 0 ? (
+                'Add to Cart'
+            ) : (
+                'Out of Stock'
+            )}
           </button>
         </div>
       </div>
@@ -58,9 +79,17 @@ export default ProductCard;
 
 export const ProductDetailClient = ({ product }) => {
     const { addItemToCart } = useCart();
+    const [isAdded, setIsAdded] = useState(false);
+    
     const discountPercentage = product.originalPrice
       ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
       : null;
+
+    const handleAddToCart = () => {
+      addItemToCart(product);
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 2000);
+    };
 
     return (
         <div className="bg-white dark:bg-slate-950 py-12 sm:py-16">
@@ -96,11 +125,23 @@ export const ProductDetailClient = ({ product }) => {
                         </p>
                         <p className="text-slate-600 dark:text-slate-400 mt-6 text-lg leading-relaxed">{product.description}</p>
                         <button
-                            onClick={() => addItemToCart(product)}
-                            disabled={product.quantity <= 0}
-                            className="mt-8 w-full sm:w-auto px-8 py-4 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors text-lg font-semibold disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed"
+                            onClick={handleAddToCart}
+                            disabled={product.quantity <= 0 || isAdded}
+                            className={`mt-8 w-full sm:w-auto px-8 py-4 text-white rounded-lg transition-colors text-lg font-semibold flex items-center justify-center gap-2 ${
+                              isAdded
+                              ? 'bg-green-500 dark:bg-green-600'
+                              : 'bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700'
+                            } disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed`}
                         >
-                           {product.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
+                           {isAdded ? (
+                             <>
+                               <CheckIcon className="h-6 w-6" /> Added to Cart!
+                             </>
+                           ) : product.quantity > 0 ? (
+                             'Add to Cart'
+                           ) : (
+                             'Out of Stock'
+                           )}
                         </button>
                     </div>
                 </div>

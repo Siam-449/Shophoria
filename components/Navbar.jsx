@@ -7,64 +7,13 @@ import { useTheme } from 'next-themes';
 import { useCart } from '../context/CartContext.jsx';
 import { useProducts } from '../context/ProductsContext.jsx';
 import { usePathname, useRouter } from 'next/navigation';
-import { SearchIcon } from './icons/SearchIcon.jsx';
+import { useDebounce } from '../hooks/useDebounce.js';
 import { MoonIcon } from './icons/MoonIcon.jsx';
 import { SunIcon } from './icons/SunIcon.jsx';
 import { CartIcon } from './icons/CartIcon.jsx';
 import { MenuIcon } from './icons/MenuIcon.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
-
-const SearchBar = ({ 
-  isMobile = false,
-  searchQuery,
-  onSearchChange,
-  onSearchFocus,
-  isFocused,
-  searchResults,
-  onItemClick
-}) => {
-  return (
-    <>
-      <form onSubmit={(e) => e.preventDefault()} className="relative">
-        <span className={`absolute inset-y-0 left-0 flex items-center ${isMobile ? 'pl-5' : 'pl-3'}`}>
-          <SearchIcon className="h-5 w-5 text-slate-400" />
-        </span>
-        <input
-          type="search"
-          name="search"
-          placeholder="Search by name..."
-          value={searchQuery}
-          onChange={onSearchChange}
-          onFocus={onSearchFocus}
-          autoComplete="off"
-          className={`w-full py-2 pl-10 pr-4 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${!isMobile && 'w-56 lg:w-64 transition-all'}`}
-        />
-      </form>
-      {isFocused && (
-        <div className="absolute top-full mt-2 w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-lg z-20 max-h-96 overflow-y-auto">
-          <ul>
-            {searchResults.length > 0 ? searchResults.map(product => (
-              <li key={product.id}>
-                <button 
-                  onClick={() => onItemClick(`/products/${product.slug}`)} 
-                  className="flex items-center gap-4 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors w-full text-left"
-                >
-                  <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
-                  <div>
-                    <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">{product.name}</p>
-                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300">৳{product.price.toLocaleString()}</p>
-                  </div>
-                </button>
-              </li>
-            )) : (
-                <li className="p-3 text-center text-sm text-slate-500 dark:text-slate-400">No products found.</li>
-             )}
-          </ul>
-        </div>
-      )}
-    </>
-  );
-};
+import SearchBar from './SearchBar.jsx';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -80,24 +29,26 @@ const Navbar = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchContainerRef = useRef(null);
 
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (searchQuery.trim() === '' || products.length === 0) {
+    if (debouncedSearchQuery.trim() === '' || products.length === 0) {
       setSearchResults([]);
       return;
     }
 
-    const lowerCaseQuery = searchQuery.trim().toLowerCase();
+    const lowerCaseQuery = debouncedSearchQuery.trim().toLowerCase();
     const filtered = products.filter(product => {
       const productName = product.name.toLowerCase();
       const productId = String(product.id).toLowerCase();
       return productName.includes(lowerCaseQuery) || productId.includes(lowerCaseQuery);
     }).slice(0, 5);
     setSearchResults(filtered);
-  }, [searchQuery, products]);
+  }, [debouncedSearchQuery, products]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -118,6 +69,18 @@ const Navbar = () => {
     setIsSearchFocused(false);
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
+    }
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${searchQuery.trim()}`);
+      setSearchQuery('');
+      setSearchResults([]);
+      setIsSearchFocused(false);
+      if (isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
     }
   };
   
@@ -182,6 +145,7 @@ const Navbar = () => {
                     searchQuery={searchQuery}
                     onSearchChange={handleSearchInputChange}
                     onSearchFocus={handleSearchFocus}
+                    onSearchSubmit={handleSearchSubmit}
                     isFocused={isSearchFocused}
                     searchResults={searchResults}
                     onItemClick={handleSearchItemClick}
@@ -225,6 +189,7 @@ const Navbar = () => {
                 searchQuery={searchQuery}
                 onSearchChange={handleSearchInputChange}
                 onSearchFocus={handleSearchFocus}
+                onSearchSubmit={handleSearchSubmit}
                 isFocused={isSearchFocused}
                 searchResults={searchResults}
                 onItemClick={handleSearchItemClick}
