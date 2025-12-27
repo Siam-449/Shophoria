@@ -4,11 +4,29 @@
 import React, { useState, useEffect } from 'react';
 import { subscribeToMaintenanceMode } from '../lib/firebase.js';
 
+// Helper to detect if the user agent is Googlebot
+const isGoogleBot = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  const userAgent = window.navigator.userAgent;
+  return /Googlebot/i.test(userAgent);
+};
+
 const MaintenanceGuard = ({ children }) => {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Googlebot doesn't need a real-time listener and can have trouble with it.
+    // We default to showing the site for bots to ensure proper indexing.
+    if (isGoogleBot()) {
+      setMaintenanceMode(false);
+      setLoading(false);
+      return; // Skip setting up the listener for Googlebot
+    }
+
+    // For regular users, subscribe to real-time updates
     const unsubscribe = subscribeToMaintenanceMode((isEnabled) => {
       setMaintenanceMode(isEnabled);
       setLoading(false);
