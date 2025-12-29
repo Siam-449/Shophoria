@@ -21,9 +21,6 @@ export const metadata = {
     template: '%s | SHOPHORIA',
   },
   description: 'Your one-stop shop for everything amazing. Explore our collections of Fashion, Electronics, Home & Toys.',
-  alternates: {
-    canonical: '/',
-  },
   icons: {
     icon: { url: '/icon.svg', type: 'image/svg+xml' },
     shortcut: { url: '/icon.svg', type: 'image/svg+xml' },
