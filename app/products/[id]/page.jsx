@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { getProduct, getProducts } from '../../../lib/firebase';
+import { getProduct, getProducts, getRelatedProducts } from '../../../lib/firebase';
 import { ProductDetailClient } from '../../../components/ProductCard.jsx';
 
 export const dynamic = 'force-dynamic';
@@ -52,7 +52,9 @@ const ProductDetailPage = async ({ params }) => {
         );
     }
 
-    return <ProductDetailClient product={product} />;
+    const relatedProducts = await getRelatedProducts(product);
+
+    return <ProductDetailClient product={product} relatedProducts={relatedProducts} />;
 };
 
 export default ProductDetailPage;

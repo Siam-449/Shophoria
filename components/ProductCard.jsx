@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useCart } from '../context/CartContext.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
 import { CheckIcon } from './icons/CheckIcon.jsx';
+import RelatedProducts from './RelatedProducts.jsx';
 
 const ProductCard = ({ product }) => {
   const { addItemToCart } = useCart();
@@ -77,7 +78,7 @@ const ProductCard = ({ product }) => {
 
 export default ProductCard;
 
-export const ProductDetailClient = ({ product }) => {
+export const ProductDetailClient = ({ product, relatedProducts }) => {
     const { addItemToCart } = useCart();
     const [isAdded, setIsAdded] = useState(false);
     
@@ -145,6 +146,8 @@ export const ProductDetailClient = ({ product }) => {
                         </button>
                     </div>
                 </div>
+
+                <RelatedProducts products={relatedProducts} />
             </main>
         </div>
     );
