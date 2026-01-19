@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getProduct, getProducts, getRelatedProducts } from '../../../lib/firebase';
 import { ProductDetailClient } from '../../../components/ProductCard.jsx';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
 
 export async function generateMetadata({ params }) {
     const { id } = params;
