@@ -28,22 +28,26 @@ const CheckoutPageClient = () => {
   const [deliveryCharges, setDeliveryCharges] = useState({ inside: 60, outside: 110 });
 
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  
+  // Automatically remove the coupon if cart changes make it invalid
+  useEffect(() => {
+    // This check is only for quantity-based coupons that are already applied
+    if (appliedCoupon && appliedCoupon.minItems && totalQuantity < appliedCoupon.minItems) {
+      setAppliedCoupon(null); // Remove the coupon
+      setCouponMessage({ 
+        text: `Coupon '${appliedCoupon.code}' removed. Minimum of ${appliedCoupon.minItems} items required.`, 
+        type: 'error' 
+      });
+    }
+  }, [totalQuantity, appliedCoupon]); // Re-run whenever the cart quantity or applied coupon changes
+
   const isFreeShipping = freeDeliveryThreshold > 0 && totalQuantity >= freeDeliveryThreshold + 1;
   
   const shippingCost = isFreeShipping 
     ? 0 
     : (total > 0 ? (shippingLocation === 'inside-dhaka' ? deliveryCharges.inside : deliveryCharges.outside) : 0);
   
-  // Check if quantity requirements are still met (in case user removed items after applying)
-  const isCouponRequirementsMet = useMemo(() => {
-    if (!appliedCoupon) return false;
-    if (appliedCoupon.minItems) {
-      return totalQuantity >= appliedCoupon.minItems;
-    }
-    return true;
-  }, [appliedCoupon, totalQuantity]);
-  
-  const discountAmount = (appliedCoupon && isCouponRequirementsMet)
+  const discountAmount = appliedCoupon
     ? (total * appliedCoupon.discountPercentage) / 100
     : 0;
   
@@ -90,7 +94,7 @@ const CheckoutPageClient = () => {
       })),
       subtotal: total,
       shippingCost,
-      coupon: (appliedCoupon && isCouponRequirementsMet) ? { code: appliedCoupon.code, discountAmount: discountAmount } : null,
+      coupon: appliedCoupon ? { code: appliedCoupon.code, discountAmount: discountAmount } : null,
       grandTotal,
       status: 'Pending',
     };
@@ -165,7 +169,8 @@ const CheckoutPageClient = () => {
   
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
-    setCouponMessage({ text: 'Coupon removed.', type: '' });
+    setCouponCode('');
+    setCouponMessage({ text: 'Coupon removed.', type: 'info' });
   };
 
   if (submitted) {
@@ -308,16 +313,9 @@ const CheckoutPageClient = () => {
                 )}
               </div>
               {appliedCoupon && (
-                <div className="flex flex-col">
-                  <div className="flex justify-between text-green-600 dark:text-green-400">
-                    <span>Discount ({appliedCoupon.code})</span>
-                    <span>-৳{discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                  </div>
-                  {!isCouponRequirementsMet && appliedCoupon.minItems && (
-                     <span className="text-xs text-red-500 text-right mt-1">
-                        Requirements not met: Add {Math.max(0, appliedCoupon.minItems - totalQuantity)} more item(s).
-                     </span>
-                  )}
+                <div className="flex justify-between text-green-600 dark:text-green-400">
+                  <span>Discount ({appliedCoupon.code})</span>
+                  <span>-৳{discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                 </div>
               )}
             </div>
@@ -348,7 +346,11 @@ const CheckoutPageClient = () => {
                   </button>
                 </div>
                  {couponMessage.text && (
-                  <p className={`text-sm mt-2 ${couponMessage.type === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+                  <p className={`text-sm mt-2 ${
+                      couponMessage.type === 'success' ? 'text-green-600 dark:text-green-400' 
+                    : couponMessage.type === 'error' ? 'text-red-500 dark:text-red-400' 
+                    : 'text-slate-600 dark:text-slate-400'
+                  }`}>
                     {couponMessage.text}
                   </p>
                 )}

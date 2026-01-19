@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getProduct, getProducts, getRelatedProducts } from '../../../lib/firebase';
 import { ProductDetailClient } from '../../../components/ProductCard.jsx';
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 0; // Revalidate on every request to ensure fresh data
 
 export async function generateMetadata({ params }) {
     const { id } = params;
