@@ -4,6 +4,10 @@ import SearchResultsClient from './SearchResultsClient.jsx';
 
 export const metadata = {
   title: 'Search Results',
+  description: 'Find products by searching our extensive collection at SHOPHORIA.',
+  alternates: {
+    canonical: '/search',
+  },
   // It is best practice to not index search result pages to avoid thin content issues.
   robots: {
     index: false,
