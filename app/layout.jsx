@@ -12,6 +12,7 @@ import MaintenanceGuard from '../components/MaintenanceGuard.jsx';
 import MoveNotification from '../components/MoveNotification.jsx';
 import StructuredData from '../components/StructuredData.jsx';
 import FacebookPixel from '../components/FacebookPixel.jsx';
+import GoogleAnalytics from '../components/GoogleAnalytics.jsx';
 import { Suspense } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -74,6 +75,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <GoogleAnalytics />
         <Suspense fallback={null}>
           <FacebookPixel />
         </Suspense>
