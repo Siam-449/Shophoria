@@ -11,7 +11,7 @@ export default async function sitemap() {
     return {
       url: `${URL}/products/${product.slug}`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'daily',
       priority: 0.8,
     };
   });

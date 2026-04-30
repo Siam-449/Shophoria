@@ -3,6 +3,8 @@ import React from 'react';
 import Link from 'next/link';
 import { getProduct, getProducts, getRelatedProducts } from '../../../lib/firebase';
 import { ProductDetailClient } from '../../../components/ProductCard.jsx';
+import StructuredData from '../../../components/StructuredData.jsx';
+import { redirect } from 'next/navigation';
 
 export const revalidate = 0; // Revalidate on every request to ensure fresh data
 
@@ -12,17 +14,29 @@ export async function generateMetadata({ params }) {
 
     if (!product) {
         return {
-            title: 'Product Not Found - SHOPHORIA',
+            title: 'Product Not Found - Shophoria',
             description: "Sorry, we couldn't find the product you're looking for.",
         };
     }
 
     return {
-        title: `${product.name} - SHOPHORIA`,
+        title: `${product.name} - Shophoria`,
         description: product.description,
         alternates: {
           canonical: `/products/${product.slug}`
-        }
+        },
+        openGraph: {
+            title: `${product.name} | Shophoria`,
+            description: product.description,
+            images: [
+                {
+                    url: product.image,
+                    width: 800,
+                    height: 600,
+                    alt: product.name,
+                },
+            ],
+        },
     };
 }
 
@@ -52,9 +66,41 @@ const ProductDetailPage = async ({ params }) => {
         );
     }
 
+    // CRITICAL SEO FIX: If the URL uses the ID instead of the Slug, 
+    // perform a permanent redirect to the slug version.
+    // This prevents "Duplicate Content" or "Alternative Page" errors in Google Search Console.
+    if (id !== product.slug) {
+        redirect(`/products/${product.slug}`);
+    }
+
+    const productSchema = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.name,
+        "image": product.image,
+        "description": product.description,
+        "sku": product.id,
+        "brand": {
+          "@type": "Brand",
+          "name": "Shophoria"
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": `https://www.shophoriabd.com/products/${product.slug}`,
+          "priceCurrency": "BDT",
+          "price": product.price,
+          "availability": "https://schema.org/InStock"
+        }
+      };
+
     const relatedProducts = await getRelatedProducts(product);
 
-    return <ProductDetailClient product={product} relatedProducts={relatedProducts} />;
+    return (
+        <>
+            <StructuredData data={productSchema} />
+            <ProductDetailClient product={product} relatedProducts={relatedProducts} />
+        </>
+    );
 };
 
 export default ProductDetailPage;
