@@ -59,7 +59,7 @@ const CategoryShowcase = () => {
                     >
                         <div className="relative overflow-hidden aspect-square">
                             <img src={category.image} alt={category.name} className="w-full h-full object-contain sm:object-cover group-hover:scale-105 sm:group-hover:scale-100 transition-transform duration-300" />
-                            <div className="hidden sm:flex absolute inset-0 bg-black/40 items-center justify-center">
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                                 <Icon className="h-6 w-6 sm:h-10 sm:w-10 text-white" />
                             </div>
                         </div>
