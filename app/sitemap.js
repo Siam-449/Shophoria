@@ -1,6 +1,9 @@
 
 import { getProducts } from '../lib/firebase';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Your live website domain
 const URL = 'https://www.shophoriabd.com';
 
