@@ -22,7 +22,7 @@ const getCollectionsProducts = (products) => {
     return array;
   };
 
-  const categories = ['Fashion & Beauty', 'Electronics', 'Home & Toys', 'Books & Paints'];
+  const categories = ['Fashion & Beauty', 'Electronics', 'Home & Toys', 'Knife'];
   const numToSelectPerCategory = 2;
   const totalProductsToShow = 12;
 

@@ -22,7 +22,7 @@ const Footer = () => {
               <li><Link href="/fashion" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Fashion & Beauty</Link></li>
               <li><Link href="/electronics" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Electronics</Link></li>
               <li><Link href="/home-toy" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Home & Toys</Link></li>
-              <li><Link href="/books" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Books & Paints</Link></li>
+              <li><Link href="/knife" className="text-slate-300 dark:text-slate-600 transition hover:text-white dark:hover:text-slate-900">Knife</Link></li>
             </ul>
           </div>
 

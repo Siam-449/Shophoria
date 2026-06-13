@@ -100,7 +100,7 @@ const Navbar = () => {
     { name: 'Fashion & Beauty', href: '/fashion' },
     { name: 'Electronics', href: '/electronics' },
     { name: 'Home & Toys', href: '/home-toy' },
-    { name: 'Books & Paints', href: '/books' },
+    { name: 'Knife', href: '/knife' },
     { name: 'Contact', href: '/contact' },
   ];
 
