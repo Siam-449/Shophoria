@@ -85,6 +85,20 @@ export default function HomePageClient() {
       <Hero />
       <CategoryShowcase />
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
+        {!timeOffersLoading && timeOffers.length > 0 && (
+          <section className="mb-16">
+            <div className="text-center my-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Limited Time Offers</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400">Grab these amazing deals before they're gone!</p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {timeOffers.map((product) => (
+                <TimeOfferCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        )}
+
          <div className="text-center my-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Our Collections</h2>
             <p className="text-lg text-slate-600 dark:text-slate-400">Explore our curated selection of amazing products.</p>
@@ -97,20 +111,6 @@ export default function HomePageClient() {
               ))
           }
         </div>
-        
-        {!timeOffersLoading && timeOffers.length > 0 && (
-          <section className="mt-16">
-            <div className="text-center my-12">
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Limited Time Offers</h2>
-              <p className="text-lg text-slate-600 dark:text-slate-400">Grab these amazing deals before they're gone!</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              {timeOffers.map((product) => (
-                <TimeOfferCard key={product.id} product={product} />
-              ))}
-            </div>
-          </section>
-        )}
         
         <div className="mt-12 text-center">
             <Link 

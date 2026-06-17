@@ -39,18 +39,18 @@ const TimeOfferCard = ({ product }) => {
 
   return (
     <div className="relative bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-md border border-slate-200 dark:border-slate-800 flex flex-col">
-      <div className="p-3 bg-red-600 text-white text-center">
-        <h4 className="font-bold text-lg">Time Left to Order!</h4>
-        <div className="flex justify-center gap-3 mt-2">
+      <div className="p-2 sm:p-3 bg-red-600 text-white text-center">
+        <h4 className="font-bold text-sm sm:text-lg">Time Left to Order!</h4>
+        <div className="flex justify-center gap-1 sm:gap-3 mt-1 sm:mt-2">
             {Object.keys(timeLeft).length > 0 ? (
                 Object.entries(timeLeft).map(([unit, value]) => (
                     <div key={unit} className="flex flex-col items-center">
-                        <span className="text-xl font-mono font-bold">{String(value).padStart(2, '0')}</span>
-                        <span className="text-xs uppercase">{unit}</span>
+                        <span className="text-sm sm:text-xl font-mono font-bold">{String(value).padStart(2, '0')}</span>
+                        <span className="text-[9px] sm:text-xs uppercase">{unit}</span>
                     </div>
                 ))
             ) : (
-                <span className="text-lg font-bold">Offer Expired!</span>
+                <span className="text-sm sm:text-lg font-bold">Offer Expired!</span>
             )}
         </div>
       </div>
