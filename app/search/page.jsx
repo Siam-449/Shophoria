@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Search Results',
   description: 'Find products by searching our extensive collection at SHOPHORIA.',
   alternates: {
-    canonical: '/search',
+    canonical: 'https://www.shophoriabd.com/search',
   },
   // It is best practice to not index search result pages to avoid thin content issues.
   robots: {

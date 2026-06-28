@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Electronics',
   description: 'Check out our latest electronic gadgets, smart devices, and kits for tech enthusiasts.',
   alternates: {
-    canonical: '/electronics',
+    canonical: 'https://www.shophoriabd.com/electronics',
   },
 };
 

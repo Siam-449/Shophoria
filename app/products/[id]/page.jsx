@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
         title: `${product.name} - Shophoria`,
         description: product.description,
         alternates: {
-          canonical: `/products/${product.slug}`
+          canonical: `https://www.shophoriabd.com/products/${product.slug}`
         },
         openGraph: {
             title: `${product.name} | Shophoria`,

@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Fashion & Beauty',
   description: 'Discover our collection of stylish bags, trendy accessories, and essential beauty products.',
   alternates: {
-    canonical: '/fashion',
+    canonical: 'https://www.shophoriabd.com/fashion',
   },
 };
 

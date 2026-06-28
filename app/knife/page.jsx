@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Knife',
   description: 'Browse our collection of high quality knives and tools.',
   alternates: {
-    canonical: '/knife',
+    canonical: 'https://www.shophoriabd.com/knife',
   },
 };
 

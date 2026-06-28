@@ -7,7 +7,7 @@ export const metadata = {
   title: 'Shophoria | Premium Online Shopping for Fashion, Electronics & More',
   description: 'Discover the latest trends in luxury fashion, cutting-edge electronics, and home essentials at Shophoria. Quality products with fast delivery in Bangladesh.',
   alternates: {
-    canonical: '/',
+    canonical: 'https://www.shophoriabd.com/',
   },
 };
 

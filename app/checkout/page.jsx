@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Checkout',
   description: 'Complete your purchase from SHOPHORIA securely.',
   alternates: {
-    canonical: '/checkout',
+    canonical: 'https://www.shophoriabd.com/checkout',
   },
   robots: {
     index: false,

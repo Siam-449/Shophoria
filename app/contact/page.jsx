@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Contact Us',
   description: "Get in touch with SHOPHORIA. We're here to help with any questions about our products or your orders.",
   alternates: {
-    canonical: '/contact',
+    canonical: 'https://www.shophoriabd.com/contact',
   },
 };
 
