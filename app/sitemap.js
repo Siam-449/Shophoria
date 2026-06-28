@@ -1,0 +1,33 @@
+import { getProducts } from '../lib/firebase';
+import { unstable_noStore as noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const URL = 'https://www.shophoriabd.com';
+
+export default async function sitemap() {
+  noStore();
+  const products = await getProducts();
+
+  const productUrls = products.map((product) => {
+    return {
+      url: `${URL}/products/${product.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    };
+  });
+
+  const staticUrls = [
+    { url: URL, lastModified: new Date(), changeFrequency: 'monthly', priority: 1 },
+    { url: `${URL}/products`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${URL}/fashion`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${URL}/electronics`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${URL}/home-toy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${URL}/knife`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${URL}/contact`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.5 },
+  ];
+
+  return [...staticUrls, ...productUrls];
+}

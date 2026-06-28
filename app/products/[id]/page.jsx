@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getProduct, getProducts, getRelatedProducts } from '../../../lib/firebase';
 import { ProductDetailClient } from '../../../components/ProductCard.jsx';
 import StructuredData from '../../../components/StructuredData.jsx';
-import { redirect } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 
 export const revalidate = 0; // Revalidate on every request to ensure fresh data
 export const dynamicParams = true; // explicitly allow new params to be fetched at runtime
@@ -65,7 +65,7 @@ const ProductDetailPage = async ({ params }) => {
     // perform a permanent redirect to the slug version.
     // This prevents "Duplicate Content" or "Alternative Page" errors in Google Search Console.
     if (id !== product.slug) {
-        redirect(`/products/${product.slug}`);
+        permanentRedirect(`/products/${product.slug}`);
     }
 
     const productSchema = {

@@ -30,7 +30,17 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     // This effect runs only on the client-side, where localStorage is available.
     try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+      const safeStringify = (obj) => {
+        let cache = [];
+        const retVal = JSON.stringify(obj, (key, value) =>
+          typeof value === "object" && value !== null
+            ? cache.includes(value) ? undefined : cache.push(value) && value
+            : value
+        );
+        cache = null;
+        return retVal;
+      };
+      localStorage.setItem(CART_STORAGE_KEY, safeStringify(cartItems));
     } catch (error) {
       console.error("Error saving cart to localStorage:", error);
     }
