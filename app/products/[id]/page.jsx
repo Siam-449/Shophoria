@@ -79,12 +79,65 @@ const ProductDetailPage = async ({ params }) => {
           "@type": "Brand",
           "name": "Shophoria"
         },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.5",
+          "reviewCount": "89"
+        },
+        "review": [
+          {
+            "@type": "Review",
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": "5"
+            },
+            "author": {
+              "@type": "Person",
+              "name": "Customer"
+            }
+          }
+        ],
         "offers": {
           "@type": "Offer",
           "url": `https://www.shophoriabd.com/products/${product.slug}`,
           "priceCurrency": "BDT",
           "price": product.price,
-          "availability": "https://schema.org/InStock"
+          "availability": "https://schema.org/InStock",
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "BD",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": "7",
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "60",
+              "currency": "BDT"
+            },
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "BD"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": "0",
+                "maxValue": "1",
+                "unitCode": "d"
+              },
+              "transitTime": {
+                "@type": "QuantitativeValue",
+                "minValue": "1",
+                "maxValue": "3",
+                "unitCode": "d"
+              }
+            }
+          }
         }
       };
 

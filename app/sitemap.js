@@ -1,5 +1,6 @@
 
 import { getProducts } from '../lib/firebase';
+import { unstable_noStore as noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -8,6 +9,7 @@ export const revalidate = 0;
 const URL = 'https://www.shophoriabd.com';
 
 export default async function sitemap() {
+  noStore(); // Explicitly tell Next.js not to cache this
   const products = await getProducts();
 
   const productUrls = products.map((product) => {
@@ -25,7 +27,7 @@ export default async function sitemap() {
     { url: `${URL}/fashion`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${URL}/electronics`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${URL}/home-toy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${URL}/books`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${URL}/knife`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${URL}/contact`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.5 },
   ];
 
