@@ -9,7 +9,6 @@ import CartDrawer from '../components/CartDrawer.jsx';
 import OfferBanner from '../components/OfferBanner.jsx';
 import { ProductsProvider } from '../context/ProductsContext.jsx';
 import MaintenanceGuard from '../components/MaintenanceGuard.jsx';
-import MoveNotification from '../components/MoveNotification.jsx';
 import StructuredData from '../components/StructuredData.jsx';
 import FacebookPixel from '../components/FacebookPixel.jsx';
 import GoogleAnalytics from '../components/GoogleAnalytics.jsx';
@@ -92,9 +91,6 @@ export default function RootLayout({ children }) {
                 <OfferBanner />
                 <Navbar />
                 <CartDrawer />
-                <Suspense fallback={null}>
-                  <MoveNotification />
-                </Suspense>
                 {children}
                 <Footer />
               </CartProvider>

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getProduct, getProducts, getRelatedProducts } from '../../../lib/firebase';
 import { ProductDetailClient } from '../../../components/ProductCard.jsx';
 import StructuredData from '../../../components/StructuredData.jsx';
-import { permanentRedirect } from 'next/navigation';
+import { permanentRedirect, notFound } from 'next/navigation';
 
 export const revalidate = 0; // Revalidate on every request to ensure fresh data
 export const dynamicParams = true; // explicitly allow new params to be fetched at runtime
@@ -48,17 +48,7 @@ const ProductDetailPage = async ({ params }) => {
     const product = await getProduct(id);
 
     if (!product) {
-        return (
-            <div className="bg-white dark:bg-slate-950 min-h-[60vh] flex items-center justify-center">
-                <div className="text-center p-4">
-                    <h1 className="text-4xl font-bold text-slate-800 dark:text-slate-100">Product Not Found</h1>
-                    <p className="mt-4 text-slate-600 dark:text-slate-400">Sorry, we couldn't find the product you are looking for.</p>
-                    <Link href="/products" className="mt-6 inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-                        Back to All Products
-                    </Link>
-                </div>
-            </div>
-        );
+        notFound();
     }
 
     // CRITICAL SEO FIX: If the URL uses the ID instead of the Slug, 
@@ -68,12 +58,15 @@ const ProductDetailPage = async ({ params }) => {
         permanentRedirect(`/products/${product.slug}`);
     }
 
+    // Ensure price is a number
+    const numericPrice = typeof product.price === 'string' ? Number(product.price.replace(/[^0-9.-]+/g, "")) : (product.price || 0);
+
     const productSchema = {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": product.name,
-        "image": product.image,
-        "description": product.description,
+        "image": product.image ? (Array.isArray(product.image) ? product.image : [product.image]) : ["https://www.shophoriabd.com/icon.svg"],
+        "description": product.description || product.name,
         "sku": product.id,
         "brand": {
           "@type": "Brand",
@@ -81,15 +74,15 @@ const ProductDetailPage = async ({ params }) => {
         },
         "aggregateRating": {
           "@type": "AggregateRating",
-          "ratingValue": "4.5",
-          "reviewCount": "89"
+          "ratingValue": 4.5,
+          "reviewCount": 89
         },
         "review": [
           {
             "@type": "Review",
             "reviewRating": {
               "@type": "Rating",
-              "ratingValue": "5"
+              "ratingValue": 5
             },
             "author": {
               "@type": "Person",
@@ -101,13 +94,13 @@ const ProductDetailPage = async ({ params }) => {
           "@type": "Offer",
           "url": `https://www.shophoriabd.com/products/${product.slug}`,
           "priceCurrency": "BDT",
-          "price": product.price,
+          "price": numericPrice,
           "availability": "https://schema.org/InStock",
           "hasMerchantReturnPolicy": {
             "@type": "MerchantReturnPolicy",
             "applicableCountry": "BD",
             "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-            "merchantReturnDays": "7",
+            "merchantReturnDays": 7,
             "returnMethod": "https://schema.org/ReturnByMail",
             "returnFees": "https://schema.org/FreeReturn"
           },
@@ -115,7 +108,7 @@ const ProductDetailPage = async ({ params }) => {
             "@type": "OfferShippingDetails",
             "shippingRate": {
               "@type": "MonetaryAmount",
-              "value": "60",
+              "value": 60,
               "currency": "BDT"
             },
             "shippingDestination": {
@@ -126,14 +119,14 @@ const ProductDetailPage = async ({ params }) => {
               "@type": "ShippingDeliveryTime",
               "handlingTime": {
                 "@type": "QuantitativeValue",
-                "minValue": "0",
-                "maxValue": "1",
+                "minValue": 0,
+                "maxValue": 1,
                 "unitCode": "d"
               },
               "transitTime": {
                 "@type": "QuantitativeValue",
-                "minValue": "1",
-                "maxValue": "3",
+                "minValue": 1,
+                "maxValue": 3,
                 "unitCode": "d"
               }
             }
