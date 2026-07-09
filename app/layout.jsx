@@ -88,8 +88,8 @@ export default function RootLayout({ children }) {
           <MaintenanceGuard>
             <ProductsProvider>
               <CartProvider>
-                <OfferBanner />
                 <Navbar />
+                <OfferBanner />
                 <CartDrawer />
                 {children}
                 <Footer />

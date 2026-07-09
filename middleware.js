@@ -10,9 +10,7 @@ export function middleware(request) {
     // Perform a 301 Permanent Redirect to the new domain
     const newDomain = 'https://www.shophoriabd.com';
     
-    // Add a flag so the new site knows they were redirected
-    url.searchParams.set('moved', 'true');
-    
+    // We used to append ?moved=true, but we are removing it to prevent GSC canonical warnings
     const newUrl = `${newDomain}${url.pathname}${url.search}`;
     
     return NextResponse.redirect(newUrl, 301);

@@ -1,0 +1,3 @@
+User-Agent: *
+Allow: /
+Sitemap: https://www.shophoriabd.com/sitemap.xml
