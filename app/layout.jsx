@@ -7,6 +7,7 @@ import Footer from '../components/Footer.jsx';
 import { CartProvider } from '../context/CartContext.jsx';
 import CartDrawer from '../components/CartDrawer.jsx';
 import OfferBanner from '../components/OfferBanner.jsx';
+import NoticeBanner from '../components/NoticeBanner.jsx';
 import { ProductsProvider } from '../context/ProductsContext.jsx';
 import MaintenanceGuard from '../components/MaintenanceGuard.jsx';
 import StructuredData from '../components/StructuredData.jsx';
@@ -73,7 +74,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-white dark:bg-[#0d0c0b] text-slate-900 dark:text-slate-100 min-h-screen`}>
         <GoogleAnalytics />
         <Suspense fallback={null}>
           <FacebookPixel />
@@ -89,7 +90,7 @@ export default function RootLayout({ children }) {
             <ProductsProvider>
               <CartProvider>
                 <Navbar />
-                <OfferBanner />
+                <NoticeBanner />
                 <CartDrawer />
                 {children}
                 <Footer />

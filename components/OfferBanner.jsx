@@ -23,7 +23,7 @@ const OfferBanner = () => {
   }
 
   return (
-    <div className="bg-black dark:bg-white text-white dark:text-black py-2.5 text-sm font-medium overflow-hidden">
+    <div className="lg:hidden bg-black dark:bg-white text-white dark:text-black py-2.5 text-sm font-medium overflow-hidden">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Mobile Marquee */}
         <div className="lg:hidden relative h-5 flex items-center">

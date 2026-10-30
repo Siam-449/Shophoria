@@ -17,14 +17,28 @@ export const ProductsProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isResolved = false;
+
+    const timer = setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        setLoading(false);
+      }
+    }, 2000);
+
     const fetchProducts = async () => {
-      setLoading(true);
       const productList = await getProducts();
-      setProducts(productList);
-      setLoading(false);
+      if (!isResolved) {
+        isResolved = true;
+        clearTimeout(timer);
+        setProducts(productList);
+        setLoading(false);
+      }
     };
 
     fetchProducts();
+
+    return () => clearTimeout(timer);
   }, []);
 
   const value = {

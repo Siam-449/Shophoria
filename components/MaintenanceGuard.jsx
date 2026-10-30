@@ -26,13 +26,30 @@ const MaintenanceGuard = ({ children }) => {
       return; // Skip setting up the listener for Googlebot
     }
 
+    let isResolved = false;
+
+    // Safety timeout in case Firestore/onSnapshot hangs
+    const timer = setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        setLoading(false);
+      }
+    }, 2000);
+
     // For regular users, subscribe to real-time updates
     const unsubscribe = subscribeToMaintenanceMode((isEnabled) => {
-      setMaintenanceMode(isEnabled);
-      setLoading(false);
+      if (!isResolved) {
+        isResolved = true;
+        clearTimeout(timer);
+        setMaintenanceMode(isEnabled);
+        setLoading(false);
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
   }, []);
 
   if (loading) {

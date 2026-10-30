@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SearchIcon } from './icons/SearchIcon.jsx';
 
@@ -19,8 +18,8 @@ const SearchBar = ({
   }
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="relative">
+    <div className="relative w-full">
+      <form onSubmit={handleSubmit} className="relative flex items-center w-full">
         <span className={`absolute inset-y-0 left-0 flex items-center ${isMobile ? 'pl-5' : 'pl-3'}`}>
           <SearchIcon className="h-5 w-5 text-slate-400" />
         </span>
@@ -32,11 +31,17 @@ const SearchBar = ({
           onChange={onSearchChange}
           onFocus={onSearchFocus}
           autoComplete="off"
-          className={`w-full py-2 pl-10 pr-4 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${!isMobile && 'w-56 lg:w-64 transition-all'}`}
+          className="w-full py-2 pl-10 pr-20 text-sm bg-white dark:bg-[#0d0c0b] text-slate-900 dark:text-slate-100 focus:outline-none rounded-l-full [&::-webkit-search-cancel-button]:hidden"
         />
+        <button
+          type="submit"
+          className="bg-black dark:bg-neutral-800 text-white px-5 py-2 text-sm font-medium rounded-r-full hover:bg-slate-800 dark:hover:bg-neutral-700 transition-colors whitespace-nowrap"
+        >
+          Search
+        </button>
       </form>
       {isFocused && (
-        <div className="absolute top-full mt-2 w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md shadow-lg z-20 max-h-96 overflow-y-auto">
+        <div className="absolute top-full mt-2 w-full bg-white dark:bg-[#0d0c0b] border border-slate-300 dark:border-neutral-800 rounded-md shadow-lg z-20 max-h-96 overflow-y-auto">
           <ul>
             {searchResults.length > 0 ? (
               <>
@@ -69,7 +74,7 @@ const SearchBar = ({
           </ul>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

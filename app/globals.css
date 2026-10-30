@@ -9,9 +9,9 @@
   }
 
   .animate-marquee {
-    position: absolute;
+    display: inline-block;
     white-space: nowrap;
-    animation: marquee 15s linear infinite;
+    animation: marquee 25s linear infinite;
   }
   
   @keyframes text-gradient {
@@ -46,4 +46,41 @@
     );
     background-size: 200% auto;
   }
+  .animate-blink {
+    animation: fade 3s ease-in-out infinite;
+  }
+  @keyframes fade {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+}
+
+html.dark,
+.dark,
+.dark body {
+  background-color: #0d0c0b;
+  color: #f8fafc;
+}
+
+/* Telegram-style Circular Reveal Theme Transition */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Light to Dark: new dark theme expands on top */
+[data-theme-transition="light-to-dark"]::view-transition-old(root) {
+  z-index: 1;
+}
+[data-theme-transition="light-to-dark"]::view-transition-new(root) {
+  z-index: 9999;
+}
+
+/* Dark to Light: old dark theme contracts on top in reverse */
+[data-theme-transition="dark-to-light"]::view-transition-old(root) {
+  z-index: 9999;
+}
+[data-theme-transition="dark-to-light"]::view-transition-new(root) {
+  z-index: 1;
 }
