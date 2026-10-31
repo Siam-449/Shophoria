@@ -55,6 +55,11 @@
   }
 }
 
+html {
+  background-color: #ffffff;
+  color: #000000;
+}
+
 html.dark,
 .dark,
 .dark body {
@@ -69,18 +74,18 @@ html.dark,
   mix-blend-mode: normal;
 }
 
-/* Light to Dark: new dark theme expands on top */
-[data-theme-transition="light-to-dark"]::view-transition-old(root) {
+/* Light to Dark: incoming dark theme expands on top */
+html.theme-transition-to-dark::view-transition-old(root) {
   z-index: 1;
 }
-[data-theme-transition="light-to-dark"]::view-transition-new(root) {
+html.theme-transition-to-dark::view-transition-new(root) {
   z-index: 9999;
 }
 
-/* Dark to Light: old dark theme contracts on top in reverse */
-[data-theme-transition="dark-to-light"]::view-transition-old(root) {
+/* Dark to Light (reverse): outgoing dark theme on top shrinks back */
+html.theme-transition-to-light::view-transition-old(root) {
   z-index: 9999;
 }
-[data-theme-transition="dark-to-light"]::view-transition-new(root) {
+html.theme-transition-to-light::view-transition-new(root) {
   z-index: 1;
 }

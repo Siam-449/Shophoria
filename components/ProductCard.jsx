@@ -56,9 +56,9 @@ const ProductCard = ({ product }) => {
             disabled={product.quantity <= 0 || isAdded}
             className={`w-full mt-2 px-3 py-2 text-white text-sm rounded-md transition-colors duration-300 ${
               isAdded 
-              ? 'bg-green-500 dark:bg-green-600' 
-              : 'bg-indigo-600 hover:bg-indigo-700'
-            } disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed`}
+              ? 'bg-green-600 text-white' 
+              : 'bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800'
+            } disabled:bg-slate-400 dark:disabled:bg-slate-700 disabled:cursor-not-allowed`}
           >
             {isAdded ? (
                 <span className="flex items-center justify-center gap-2">
@@ -141,9 +141,9 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                             disabled={product.quantity <= 0 || isAdded}
                             className={`mt-8 w-full sm:w-auto px-8 py-4 text-white rounded-lg transition-colors text-lg font-semibold flex items-center justify-center gap-2 ${
                               isAdded
-                              ? 'bg-green-500 dark:bg-green-600'
-                              : 'bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700'
-                            } disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed`}
+                              ? 'bg-green-600 text-white'
+                              : 'bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800'
+                            } disabled:bg-slate-400 dark:disabled:bg-slate-700 disabled:cursor-not-allowed`}
                         >
                            {isAdded ? (
                              <>

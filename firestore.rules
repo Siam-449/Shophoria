@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public read for products, write restricted to authenticated admins
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Website settings (banners, notice, free delivery, maintenance):
+    // Public read so both websites can load them, write restricted to admin
+    match /website_settings/{settingId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Nested website settings subcollections (if any):
+    match /website_settings/{settingId}/{subCollection=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Banners collection (if stored as individual documents):
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Categories collection (if stored as individual documents):
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Limited time offers collection:
+    match /time_offers/{offerId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Coupons
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Web sales orders (users can submit orders)
+    match /websales/{saleId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // Contact messages (users can submit contact queries)
+    match /dynamic_messages/{messageId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+  }
+}

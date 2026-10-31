@@ -75,7 +75,7 @@ const CartDrawer = () => {
               <Link
                 href="/checkout"
                 onClick={toggleCart}
-                className="w-full block text-center py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors"
+                className="w-full block text-center py-3 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors font-semibold"
               >
                 Proceed to Checkout
               </Link>

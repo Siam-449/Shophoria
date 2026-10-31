@@ -81,7 +81,7 @@ const TimeOfferCard = ({ product }) => {
           <button 
             onClick={() => addItemToCart(product)}
             disabled={product.quantity <= 0 || Object.keys(timeLeft).length === 0}
-            className="w-full mt-2 px-3 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed"
+            className="w-full mt-2 px-3 py-2 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white text-sm rounded-md hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors disabled:bg-slate-400 dark:disabled:bg-slate-700 disabled:cursor-not-allowed"
           >
             {product.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
           </button>

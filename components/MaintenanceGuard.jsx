@@ -15,50 +15,20 @@ const isGoogleBot = () => {
 
 const MaintenanceGuard = ({ children }) => {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Googlebot doesn't need a real-time listener and can have trouble with it.
-    // We default to showing the site for bots to ensure proper indexing.
     if (isGoogleBot()) {
-      setMaintenanceMode(false);
-      setLoading(false);
-      return; // Skip setting up the listener for Googlebot
+      return;
     }
 
-    let isResolved = false;
-
-    // Safety timeout in case Firestore/onSnapshot hangs
-    const timer = setTimeout(() => {
-      if (!isResolved) {
-        isResolved = true;
-        setLoading(false);
-      }
-    }, 2000);
-
-    // For regular users, subscribe to real-time updates
     const unsubscribe = subscribeToMaintenanceMode((isEnabled) => {
-      if (!isResolved) {
-        isResolved = true;
-        clearTimeout(timer);
-        setMaintenanceMode(isEnabled);
-        setLoading(false);
-      }
+      setMaintenanceMode(isEnabled);
     });
 
     return () => {
-      clearTimeout(timer);
       unsubscribe();
     };
   }, []);
-
-  if (loading) {
-      return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-        </div>
-      );
-  }
 
   if (maintenanceMode) {
     return (

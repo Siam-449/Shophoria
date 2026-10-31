@@ -2,11 +2,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { flushSync } from 'react-dom';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useCart } from '../context/CartContext.jsx';
 import { useProducts } from '../context/ProductsContext.jsx';
+import { useCategories } from '../context/CategoriesContext.jsx';
 import { usePathname, useRouter } from 'next/navigation';
 import { useDebounce } from '../hooks/useDebounce.js';
 import { MoonIcon } from './icons/MoonIcon.jsx';
@@ -26,8 +26,10 @@ const Navbar = () => {
   const noticeRef = useRef(null);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const isTransitioningRef = useRef(false);
   const { toggleCart, cartItems } = useCart();
   const { products } = useProducts();
+  const { categories } = useCategories();
   const pathname = usePathname();
   const router = useRouter();
   
@@ -113,16 +115,37 @@ const Navbar = () => {
     }
   }
 
-  const navLinks = [
-    { name: 'All Products', href: '/products' },
-    { name: 'Fashion & Beauty', href: '/fashion' },
-    { name: 'Electronics', href: '/electronics' },
-    { name: 'Home & Toys', href: '/home-toy' },
-    { name: 'Knife', href: '/knife' },
-  ];
+  const toCategorySlug = (text) => {
+    if (!text) return '';
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
+  const dynamicCategoryLinks = categories && categories.length > 0 ? categories.map((cat) => {
+    let href = cat.href;
+    if (!href) {
+      const slug = cat.slug || toCategorySlug(cat.name);
+      if (slug === 'fashion' || slug === 'fashion-beauty') href = '/fashion';
+      else if (slug === 'electronics' || slug === 'electronics-gadgets') href = '/electronics';
+      else if (slug === 'home-toy' || slug === 'toys-kids') href = '/home-toy';
+      else if (slug === 'knife') href = '/knife';
+      else href = `/category/${slug}`;
+    }
+    return {
+      name: cat.name,
+      href,
+    };
+  }) : [];
 
   const toggleThemeWithTransition = (e) => {
-    const isDark = theme === 'dark';
+    if (isTransitioningRef.current) return;
+
+    // Strict, reliable check directly from root class
+    const isDark = typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : theme === 'dark';
     const newTheme = isDark ? 'light' : 'dark';
 
     if (
@@ -134,6 +157,8 @@ const Navbar = () => {
       return;
     }
 
+    isTransitioningRef.current = true;
+
     const rect = e?.currentTarget?.getBoundingClientRect?.() || {
       left: window.innerWidth - 60,
       top: 30,
@@ -141,42 +166,62 @@ const Navbar = () => {
       height: 24,
     };
 
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
+    const x = e?.clientX && e.clientX > 0 ? e.clientX : (rect.left + rect.width / 2);
+    const y = e?.clientY && e.clientY > 0 ? e.clientY : (rect.top + rect.height / 2);
 
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y)
     );
 
-    document.documentElement.dataset.themeTransition = isDark ? 'dark-to-light' : 'light-to-dark';
+    const transitionClass = isDark ? 'theme-transition-to-light' : 'theme-transition-to-dark';
+    document.documentElement.classList.add(transitionClass);
+
+    let activeAnimation = null;
 
     const transition = document.startViewTransition(() => {
-      flushSync(() => {
-        setTheme(newTheme);
-      });
+      // Toggle class synchronously so the new theme DOM snapshot is immediate
+      if (newTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      setTheme(newTheme);
     });
 
     transition.ready.then(() => {
-      const clipPath = [
-        `circle(0px at ${x}px ${y}px)`,
-        `circle(${endRadius}px at ${x}px ${y}px)`,
-      ];
+      const keyframes = isDark
+        ? [
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+            `circle(0px at ${x}px ${y}px)`,
+          ]
+        : [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ];
 
-      document.documentElement.animate(
+      activeAnimation = document.documentElement.animate(
         {
-          clipPath: isDark ? [...clipPath].reverse() : clipPath,
+          clipPath: keyframes,
         },
         {
-          duration: 500,
+          duration: 400,
           easing: 'ease-in-out',
+          fill: 'forwards',
           pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)',
         }
       );
     });
 
     transition.finished.finally(() => {
-      delete document.documentElement.dataset.themeTransition;
+      if (activeAnimation) {
+        activeAnimation.cancel();
+      }
+      document.documentElement.classList.remove(
+        'theme-transition-to-light',
+        'theme-transition-to-dark'
+      );
+      isTransitioningRef.current = false;
     });
   };
 
@@ -240,7 +285,7 @@ const Navbar = () => {
             <button onClick={toggleCart} aria-label="Open cart" className="relative p-2 text-black dark:text-white transition-colors">
               <CartIcon className="h-6 w-6" />
               {cartItems.length > 0 && (
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-black dark:bg-white dark:text-black rounded-full">
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 rounded-full">
                   {cartItems.length}
                 </span>
               )}
@@ -259,34 +304,37 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4 py-2">
+        <div className="flex items-center gap-2 sm:gap-4 py-2 overflow-x-auto scrollbar-none">
           <Link 
             href="/" 
             aria-label="Home"
-            className="flex items-center gap-1.5 bg-black text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap hover:bg-neutral-800 transition-colors"
+            className="flex items-center gap-1.5 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
           >
             <Home className="h-4 w-4" />
             <span>Home</span>
           </Link>
-          <Link href="/products" className="bg-black text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap">
+          <Link 
+            href="/products" 
+            className="bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
+          >
             All Products
           </Link>
           <div className="relative" ref={categoriesRef}>
             <button 
                 onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-                className="flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap"
+                className="flex items-center gap-2 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
             >
                 All Categories
                 <ChevronDown className="h-4 w-4" />
             </button>
             {isCategoriesOpen && (
-                <div className="absolute top-full left-0 mt-2 bg-white dark:bg-[#0d0c0b] border border-black dark:border-neutral-800 w-48 shadow-lg z-50">
-                    {navLinks.map((link) => (
+                <div className="absolute top-full left-0 mt-2 bg-white dark:bg-[#0d0c0b] border border-black dark:border-neutral-800 w-56 max-h-80 overflow-y-auto shadow-xl rounded-md py-1 z-50">
+                    {dynamicCategoryLinks.map((link, idx) => (
                       <Link 
-                        key={link.name} 
+                        key={link.name + idx} 
                         href={link.href} 
                         onClick={() => setIsCategoriesOpen(false)}
-                        className="block px-4 py-2 text-sm text-black dark:text-white hover:bg-gray-100 dark:hover:bg-neutral-800"
+                        className="block px-4 py-2 text-sm text-black dark:text-white hover:bg-orange-50 dark:hover:bg-neutral-800 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                       >
                         {link.name}
                       </Link>
@@ -321,16 +369,34 @@ const Navbar = () => {
                 onItemClick={handleSearchItemClick}
             />
           </div>
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-base font-medium text-black dark:text-white"
-            >
-              {link.name}
-            </Link>
-          ))}
+          <Link
+            href="/"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center gap-2 text-base font-semibold text-black dark:text-white"
+          >
+            <Home className="h-5 w-5" />
+            <span>Home</span>
+          </Link>
+          <Link
+            href="/products"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block text-base font-medium text-black dark:text-white"
+          >
+            All Products
+          </Link>
+          <div className="border-t border-slate-200 dark:border-neutral-800 pt-3 space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Categories</p>
+            {dynamicCategoryLinks.map((link, idx) => (
+              <Link
+                key={link.name + idx}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-base font-medium text-black dark:text-white hover:text-orange-500 transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </header>

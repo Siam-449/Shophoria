@@ -35,7 +35,7 @@ const SearchBar = ({
         />
         <button
           type="submit"
-          className="bg-black dark:bg-neutral-800 text-white px-5 py-2 text-sm font-medium rounded-r-full hover:bg-slate-800 dark:hover:bg-neutral-700 transition-colors whitespace-nowrap"
+          className="bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-5 py-2 text-sm font-medium rounded-r-full hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors whitespace-nowrap"
         >
           Search
         </button>
@@ -49,7 +49,7 @@ const SearchBar = ({
                   <li key={product.id}>
                     <button 
                       onClick={() => onItemClick(`/products/${product.slug}`)} 
-                      className="flex items-center gap-4 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors w-full text-left"
+                      className="flex items-center gap-4 p-3 hover:bg-slate-100 dark:hover:bg-neutral-800 transition-colors w-full text-left"
                     >
                       <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
                       <div>
@@ -62,7 +62,7 @@ const SearchBar = ({
                 <li className="p-2 border-t border-slate-200 dark:border-slate-700">
                   <button 
                     onClick={handleSubmit} 
-                    className="text-center text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:underline w-full py-1"
+                    className="text-center text-sm font-semibold text-black dark:text-white hover:underline w-full py-1"
                   >
                     View all results
                   </button>

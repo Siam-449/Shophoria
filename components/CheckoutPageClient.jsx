@@ -339,7 +339,7 @@ const CheckoutPageClient = () => {
                   <button
                     type="button"
                     onClick={handleApplyCoupon}
-                    className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-sm font-semibold rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-slate-200 dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-slate-800 dark:text-white text-sm font-semibold rounded-md hover:bg-slate-300 dark:hover:bg-neutral-800 transition-colors disabled:opacity-50"
                     disabled={isCouponLoading}
                   >
                     {isCouponLoading ? '...' : 'Apply'}
@@ -386,7 +386,7 @@ const CheckoutPageClient = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full mt-4 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mt-4 py-3 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Placing Order...' : 'Place Order (Cash on Delivery)'}
             </button>

@@ -114,7 +114,7 @@ export default function HomePageClient() {
         <div className="mt-12 text-center">
             <Link 
                 href="/products" 
-                className="inline-block px-8 py-3 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium"
+                className="inline-block px-8 py-3 border border-slate-300 dark:border-neutral-700 bg-white dark:bg-[#1c1b1a] rounded-lg text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-neutral-800 transition-colors font-medium"
             >
                 View All Products
             </Link>

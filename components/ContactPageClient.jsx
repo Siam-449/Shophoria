@@ -117,7 +117,7 @@ const ContactPageClient = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full flex justify-center py-3 px-4 border border-transparent dark:border-neutral-700 rounded-md shadow-sm text-sm font-medium text-white bg-black dark:bg-[#1c1b1a] hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? 'Sending...' : 'Send Message'}
                     </button>

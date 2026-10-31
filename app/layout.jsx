@@ -9,6 +9,7 @@ import CartDrawer from '../components/CartDrawer.jsx';
 import OfferBanner from '../components/OfferBanner.jsx';
 import NoticeBanner from '../components/NoticeBanner.jsx';
 import { ProductsProvider } from '../context/ProductsContext.jsx';
+import { CategoriesProvider } from '../context/CategoriesContext.jsx';
 import MaintenanceGuard from '../components/MaintenanceGuard.jsx';
 import StructuredData from '../components/StructuredData.jsx';
 import FacebookPixel from '../components/FacebookPixel.jsx';
@@ -88,13 +89,15 @@ export default function RootLayout({ children }) {
         >
           <MaintenanceGuard>
             <ProductsProvider>
-              <CartProvider>
-                <Navbar />
-                <NoticeBanner />
-                <CartDrawer />
-                {children}
-                <Footer />
-              </CartProvider>
+              <CategoriesProvider>
+                <CartProvider>
+                  <Navbar />
+                  <NoticeBanner />
+                  <CartDrawer />
+                  {children}
+                  <Footer />
+                </CartProvider>
+              </CategoriesProvider>
             </ProductsProvider>
           </MaintenanceGuard>
         </ThemeProvider>
