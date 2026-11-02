@@ -58,16 +58,13 @@ const getCollectionsProducts = (products) => {
 };
 
 export default function HomePageClient() {
-  const [collectionsProducts, setCollectionsProducts] = useState([]);
   const [timeOffers, setTimeOffers] = useState([]);
   const [timeOffersLoading, setTimeOffersLoading] = useState(true);
   const { products, loading } = useProducts();
 
-  useEffect(() => {
-    // Shuffling products on the client-side after initial render to avoid hydration errors.
-    if (products.length > 0) {
-      setCollectionsProducts(getCollectionsProducts(products));
-    }
+  const collectionsProducts = React.useMemo(() => {
+    if (products.length === 0) return [];
+    return getCollectionsProducts(products);
   }, [products]);
 
   useEffect(() => {

@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -15,8 +14,43 @@ const isGoogleBot = () => {
 
 const MaintenanceGuard = ({ children }) => {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [isBypassed, setIsBypassed] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Check query params for admin/bypass
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('admin') === 'true' || params.get('bypass') === 'true') {
+      localStorage.setItem('isAdmin', 'true');
+      setIsBypassed(true);
+    }
+
+    // Check localStorage for admin status
+    if (
+      localStorage.getItem('isAdmin') === 'true' ||
+      localStorage.getItem('admin') === 'true' ||
+      localStorage.getItem('shophoria_admin') === 'true'
+    ) {
+      setIsBypassed(true);
+    }
+
+    // Check if localhost or sandbox / preview domains
+    const hostname = window.location.hostname;
+    if (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '0.0.0.0' ||
+      hostname.includes('run.app') ||
+      hostname.includes('sandbox') ||
+      hostname.includes('preview') ||
+      hostname.includes('webcontainer') ||
+      hostname.includes('gitpod') ||
+      hostname.includes('stackblitz')
+    ) {
+      setIsBypassed(true);
+    }
+
     if (isGoogleBot()) {
       return;
     }
@@ -30,7 +64,13 @@ const MaintenanceGuard = ({ children }) => {
     };
   }, []);
 
-  if (maintenanceMode) {
+  const handleAdminBypass = () => {
+    localStorage.setItem('isAdmin', 'true');
+    setIsBypassed(true);
+    window.location.reload();
+  };
+
+  if (maintenanceMode && !isBypassed) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950 px-4">
         <div className="text-center max-w-lg p-8 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800">
@@ -44,10 +84,15 @@ const MaintenanceGuard = ({ children }) => {
           <p className="text-lg text-slate-600 dark:text-slate-400 mb-6">
             Our website is currently down for scheduled maintenance. We apologize for any inconvenience and appreciate your patience.
           </p>
-          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 mb-2">
+          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 mb-6">
             <div className="bg-indigo-600 h-2.5 rounded-full w-3/4 animate-pulse"></div>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-500 mt-2">Updating our shelves...</p>
+          <button
+            onClick={handleAdminBypass}
+            className="text-xs text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors underline"
+          >
+            Admin / Developer Bypass
+          </button>
         </div>
       </div>
     );

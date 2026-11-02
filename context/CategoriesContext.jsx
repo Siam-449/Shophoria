@@ -5,74 +5,32 @@ import { getCategories, subscribeToCategories } from '../lib/firebase.js';
 
 export const DEFAULT_CATEGORIES = [
   {
-    id: 'electronics-gadgets',
-    name: 'Electronics & Gadgets',
+    id: 'fashion',
+    name: 'Fashion & Beauty',
+    slug: 'fashion',
+    href: '/fashion',
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_fill,w_600,h_600,f_auto,q_auto/v1759251677/Fashion-_-Clothing_n26a59.jpg',
+  },
+  {
+    id: 'electronics',
+    name: 'Electronics',
     slug: 'electronics',
     href: '/electronics',
-    iconType: 'gadget',
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_fill,w_600,h_600,f_auto,q_auto/v1759251676/Electronics-_-Gadgets_awvtfq.jpg',
   },
   {
-    id: 'home-kitchen',
-    name: 'Home & Kitchen',
-    slug: 'home-kitchen',
-    href: '/category/home-kitchen',
-    iconType: 'pot',
-  },
-  {
-    id: 'home-kitchen-alt',
-    name: 'Home & Kitchen',
-    slug: 'home-kitchen',
-    href: '/category/home-kitchen',
-    letter: 'H',
-  },
-  {
-    id: 'home-cleaning',
-    name: 'Home & Cleaning',
-    slug: 'home-cleaning',
-    href: '/category/home-cleaning',
-    iconType: 'spray',
-  },
-  {
-    id: 'beauty-personal-care',
-    name: 'Beauty & Personal Care',
-    slug: 'beauty-personal-care',
-    href: '/category/beauty-personal-care',
-    letter: 'B',
-  },
-  {
-    id: 'lighting',
-    name: 'Lighting',
-    slug: 'lighting',
-    href: '/category/lighting',
-    iconType: 'lightbulb',
-  },
-  {
-    id: 'health-beauty',
-    name: 'Health & Beauty',
-    slug: 'health-beauty',
-    href: '/category/health-beauty',
-    iconType: 'heart',
-  },
-  {
-    id: 'bags-watches',
-    name: 'Bags & Watches',
-    slug: 'bags-watches',
-    href: '/category/bags-watches',
-    iconType: 'bag',
-  },
-  {
-    id: 'toys-kids',
-    name: 'Toys & Kids',
+    id: 'home-toy',
+    name: 'Home & Toys',
     slug: 'home-toy',
     href: '/home-toy',
-    iconType: 'toy',
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_fill,w_600,h_600,f_auto,q_auto/v1759251693/Home-_-Toy_qvbwoc.jpg',
   },
   {
-    id: 'car-auto',
-    name: 'Car & Auto',
-    slug: 'car-auto',
-    href: '/category/car-auto',
-    iconType: 'car',
+    id: 'knife',
+    name: 'Knife',
+    slug: 'knife',
+    href: '/knife',
+    image: 'https://res.cloudinary.com/dqki5wiei/image/upload/c_fill,w_600,h_600,f_auto,q_auto/v1781364320/Knife_vwbnhk.jpg',
   },
 ];
 
@@ -85,21 +43,33 @@ export const useCategories = () => useContext(CategoriesContext);
 
 export const CategoriesProvider = ({ children }) => {
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let unsubscribe = null;
+
+    // Load from localStorage cache on client mount
+    try {
+      const cached = localStorage.getItem('cached_shophoria_categories');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCategories(parsed);
+        }
+      }
+    } catch (e) {}
 
     const fetchInitial = async () => {
       try {
         const fetched = await getCategories();
         if (fetched && fetched.length > 0) {
           setCategories(fetched);
+          try {
+            localStorage.setItem('cached_shophoria_categories', JSON.stringify(fetched));
+          } catch (e) {}
         }
       } catch (err) {
         console.error('Error fetching categories:', err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchInitial();
@@ -108,6 +78,9 @@ export const CategoriesProvider = ({ children }) => {
       unsubscribe = subscribeToCategories((liveCats) => {
         if (liveCats && liveCats.length > 0) {
           setCategories(liveCats);
+          try {
+            localStorage.setItem('cached_shophoria_categories', JSON.stringify(liveCats));
+          } catch (e) {}
         }
       });
     }
