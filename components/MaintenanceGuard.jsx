@@ -64,12 +64,6 @@ const MaintenanceGuard = ({ children }) => {
     };
   }, []);
 
-  const handleAdminBypass = () => {
-    localStorage.setItem('isAdmin', 'true');
-    setIsBypassed(true);
-    window.location.reload();
-  };
-
   if (maintenanceMode && !isBypassed) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950 px-4">
@@ -84,15 +78,9 @@ const MaintenanceGuard = ({ children }) => {
           <p className="text-lg text-slate-600 dark:text-slate-400 mb-6">
             Our website is currently down for scheduled maintenance. We apologize for any inconvenience and appreciate your patience.
           </p>
-          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 mb-6">
+          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
             <div className="bg-indigo-600 h-2.5 rounded-full w-3/4 animate-pulse"></div>
           </div>
-          <button
-            onClick={handleAdminBypass}
-            className="text-xs text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors underline"
-          >
-            Admin / Developer Bypass
-          </button>
         </div>
       </div>
     );
