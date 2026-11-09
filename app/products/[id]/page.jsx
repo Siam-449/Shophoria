@@ -10,7 +10,8 @@ export const revalidate = 0; // Revalidate on every request to ensure fresh data
 export const dynamicParams = true; // explicitly allow new params to be fetched at runtime
 
 export async function generateMetadata({ params }) {
-    const id = decodeURIComponent(params.id);
+    const resolvedParams = await params;
+    const id = decodeURIComponent(resolvedParams?.id || '');
     const product = await getProduct(id);
 
     if (!product) {
@@ -44,7 +45,8 @@ export async function generateMetadata({ params }) {
 
 
 const ProductDetailPage = async ({ params }) => {
-    const id = decodeURIComponent(params.id); 
+    const resolvedParams = await params;
+    const id = decodeURIComponent(resolvedParams?.id || ''); 
     const product = await getProduct(id);
 
     if (!product) {

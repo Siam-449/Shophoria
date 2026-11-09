@@ -2,7 +2,8 @@ import React from 'react';
 import DynamicCategoryPageClient from '../../../components/category/DynamicCategoryPageClient.jsx';
 
 export async function generateMetadata({ params }) {
-  const { slug } = params;
+  const resolvedParams = await params;
+  const slug = resolvedParams?.slug;
   const title = slug
     ?.split('-')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
@@ -14,6 +15,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function DynamicCategoryPage({ params }) {
-  return <DynamicCategoryPageClient slug={params.slug} />;
+export default async function DynamicCategoryPage({ params }) {
+  const resolvedParams = await params;
+  return <DynamicCategoryPageClient slug={resolvedParams?.slug} />;
 }
