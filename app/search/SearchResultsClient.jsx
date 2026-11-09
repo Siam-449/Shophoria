@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 import { useProducts } from '../../context/ProductsContext.jsx';
 import ProductSkeleton from '../../components/ProductSkeleton.jsx';
 import ProductCard from '../../components/ProductCard.jsx';
+import { motion } from 'motion/react';
 
 const SearchResultsClient = () => {
   const searchParams = useSearchParams();
@@ -46,42 +47,62 @@ const SearchResultsClient = () => {
   }
 
   return (
-    <main className="container mx-auto p-4 sm:p-6 lg:p-8 min-h-[60vh]">
+    <main className="container mx-auto p-4 sm:p-6 lg:p-8 min-h-[60vh] overflow-hidden">
       {query ? (
         <>
-          <div className="text-center my-12">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center my-12"
+          >
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">
               Search Results for "{query}"
             </h1>
             <p className="text-lg text-slate-600 dark:text-slate-400">
               {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
             </p>
-          </div>
+          </motion.div>
 
           {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6"
+            >
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
-            </div>
+            </motion.div>
           ) : (
-            <div className="text-center py-16">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-center py-16"
+            >
               <p className="text-xl text-slate-600 dark:text-slate-400">No products found matching your search.</p>
               <Link href="/" className="mt-6 inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
                 Back to Home
               </Link>
-            </div>
+            </motion.div>
           )}
         </>
       ) : (
-        <div className="text-center py-16">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center py-16"
+        >
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                 Please enter a search term
             </h1>
             <p className="text-lg text-slate-600 dark:text-slate-400">
                 Use the search bar in the navigation to find products.
             </p>
-        </div>
+        </motion.div>
       )}
     </main>
   );

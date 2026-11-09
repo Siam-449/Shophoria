@@ -11,6 +11,8 @@ import ProductSkeleton from './ProductSkeleton.jsx';
 import { getTimeOffers } from '../lib/firebase.js';
 import TimeOfferCard from './TimeOfferCard.jsx';
 
+import { motion } from 'motion/react';
+
 const getCollectionsProducts = (products) => {
   const displayableProducts = products.filter(p => p.category !== 'prank');
 
@@ -78,9 +80,15 @@ export default function HomePageClient() {
   }, []);
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-900">
+    <div className="bg-slate-50 dark:bg-slate-900 overflow-hidden">
       {!timeOffersLoading && timeOffers.length > 0 && (
-        <section className="container mx-auto p-4 sm:p-6 lg:p-8 mb-8">
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="container mx-auto p-4 sm:p-6 lg:p-8 mb-8"
+        >
           <div className="text-center my-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Limited Time Offers</h2>
             <p className="text-lg text-slate-600 dark:text-slate-400">Grab these amazing deals before they're gone!</p>
@@ -90,11 +98,34 @@ export default function HomePageClient() {
               <TimeOfferCard key={product.id} product={product} />
             ))}
           </div>
-        </section>
+        </motion.section>
       )}
-      <Hero />
-      <CategoryShowcase />
-      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
+        <Hero />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <CategoryShowcase />
+      </motion.div>
+
+      <motion.main 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.7 }}
+        className="container mx-auto p-4 sm:p-6 lg:p-8"
+      >
          <div className="text-center my-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Our Collections</h2>
             <p className="text-lg text-slate-600 dark:text-slate-400">Explore our curated selection of amazing products.</p>
@@ -116,7 +147,7 @@ export default function HomePageClient() {
                 View All Products
             </Link>
         </div>
-      </main>
+      </motion.main>
     </div>
   );
 };

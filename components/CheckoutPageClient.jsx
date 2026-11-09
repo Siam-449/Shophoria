@@ -9,6 +9,7 @@ import { PlusIcon } from './icons/PlusIcon.jsx';
 import { MinusIcon } from './icons/MinusIcon.jsx';
 import { RemoveIcon } from './icons/RemoveIcon.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
+import { motion, AnimatePresence } from 'motion/react';
 
 
 const CheckoutPageClient = () => {
@@ -175,15 +176,25 @@ const CheckoutPageClient = () => {
 
   if (submitted) {
     return (
-      <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-[60vh] flex items-center justify-center">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-[60vh] flex items-center justify-center"
+      >
         <div className="text-center p-4">
-          <h1 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">Thank You for Your Order!</h1>
+          <motion.h1 
+            initial={{ y: -20 }}
+            animate={{ y: 0 }}
+            className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4"
+          >
+            Thank You for Your Order!
+          </motion.h1>
           <p className="text-slate-600 dark:text-slate-400 mb-8">Your order has been placed successfully. We will contact you shortly with confirmation.</p>
           <Link href="/" className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
             Continue Shopping
           </Link>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -202,14 +213,25 @@ const CheckoutPageClient = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200">
+    <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 overflow-hidden">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-        <h1 className="text-center text-4xl sm:text-5xl font-bold tracking-tight mb-12">Checkout</h1>
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center text-4xl sm:text-5xl font-bold tracking-tight mb-12"
+        >
+          Checkout
+        </motion.h1>
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16"
         >
-          <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800"
+          >
             <div className="space-y-8">
               <div>
                 <h2 className="text-2xl font-bold mb-6">Shipping Information</h2>
@@ -271,9 +293,14 @@ const CheckoutPageClient = () => {
                  </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800 self-start">
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-lg border border-slate-200 dark:border-slate-800 self-start"
+          >
             <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
               {cartItems.map(item => (
@@ -322,47 +349,59 @@ const CheckoutPageClient = () => {
 
             <div className="border-t border-slate-200 dark:border-slate-700 my-6"></div>
             
-            {!appliedCoupon ? (
-              <div className="space-y-2 mb-6">
-                <label htmlFor="coupon" className="text-sm font-medium text-slate-700 dark:text-slate-300">Have a coupon?</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    id="coupon"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon(e)}
-                    placeholder="Enter coupon code"
-                    className="w-full px-4 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    disabled={isCouponLoading}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleApplyCoupon}
-                    className="px-4 py-2 bg-slate-200 dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-slate-800 dark:text-white text-sm font-semibold rounded-md hover:bg-slate-300 dark:hover:bg-neutral-800 transition-colors disabled:opacity-50"
-                    disabled={isCouponLoading}
-                  >
-                    {isCouponLoading ? '...' : 'Apply'}
-                  </button>
-                </div>
-                 {couponMessage.text && (
-                  <p className={`text-sm mt-2 ${
-                      couponMessage.type === 'success' ? 'text-green-600 dark:text-green-400' 
-                    : couponMessage.type === 'error' ? 'text-red-500 dark:text-red-400' 
-                    : 'text-slate-600 dark:text-slate-400'
-                  }`}>
-                    {couponMessage.text}
-                  </p>
-                )}
-              </div>
-            ) : (
-               <div className="flex justify-between items-center mb-6">
-                  <p className="text-sm text-slate-700 dark:text-slate-300">Coupon Applied: <span className="font-bold text-green-600 dark:text-green-400">{appliedCoupon.code}</span></p>
-                   <button type="button" onClick={handleRemoveCoupon} title="Remove coupon" className="text-red-500 hover:text-red-700 dark:hover:text-red-400 p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50">
-                     <CloseIcon className="h-4 w-4" />
-                   </button>
-               </div>
-            )}
+            <AnimatePresence>
+              {!appliedCoupon ? (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-2 mb-6 overflow-hidden"
+                >
+                  <label htmlFor="coupon" className="text-sm font-medium text-slate-700 dark:text-slate-300">Have a coupon?</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      id="coupon"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon(e)}
+                      placeholder="Enter coupon code"
+                      className="w-full px-4 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      disabled={isCouponLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      className="px-4 py-2 bg-slate-200 dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-slate-800 dark:text-white text-sm font-semibold rounded-md hover:bg-slate-300 dark:hover:bg-neutral-800 transition-colors disabled:opacity-50"
+                      disabled={isCouponLoading}
+                    >
+                      {isCouponLoading ? '...' : 'Apply'}
+                    </button>
+                  </div>
+                   {couponMessage.text && (
+                    <p className={`text-sm mt-2 ${
+                        couponMessage.type === 'success' ? 'text-green-600 dark:text-green-400' 
+                      : couponMessage.type === 'error' ? 'text-red-500 dark:text-red-400' 
+                      : 'text-slate-600 dark:text-slate-400'
+                    }`}>
+                      {couponMessage.text}
+                    </p>
+                  )}
+                </motion.div>
+              ) : (
+                 <motion.div 
+                   initial={{ opacity: 0, height: 0 }}
+                   animate={{ opacity: 1, height: 'auto' }}
+                   exit={{ opacity: 0, height: 0 }}
+                   className="flex justify-between items-center mb-6 overflow-hidden"
+                 >
+                    <p className="text-sm text-slate-700 dark:text-slate-300">Coupon Applied: <span className="font-bold text-green-600 dark:text-green-400">{appliedCoupon.code}</span></p>
+                     <button type="button" onClick={handleRemoveCoupon} title="Remove coupon" className="text-red-500 hover:text-red-700 dark:hover:text-red-400 p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50">
+                       <CloseIcon className="h-4 w-4" />
+                     </button>
+                 </motion.div>
+              )}
+            </AnimatePresence>
             
             <div className="flex justify-between text-xl font-bold">
               <span>Total</span>
@@ -390,7 +429,7 @@ const CheckoutPageClient = () => {
             >
               {isSubmitting ? 'Placing Order...' : 'Place Order (Cash on Delivery)'}
             </button>
-          </div>
+          </motion.div>
         </form>
       </div>
     </div>

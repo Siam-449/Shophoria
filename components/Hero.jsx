@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
 import { useProducts } from '../context/ProductsContext.jsx';
 import { getBanners, subscribeToBanners } from '../lib/firebase.js';
+import { motion } from 'motion/react';
 
 const Hero = () => {
   const { products } = useProducts();
@@ -13,6 +14,7 @@ const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [isManuallyMuted, setIsManuallyMuted] = useState(false);
   const videoRefs = useRef({});
 
   // Fetch or subscribe to dynamic banners from Firebase
@@ -68,22 +70,82 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, [totalSlides, isHovered, nextSlide]);
 
-  // Ensure current video plays when active
+  const isVideoSlide = (slide) => {
+    if (!slide) return false;
+    if (slide.type === 'video') return true;
+    const url = slide.videoUrl || slide.url || '';
+    return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+  };
+
+  // Ensure current video plays when active and syncs initial mute state
   useEffect(() => {
     const currentSlide = banners[currentIndex];
     if (currentSlide && isVideoSlide(currentSlide)) {
       const vid = videoRefs.current[currentIndex];
       if (vid) {
+        const shouldMute = isHovered ? isManuallyMuted : true;
+        vid.muted = shouldMute;
+        setIsMuted(shouldMute);
         vid.currentTime = 0;
         vid.play().catch(() => {});
       }
     }
-  }, [currentIndex, banners]);
+  }, [currentIndex, banners, isHovered, isManuallyMuted]);
 
-  const isVideoSlide = (slide) => {
-    if (slide.type === 'video') return true;
-    const url = slide.videoUrl || slide.url || '';
-    return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+  // Direct sync of DOM muted property with active video
+  useEffect(() => {
+    const vid = videoRefs.current[currentIndex];
+    if (vid) {
+      vid.muted = isMuted;
+    }
+  }, [isMuted, currentIndex]);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    const current = banners[currentIndex];
+    if (current && isVideoSlide(current)) {
+      if (!isManuallyMuted) {
+        setIsMuted(false);
+        const vid = videoRefs.current[currentIndex];
+        if (vid) {
+          vid.muted = false;
+        }
+      }
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    const current = banners[currentIndex];
+    if (current && isVideoSlide(current)) {
+      setIsMuted(true);
+      const vid = videoRefs.current[currentIndex];
+      if (vid) {
+        vid.muted = true;
+      }
+    }
+  };
+
+  const toggleMute = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isMuted) {
+      // User clicked Unmute -> unmute and reset manual mute lock
+      setIsMuted(false);
+      setIsManuallyMuted(false);
+      const vid = videoRefs.current[currentIndex];
+      if (vid) {
+        vid.muted = false;
+      }
+    } else {
+      // User clicked Mute -> stay muted no matter if hovered again until unmuted
+      setIsMuted(true);
+      setIsManuallyMuted(true);
+      const vid = videoRefs.current[currentIndex];
+      if (vid) {
+        vid.muted = true;
+      }
+    }
   };
 
   // Helper to dynamically link banner to products page or specific product
@@ -105,7 +167,7 @@ const Hero = () => {
     return (
       <section className="w-full py-4 sm:py-6">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative w-full aspect-[16/7] sm:aspect-[1917/498] rounded-xl sm:rounded-2xl overflow-hidden bg-black shadow-md sm:shadow-lg" />
+          <div className="relative w-full min-h-[180px] sm:min-h-[550px] aspect-[16/7] sm:aspect-[1917/750] rounded-xl sm:rounded-2xl overflow-hidden bg-black shadow-md sm:shadow-lg" />
         </div>
       </section>
     );
@@ -118,9 +180,9 @@ const Hero = () => {
     <section className="w-full py-4 sm:py-6">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className="relative w-full aspect-[16/7] sm:aspect-[1917/498] rounded-xl sm:rounded-2xl overflow-hidden bg-black shadow-md sm:shadow-lg group select-none"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          className="relative w-full min-h-[180px] sm:min-h-[550px] aspect-[16/7] sm:aspect-[1917/750] rounded-xl sm:rounded-2xl overflow-hidden bg-black shadow-md sm:shadow-lg group select-none"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           {/* Carousel Track with smooth horizontal transition */}
           <div
@@ -136,27 +198,35 @@ const Hero = () => {
                 <div key={slide.id || idx} className="relative w-full h-full flex-shrink-0">
                   <Link
                     href={targetLink}
-                    className="block w-full h-full cursor-pointer relative"
+                    className="block w-full h-full cursor-pointer relative overflow-hidden"
                     aria-label={slide.alt || 'Featured Product Banner'}
                   >
-                    {isVideo ? (
-                      <video
-                        ref={(el) => (videoRefs.current[idx] = el)}
-                        src={mediaUrl}
-                        autoPlay
-                        loop
-                        muted={isMuted}
-                        playsInline
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <img
-                        src={mediaUrl}
-                        alt={slide.alt || "Shophoria Banner"}
-                        className="w-full h-full object-cover object-center"
-                        loading={idx === 0 ? "eager" : "lazy"}
-                      />
-                    )}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 1.05 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className="w-full h-full"
+                    >
+                      {/* Primary Media Layer (Stretched to Fill) */}
+                      {isVideo ? (
+                        <video
+                          ref={(el) => (videoRefs.current[idx] = el)}
+                          src={mediaUrl}
+                          autoPlay
+                          loop
+                          muted={isMuted}
+                          playsInline
+                          className="w-full h-full object-fill"
+                        />
+                      ) : (
+                        <img
+                          src={mediaUrl}
+                          alt={slide.alt || "Shophoria Banner"}
+                          className="w-full h-full object-fill"
+                          loading={idx === 0 ? "eager" : "lazy"}
+                        />
+                      )}
+                    </motion.div>
                   </Link>
                 </div>
               );
@@ -218,16 +288,12 @@ const Hero = () => {
             </div>
           )}
 
-          {/* Video Mute / Unmute Button (Shown on hover when current slide is video) */}
+          {/* Video Mute / Unmute Button (Shown when current slide is video) */}
           {isCurrentVideo && (
             <button
               type="button"
               aria-label={isMuted ? "Unmute audio" : "Mute audio"}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setIsMuted((prev) => !prev);
-              }}
+              onClick={toggleMute}
               className="absolute bottom-3 right-3 sm:bottom-4 sm:right-5 z-20 p-2 sm:px-3 sm:py-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all duration-200 opacity-90 group-hover:opacity-100 hover:scale-105 flex items-center gap-1.5 text-xs font-semibold shadow-lg"
             >
               {isMuted ? (

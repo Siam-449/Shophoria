@@ -15,11 +15,13 @@ import { CartIcon } from './icons/CartIcon.jsx';
 import { MenuIcon } from './icons/MenuIcon.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
 import SearchBar from './SearchBar.jsx';
-import { ChevronDown, MessageSquare, Home } from 'lucide-react';
+import { ChevronDown, MessageSquare, Home, Package, Grid, Search, ShoppingCart } from 'lucide-react';
 import { getOfferMessage } from '../lib/firebase.js';
+import { motion, AnimatePresence } from 'motion/react';
 
 const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [notice, setNotice] = useState(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -38,6 +40,7 @@ const Navbar = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchContainerRef = useRef(null);
   const categoriesRef = useRef(null);
+  const optionsRef = useRef(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -75,21 +78,21 @@ const Navbar = () => {
       if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
         setIsCategoriesOpen(false);
       }
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setIsOptionsMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [searchContainerRef, categoriesRef]);
+  }, [searchContainerRef, categoriesRef, optionsRef]);
 
   const handleSearchItemClick = (href) => {
     router.push(href);
     setSearchQuery('');
     setSearchResults([]);
     setIsSearchFocused(false);
-    if (isMobileMenuOpen) {
-      setIsMobileMenuOpen(false);
-    }
   };
 
   const handleSearchSubmit = () => {
@@ -98,9 +101,6 @@ const Navbar = () => {
       setSearchQuery('');
       setSearchResults([]);
       setIsSearchFocused(false);
-      if (isMobileMenuOpen) {
-        setIsMobileMenuOpen(false);
-      }
     }
   };
   
@@ -250,15 +250,24 @@ const Navbar = () => {
   return (
     <header className="bg-white dark:bg-[#0d0c0b] text-black dark:text-white border-b border-black dark:border-neutral-800 sticky top-0 z-50 transition-colors">
       <nav className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 border-b border-black dark:border-neutral-800">
-          <div className="flex items-center gap-8">
+        <div className="relative flex items-center justify-between h-20 border-b border-black dark:border-neutral-800">
+          <motion.div 
+            className="flex items-center gap-8"
+            animate={{ 
+              opacity: isMobileSearchOpen ? 0 : 1, 
+              x: isMobileSearchOpen ? -20 : 0,
+              pointerEvents: isMobileSearchOpen ? 'none' : 'auto'
+            }}
+            transition={{ duration: 0.3 }}
+          >
             <Link href="/" className="text-2xl font-extrabold tracking-tight text-black dark:text-white">
               SHOPHORIA
             </Link>
-          </div>
+          </motion.div>
           
-          <div className="flex-grow flex items-center justify-center px-8">
-             <div className="relative w-full max-w-2xl flex border border-black dark:border-neutral-700 rounded-full overflow-hidden" ref={!isMobileMenuOpen ? searchContainerRef : null}>
+          {/* Desktop Search */}
+          <div className="hidden lg:flex flex-grow items-center justify-center px-8">
+             <div className="relative w-full max-w-2xl flex border border-black dark:border-neutral-700 rounded-full overflow-hidden" ref={searchContainerRef}>
                 <SearchBar 
                     searchQuery={searchQuery}
                     onSearchChange={handleSearchInputChange}
@@ -271,7 +280,55 @@ const Navbar = () => {
              </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Mobile Search & Cart Buttons */}
+          <div className="lg:hidden flex items-center gap-2">
+            <button onClick={() => setIsMobileSearchOpen(true)} className="p-2" aria-label="Open search">
+              <Search className="h-6 w-6" />
+            </button>
+            <button onClick={toggleCart} className="p-2 relative" aria-label="Open cart">
+              <ShoppingCart className="h-6 w-6" />
+              {cartItems.length > 0 && (
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-black rounded-full">
+                  {cartItems.length}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Mobile Search Overlay */}
+          <AnimatePresence>
+            {isMobileSearchOpen && (
+              <motion.div 
+                className="absolute inset-0 z-30 flex items-center px-4 bg-white dark:bg-[#0d0c0b]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                  <div className="flex-grow">
+                      <SearchBar 
+                          isMobile={true}
+                          searchQuery={searchQuery}
+                          onSearchChange={handleSearchInputChange}
+                          onSearchFocus={handleSearchFocus}
+                          onSearchSubmit={handleSearchSubmit}
+                          isFocused={isSearchFocused}
+                          searchResults={searchResults}
+                          onItemClick={() => { handleSearchItemClick(); setIsMobileSearchOpen(false); }}
+                      />
+                  </div>
+                  <button 
+                    onClick={() => setIsMobileSearchOpen(false)} 
+                    className="ml-2 p-2 text-slate-500 hover:text-black dark:hover:text-white"
+                    aria-label="Close search"
+                  >
+                      <CloseIcon className="h-6 w-6" />
+                  </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="hidden lg:flex items-center gap-4">
             <Link href="/contact" aria-label="Contact" className="p-2 text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
               <MessageSquare className="h-6 w-6" />
             </Link>
@@ -292,43 +349,44 @@ const Navbar = () => {
             </button>
           </div>
           
-          <div className="lg:hidden flex items-center">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-black dark:text-white focus:outline-none"
-              aria-expanded={isMobileMenuOpen}
-            >
-              <span className="sr-only">Open main menu</span>
-              {isMobileMenuOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
-            </button>
-          </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4 py-2 overflow-x-auto scrollbar-none">
+        <div className="flex items-center lg:justify-start gap-1.5 lg:gap-4 py-2 overflow-x-auto lg:overflow-visible scrollbar-none">
           <Link 
             href="/" 
             aria-label="Home"
-            className="flex items-center gap-1.5 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
+            className="flex items-center gap-1 lg:gap-1.5 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-2 lg:px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
           >
-            <Home className="h-4 w-4" />
+            <Home className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
             <span>Home</span>
           </Link>
           <Link 
             href="/products" 
-            className="bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
+            aria-label="All Products"
+            className="flex items-center gap-1 lg:gap-1.5 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-2 lg:px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
           >
-            All Products
+            <Package className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
+            <span><span className="lg:hidden">Products</span><span className="hidden lg:inline">All Products</span></span>
           </Link>
           <div className="relative" ref={categoriesRef}>
             <button 
                 onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-                className="flex items-center gap-2 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
+                aria-label="All Categories"
+                className="flex items-center gap-1 lg:gap-2 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-2 lg:px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
             >
-                All Categories
-                <ChevronDown className="h-4 w-4" />
+                <Grid className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
+                <span><span className="lg:hidden">Categories</span><span className="hidden lg:inline">All Categories</span></span>
+                <ChevronDown className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
             </button>
-            {isCategoriesOpen && (
-                <div className="absolute top-full left-0 mt-2 bg-white dark:bg-[#0d0c0b] border border-black dark:border-neutral-800 w-56 max-h-80 overflow-y-auto shadow-xl rounded-md py-1 z-50">
+            <AnimatePresence>
+              {isCategoriesOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="fixed lg:absolute top-[125px] lg:top-full left-4 lg:left-0 mt-2 bg-white dark:bg-[#0d0c0b] border border-black dark:border-neutral-800 w-56 max-h-80 overflow-y-auto shadow-xl rounded-md py-1 z-[100]"
+                >
                     {dynamicCategoryLinks.map((link, idx) => (
                       <Link 
                         key={link.name + idx} 
@@ -339,8 +397,49 @@ const Navbar = () => {
                         {link.name}
                       </Link>
                     ))}
-                </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* New 3-Line Menu */}
+          <div className="relative lg:hidden" ref={optionsRef}>
+            <button
+              onClick={() => setIsOptionsMenuOpen(!isOptionsMenuOpen)}
+              aria-label="Options"
+              className="p-2 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white rounded-md hover:bg-neutral-800 transition-colors"
+            >
+              <div className="space-y-1">
+                <div className="w-4 h-0.5 bg-white"></div>
+                <div className="w-4 h-0.5 bg-white"></div>
+                <div className="w-4 h-0.5 bg-white"></div>
+              </div>
+            </button>
+            <AnimatePresence>
+              {isOptionsMenuOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="fixed top-[125px] right-4 bg-white dark:bg-[#0d0c0b] border border-black dark:border-neutral-800 w-40 shadow-xl rounded-md py-1 z-[100]"
+                >
+                  <button
+                    onClick={(e) => { toggleThemeWithTransition(e); setIsOptionsMenuOpen(false); }}
+                    className="w-full text-left px-4 py-2 text-sm text-black dark:text-white hover:bg-orange-50 dark:hover:bg-neutral-800"
+                  >
+                    {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                  </button>
+                  <Link
+                    href="/contact"
+                    onClick={() => setIsOptionsMenuOpen(false)}
+                    className="block px-4 py-2 text-sm text-black dark:text-white hover:bg-orange-50 dark:hover:bg-neutral-800"
+                  >
+                    Contact
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           {notice && (
             <div className="hidden lg:block flex-grow overflow-hidden px-5 py-1 text-sm font-medium bg-black text-[#fca5a5] rounded-md whitespace-nowrap" ref={noticeRef}>
@@ -351,54 +450,6 @@ const Navbar = () => {
           )}
         </div>
       </nav>
-
-      {/* Mobile Menu */}
-      <div 
-        className={`lg:hidden bg-white dark:bg-[#0d0c0b] border-t border-black dark:border-neutral-800 transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen ? 'max-h-screen' : 'max-h-0'}`}
-      >
-        <div className="px-4 py-4 space-y-4">
-          <div className="relative" ref={isMobileMenuOpen ? searchContainerRef : null}>
-            <SearchBar 
-                isMobile={true} 
-                searchQuery={searchQuery}
-                onSearchChange={handleSearchInputChange}
-                onSearchFocus={handleSearchFocus}
-                onSearchSubmit={handleSearchSubmit}
-                isFocused={isSearchFocused}
-                searchResults={searchResults}
-                onItemClick={handleSearchItemClick}
-            />
-          </div>
-          <Link
-            href="/"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center gap-2 text-base font-semibold text-black dark:text-white"
-          >
-            <Home className="h-5 w-5" />
-            <span>Home</span>
-          </Link>
-          <Link
-            href="/products"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="block text-base font-medium text-black dark:text-white"
-          >
-            All Products
-          </Link>
-          <div className="border-t border-slate-200 dark:border-neutral-800 pt-3 space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Categories</p>
-            {dynamicCategoryLinks.map((link, idx) => (
-              <Link
-                key={link.name + idx}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-base font-medium text-black dark:text-white hover:text-orange-500 transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
     </header>
   );
 };

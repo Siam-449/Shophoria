@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
 import { CheckIcon } from './icons/CheckIcon.jsx';
 import RelatedProducts from './RelatedProducts.jsx';
+import { motion } from 'motion/react';
 
 const ProductCard = ({ product }) => {
   const { addItemToCart } = useCart();
@@ -23,7 +24,15 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="relative bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5 }}
+      whileTap={{ scale: 0.98 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3 }}
+      className="relative bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col h-full"
+    >
       {discountPercentage && (
         <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
           -{discountPercentage}%
@@ -72,7 +81,7 @@ const ProductCard = ({ product }) => {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -93,10 +102,20 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
     };
 
     return (
-        <div className="bg-white dark:bg-slate-950 py-12 sm:py-16">
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white dark:bg-slate-950 py-12 sm:py-16"
+        >
             <main className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                    <div className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-md border border-slate-200 dark:border-slate-800 flex flex-col">
+                    <motion.div 
+                        initial={{ opacity: 0, x: -30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-md border border-slate-200 dark:border-slate-800 flex flex-col"
+                    >
                         {product.expiresAt && (
                            <CountdownTimer expiresAt={product.expiresAt} />
                         )}
@@ -112,8 +131,12 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                 className="w-full h-auto object-contain aspect-square" 
                             />
                         </div>
-                    </div>
-                    <div>
+                    </motion.div>
+                    <motion.div
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                    >
                         <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100">{product.name}</h1>
                         <div className="mt-2 flex items-center gap-2">
                             <div className="flex text-amber-500">
@@ -155,11 +178,11 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                              'Out of Stock'
                            )}
                         </button>
-                    </div>
+                    </motion.div>
                 </div>
 
                 <RelatedProducts products={relatedProducts} />
             </main>
-        </div>
+        </motion.div>
     );
 };
