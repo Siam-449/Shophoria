@@ -27,52 +27,52 @@ const ProductCard = ({ product }) => {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -4 }}
       whileTap={{ scale: 0.98 }}
       viewport={{ once: true }}
       transition={{ duration: 0.3 }}
-      className="relative bg-white dark:bg-slate-900 rounded-lg overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col h-full"
+      className="relative bg-white dark:bg-[#141414] rounded-xl sm:rounded-2xl overflow-hidden group shadow-sm hover:shadow-md border border-slate-200 dark:border-neutral-800 flex flex-col h-full p-3 sm:p-4 transition-all"
     >
       {discountPercentage && (
-        <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
+        <div className="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full z-10 shadow-sm">
           -{discountPercentage}%
         </div>
       )}
       <Link href={`/products/${product.slug}`} aria-label={`View details for ${product.name}`}>
-        <div className="overflow-hidden aspect-square">
+        <div className="overflow-hidden aspect-square rounded-lg bg-slate-50 dark:bg-neutral-900 mb-3 flex items-center justify-center p-2">
             <img src={product.image} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
         </div>
       </Link>
-      <div className="p-3 flex flex-col flex-grow">
+      <div className="flex flex-col flex-grow">
         <Link href={`/products/${product.slug}`} className="flex-grow">
-          <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">{product.name}</h3>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{product.description}</p>
+          <h3 className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">{product.name}</h3>
+          <p className="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-1">{product.description}</p>
         </Link>
-        <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-          <div className="flex justify-between items-center">
-            <div className="flex items-baseline gap-2">
-              <p className="text-base font-bold text-slate-900 dark:text-slate-100">৳{product.price.toLocaleString()}</p>
+        <div className="mt-3 pt-3 border-t border-slate-100 dark:border-neutral-800/80">
+          <div className="flex justify-between items-center mb-2.5">
+            <div className="flex items-baseline gap-1.5 sm:gap-2">
+              <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">৳{product.price.toLocaleString()}</p>
               {product.originalPrice && product.originalPrice > product.price && (
-                <p className="text-sm text-slate-500 dark:text-slate-400 line-through">৳{product.originalPrice.toLocaleString()}</p>
+                <p className="text-xs sm:text-sm text-slate-400 dark:text-slate-500 line-through">৳{product.originalPrice.toLocaleString()}</p>
               )}
             </div>
-            <p className={`text-xs font-semibold ${product.quantity > 5 ? 'text-green-600 dark:text-green-400' : product.quantity > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'}`}>
+            <p className={`text-[10px] sm:text-xs font-semibold ${product.quantity > 5 ? 'text-green-600 dark:text-green-400' : product.quantity > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'}`}>
               {product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
             </p>
           </div>
           <button 
             onClick={handleAddToCart}
             disabled={product.quantity <= 0 || isAdded}
-            className={`w-full mt-2 px-3 py-2 text-white text-sm rounded-md transition-colors duration-300 ${
+            className={`w-full py-2.5 px-3 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-1.5 ${
               isAdded 
               ? 'bg-green-600 text-white' 
               : 'bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800'
             } disabled:bg-slate-400 dark:disabled:bg-slate-700 disabled:cursor-not-allowed`}
           >
             {isAdded ? (
-                <span className="flex items-center justify-center gap-2">
+                <>
                     <CheckIcon className="h-4 w-4" /> Added!
-                </span>
+                </>
             ) : product.quantity > 0 ? (
                 'Add to Cart'
             ) : (
