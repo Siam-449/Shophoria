@@ -351,32 +351,32 @@ const Navbar = () => {
           
         </div>
 
-        <div className="flex items-center lg:justify-start gap-1.5 lg:gap-4 py-2 overflow-x-auto lg:overflow-visible scrollbar-none">
+        <div className="w-full flex items-center lg:justify-start gap-1.5 lg:gap-4 py-2 overflow-x-auto lg:overflow-visible scrollbar-none">
           <Link 
             href="/" 
             aria-label="Home"
-            className="flex items-center gap-1 lg:gap-1.5 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-2 lg:px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
+            className="flex-shrink-0 whitespace-nowrap flex items-center gap-1 lg:gap-1.5 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-2 lg:px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
           >
-            <Home className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
+            <Home className="h-3.5 w-3.5 lg:h-4 lg:w-4 flex-shrink-0" />
             <span>Home</span>
           </Link>
           <Link 
             href="/products" 
             aria-label="All Products"
-            className="flex items-center gap-1 lg:gap-1.5 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-2 lg:px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
+            className="flex-shrink-0 whitespace-nowrap flex items-center gap-1 lg:gap-1.5 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-2 lg:px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
           >
-            <Package className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
+            <Package className="h-3.5 w-3.5 lg:h-4 lg:w-4 flex-shrink-0" />
             <span><span className="lg:hidden">Products</span><span className="hidden lg:inline">All Products</span></span>
           </Link>
-          <div className="relative" ref={categoriesRef}>
+          <div className="relative flex-shrink-0" ref={categoriesRef}>
             <button 
                 onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
                 aria-label="All Categories"
-                className="flex items-center gap-1 lg:gap-2 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-2 lg:px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
+                className="flex-shrink-0 whitespace-nowrap flex items-center gap-1 lg:gap-2 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white px-2 lg:px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors"
             >
-                <Grid className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
+                <Grid className="h-3.5 w-3.5 lg:h-4 lg:w-4 flex-shrink-0" />
                 <span><span className="lg:hidden">Categories</span><span className="hidden lg:inline">All Categories</span></span>
-                <ChevronDown className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
+                <ChevronDown className="h-3.5 w-3.5 lg:h-4 lg:w-4 flex-shrink-0" />
             </button>
             <AnimatePresence>
               {isCategoriesOpen && (
@@ -442,7 +442,7 @@ const Navbar = () => {
             </AnimatePresence>
           </div>
           {notice && (
-            <div className="hidden lg:block flex-grow overflow-hidden px-5 py-1 text-sm font-medium bg-black text-[#fca5a5] rounded-md whitespace-nowrap" ref={noticeRef}>
+            <div className="hidden lg:block flex-grow min-w-0 overflow-hidden px-5 py-1 text-sm font-medium bg-black text-[#fca5a5] rounded-md whitespace-nowrap" ref={noticeRef}>
               <div className={isOverflowing ? 'animate-marquee' : 'animate-blink'}>
                 {notice}
               </div>
