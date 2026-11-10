@@ -90,8 +90,8 @@ export default function HomePageClient() {
           transition={{ duration: 0.6 }}
           className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10"
         >
-          <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-7 md:p-8 bg-gradient-to-b from-neutral-100/80 via-white to-white dark:from-neutral-900/60 dark:via-[#111111] dark:to-[#111111] border border-neutral-200 dark:border-neutral-800 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-neutral-200/80 dark:border-neutral-800/80">
+          <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-7 md:p-8 bg-white dark:bg-[#111111] border border-slate-300 dark:border-neutral-800 shadow-sm sm:shadow-md ring-1 ring-black/5 dark:ring-white/5">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-slate-200 dark:border-neutral-800">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold uppercase tracking-wider mb-2">
                   <Flame className="w-3.5 h-3.5 fill-rose-500 animate-pulse" />
