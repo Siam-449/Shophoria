@@ -90,22 +90,22 @@ export default function HomePageClient() {
           transition={{ duration: 0.6 }}
           className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10"
         >
-          <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-7 md:p-8 bg-white dark:bg-[#111111] border border-slate-300 dark:border-neutral-800 shadow-sm sm:shadow-md ring-1 ring-black/5 dark:ring-white/5">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-slate-200 dark:border-neutral-800">
+          <div className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 md:p-8 bg-white dark:bg-[#111111] border border-slate-300 dark:border-neutral-800 shadow-sm sm:shadow-md ring-1 ring-black/5 dark:ring-white/5">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 sm:gap-3 mb-4 sm:mb-6 md:mb-8 pb-3 sm:pb-4 border-b border-slate-200 dark:border-neutral-800">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold uppercase tracking-wider mb-2">
-                  <Flame className="w-3.5 h-3.5 fill-rose-500 animate-pulse" />
+                <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5 sm:mb-2">
+                  <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-rose-500 animate-pulse" />
                   Flash Deals
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                   Limited Time Offers
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-[11px] sm:text-xs md:text-sm text-slate-600 dark:text-slate-400 mt-0.5 sm:mt-1">
                   Grab these limited special deals before the countdown expires.
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-4 md:gap-6">
               {timeOffers.map((product) => (
                 <TimeOfferCard key={product.id} product={product} />
               ))}
