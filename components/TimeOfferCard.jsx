@@ -4,8 +4,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '../context/CartContext.jsx';
+import { CheckIcon } from './icons/CheckIcon.jsx';
+import { Flame, Timer, ShoppingCart } from 'lucide-react';
+import { motion } from 'motion/react';
 
 const calculateTimeLeft = (expiresAt) => {
+  if (!expiresAt) return {};
   const difference = +new Date(expiresAt) - +new Date();
   let timeLeft = {};
 
@@ -24,6 +28,7 @@ const calculateTimeLeft = (expiresAt) => {
 const TimeOfferCard = ({ product }) => {
   const { addItemToCart } = useCart();
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(product.expiresAt));
+  const [isAdded, setIsAdded] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -37,60 +42,142 @@ const TimeOfferCard = ({ product }) => {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null;
 
+  const isExpired = !timeLeft || Object.keys(timeLeft).length === 0;
+
+  const handleAddToCart = () => {
+    addItemToCart(product);
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 1500);
+  };
+
   return (
-    <div className="relative bg-white dark:bg-[#141414] rounded-xl sm:rounded-2xl overflow-hidden group shadow-sm hover:shadow-md border border-slate-200 dark:border-neutral-800 flex flex-col h-full transition-all">
-      <div className="p-2 sm:p-3 bg-red-600 text-white text-center">
-        <h4 className="font-bold text-xs sm:text-sm uppercase tracking-wide">Time Left to Order!</h4>
-        <div className="flex justify-center gap-1 sm:gap-3 mt-1 sm:mt-1.5">
-            {Object.keys(timeLeft).length > 0 ? (
-                Object.entries(timeLeft).map(([unit, value]) => (
-                    <div key={unit} className="flex flex-col items-center">
-                        <span className="text-xs sm:text-base font-mono font-bold">{String(value).padStart(2, '0')}</span>
-                        <span className="text-[9px] uppercase">{unit}</span>
-                    </div>
-                ))
-            ) : (
-                <span className="text-xs sm:text-sm font-bold">Offer Expired!</span>
-            )}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      whileTap={{ scale: 0.98 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3 }}
+      className="relative bg-white dark:bg-[#141414] rounded-xl sm:rounded-2xl overflow-hidden group shadow-sm hover:shadow-lg border border-slate-200 dark:border-neutral-800 flex flex-col h-full transition-all"
+    >
+      {/* Sleek Digital Clock Showcase Header */}
+      <div className="bg-neutral-950 text-white p-3 sm:p-3.5 border-b border-neutral-800">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5 text-rose-400 font-semibold text-xs tracking-wider uppercase">
+            <Flame className="w-3.5 h-3.5 fill-rose-500 animate-pulse" />
+            <span>Flash Deal</span>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] text-neutral-400 font-medium">
+            <Timer className="w-3 h-3 text-neutral-400" />
+            <span>Ends Soon</span>
+          </div>
         </div>
+
+        {isExpired ? (
+          <div className="py-2 text-center text-xs font-semibold text-rose-400">
+            Offer Expired
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-1 sm:gap-1.5">
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 sm:w-10 sm:h-9 bg-neutral-900 border border-neutral-800 rounded-md flex items-center justify-center font-mono font-bold text-xs sm:text-sm text-white shadow-inner">
+                {String(timeLeft.days ?? 0).padStart(2, '0')}
+              </div>
+              <span className="text-[9px] text-neutral-400 uppercase font-medium mt-1">Days</span>
+            </div>
+            <span className="text-neutral-500 font-bold text-xs mb-3">:</span>
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 sm:w-10 sm:h-9 bg-neutral-900 border border-neutral-800 rounded-md flex items-center justify-center font-mono font-bold text-xs sm:text-sm text-white shadow-inner">
+                {String(timeLeft.hours ?? 0).padStart(2, '0')}
+              </div>
+              <span className="text-[9px] text-neutral-400 uppercase font-medium mt-1">Hours</span>
+            </div>
+            <span className="text-neutral-500 font-bold text-xs mb-3">:</span>
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 sm:w-10 sm:h-9 bg-neutral-900 border border-neutral-800 rounded-md flex items-center justify-center font-mono font-bold text-xs sm:text-sm text-white shadow-inner">
+                {String(timeLeft.minutes ?? 0).padStart(2, '0')}
+              </div>
+              <span className="text-[9px] text-neutral-400 uppercase font-medium mt-1">Mins</span>
+            </div>
+            <span className="text-neutral-500 font-bold text-xs mb-3">:</span>
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 sm:w-10 sm:h-9 bg-neutral-900 border border-rose-500/40 rounded-md flex items-center justify-center font-mono font-bold text-xs sm:text-sm text-rose-400 shadow-inner">
+                {String(timeLeft.seconds ?? 0).padStart(2, '0')}
+              </div>
+              <span className="text-[9px] text-rose-400 uppercase font-medium mt-1">Secs</span>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Product Card Body */}
       <div className="p-3 sm:p-4 flex flex-col flex-grow">
         <Link href={`/products/${product.slug}`} aria-label={`View details for ${product.name}`}>
-          <div className="overflow-hidden aspect-square rounded-lg bg-slate-50 dark:bg-neutral-900 mb-3 flex items-center justify-center p-2">
-              <img src={product.image} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+          <div className="overflow-hidden aspect-square rounded-lg bg-slate-50 dark:bg-neutral-900 mb-3 flex items-center justify-center p-2 relative">
+            {discountPercentage && (
+              <div className="absolute top-2.5 right-2.5 bg-rose-600 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full shadow-md z-10">
+                -{discountPercentage}%
+              </div>
+            )}
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+            />
           </div>
         </Link>
         <div className="flex flex-col flex-grow">
           <Link href={`/products/${product.slug}`} className="flex-grow">
-            <h3 className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">{product.name}</h3>
-            <p className="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-1">{product.description}</p>
+            <h3 className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+              {product.name}
+            </h3>
+            <p className="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-1">
+              {product.description}
+            </p>
           </Link>
           <div className="mt-3 pt-3 border-t border-slate-100 dark:border-neutral-800/80">
             <div className="flex justify-between items-center mb-2.5">
               <div className="flex items-baseline gap-1.5 sm:gap-2">
-                <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">৳{product.price.toLocaleString()}</p>
+                <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
+                  ৳{product.price.toLocaleString()}
+                </p>
                 {product.originalPrice && product.originalPrice > product.price && (
-                  <p className="text-xs sm:text-sm text-slate-400 dark:text-slate-500 line-through">৳{product.originalPrice.toLocaleString()}</p>
+                  <p className="text-xs sm:text-sm text-slate-400 dark:text-slate-500 line-through">
+                    ৳{product.originalPrice.toLocaleString()}
+                  </p>
                 )}
               </div>
-               {discountPercentage && (
-                <div className="bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full z-10">
-                  -{discountPercentage}%
-                </div>
-              )}
+              <p className={`text-[10px] sm:text-xs font-semibold ${product.quantity > 5 ? 'text-green-600 dark:text-green-400' : product.quantity > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'}`}>
+                {product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
+              </p>
             </div>
-            <button 
-              onClick={() => addItemToCart(product)}
-              disabled={product.quantity <= 0 || Object.keys(timeLeft).length === 0}
-              className="w-full py-2.5 px-3 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-800 transition-colors disabled:bg-slate-400 dark:disabled:bg-slate-700 disabled:cursor-not-allowed"
+            <button
+              onClick={handleAddToCart}
+              disabled={product.quantity <= 0 || isExpired || isAdded}
+              className={`w-full py-2.5 px-3 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-1.5 ${
+                isAdded
+                  ? 'bg-green-600 text-white'
+                  : 'bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800'
+              } disabled:bg-slate-400 dark:disabled:bg-slate-700 disabled:cursor-not-allowed`}
             >
-              {product.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
+              {isAdded ? (
+                <>
+                  <CheckIcon className="h-4 w-4" /> Added!
+                </>
+              ) : product.quantity > 0 && !isExpired ? (
+                <>
+                  <ShoppingCart className="h-4 w-4" /> Add to Cart
+                </>
+              ) : (
+                'Out of Stock'
+              )}
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 export default TimeOfferCard;
+

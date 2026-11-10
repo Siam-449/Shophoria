@@ -10,6 +10,7 @@ import ProductCard from './ProductCard.jsx';
 import ProductSkeleton from './ProductSkeleton.jsx';
 import { getTimeOffers } from '../lib/firebase.js';
 import TimeOfferCard from './TimeOfferCard.jsx';
+import { Flame } from 'lucide-react';
 
 import { motion } from 'motion/react';
 
@@ -87,16 +88,28 @@ export default function HomePageClient() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 mb-8"
+          className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10"
         >
-          <div className="text-center my-8">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Limited Time Offers</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400">Grab these amazing deals before they're gone!</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {timeOffers.map((product) => (
-              <TimeOfferCard key={product.id} product={product} />
-            ))}
+          <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-7 md:p-8 bg-gradient-to-b from-neutral-100/80 via-white to-white dark:from-neutral-900/60 dark:via-[#111111] dark:to-[#111111] border border-neutral-200 dark:border-neutral-800 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-neutral-200/80 dark:border-neutral-800/80">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold uppercase tracking-wider mb-2">
+                  <Flame className="w-3.5 h-3.5 fill-rose-500 animate-pulse" />
+                  Flash Deals
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  Limited Time Offers
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+                  Grab these limited special deals before the countdown expires.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+              {timeOffers.map((product) => (
+                <TimeOfferCard key={product.id} product={product} />
+              ))}
+            </div>
           </div>
         </motion.section>
       )}
