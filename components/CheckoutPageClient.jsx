@@ -88,10 +88,16 @@ const CheckoutPageClient = () => {
       deliveryLocation: formData.get('deliveryLocation'),
       items: cartItems.map(item => ({
         id: item.id,
+        cartItemId: item.cartItemId || item.id,
         name: item.name,
         price: item.price,
-        originalPrice: item.originalPrice,
+        originalPrice: item.originalPrice || null,
         quantity: item.quantity,
+        image: item.image || null,
+        variant: item.selectedVariant?.name || null,
+        color: item.selectedColor || null,
+        size: item.selectedSize || null,
+        weight: item.selectedWeight || null,
       })),
       subtotal: total,
       shippingCost,
@@ -303,27 +309,39 @@ const CheckoutPageClient = () => {
           >
             <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
-              {cartItems.map(item => (
-                <div key={item.id} className="flex items-center gap-4">
-                  <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-md flex-shrink-0" />
-                  <div className="flex-grow">
-                      <p className="font-semibold text-slate-800 dark:text-slate-100 leading-tight">{item.name}</p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">৳{(item.price * item.quantity).toLocaleString()}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                          <button type="button" onClick={() => updateItemQuantity(item.id, item.quantity - 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50" disabled={isSubmitting}>
-                              <MinusIcon className="h-4 w-4" />
-                          </button>
-                          <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                          <button type="button" onClick={() => updateItemQuantity(item.id, item.quantity + 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50" disabled={isSubmitting}>
-                              <PlusIcon className="h-4 w-4" />
-                          </button>
-                      </div>
+              {cartItems.map(item => {
+                const itemKey = item.cartItemId || item.id;
+                const hasVariantDetails = item.selectedVariant?.name || item.selectedColor || item.selectedSize || item.selectedWeight;
+                return (
+                  <div key={itemKey} className="flex items-center gap-4">
+                    <img src={item.image} alt={item.name} className="w-16 h-16 object-contain bg-white dark:bg-slate-800 p-1 rounded-md flex-shrink-0" />
+                    <div className="flex-grow min-w-0">
+                        <p className="font-semibold text-slate-800 dark:text-slate-100 leading-tight truncate">{item.name}</p>
+                        {hasVariantDetails && (
+                          <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            {item.selectedVariant?.name && <span>{item.selectedVariant.name}</span>}
+                            {item.selectedColor && <span>Color: <strong>{item.selectedColor}</strong></span>}
+                            {item.selectedSize && <span>Size: <strong>{item.selectedSize}</strong></span>}
+                            {item.selectedWeight && <span>Weight: <strong>{item.selectedWeight}</strong></span>}
+                          </div>
+                        )}
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">৳{(item.price * item.quantity).toLocaleString()}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                            <button type="button" onClick={() => updateItemQuantity(itemKey, item.quantity - 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50" disabled={isSubmitting}>
+                                <MinusIcon className="h-4 w-4" />
+                            </button>
+                            <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                            <button type="button" onClick={() => updateItemQuantity(itemKey, item.quantity + 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50" disabled={isSubmitting}>
+                                <PlusIcon className="h-4 w-4" />
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" onClick={() => removeItemFromCart(itemKey)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400 self-start disabled:opacity-50" disabled={isSubmitting}>
+                        <RemoveIcon className="h-5 w-5" />
+                    </button>
                   </div>
-                  <button type="button" onClick={() => removeItemFromCart(item.id)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400 self-start disabled:opacity-50" disabled={isSubmitting}>
-                      <RemoveIcon className="h-5 w-5" />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="border-t border-slate-200 dark:border-slate-700 my-6"></div>
             <div className="space-y-3">

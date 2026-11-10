@@ -46,27 +46,39 @@ const CartDrawer = () => {
               {/* Cart Items */}
               {cartItems.length > 0 ? (
                 <div className="flex-grow overflow-y-auto p-4 space-y-4">
-                  {cartItems.map(item => (
-                    <div key={item.id} className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg">
-                      <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-md" />
-                      <div className="flex-grow">
-                        <p className="font-semibold text-slate-800 dark:text-slate-100">{item.name}</p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">৳{item.price.toLocaleString()}</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <button onClick={() => updateItemQuantity(item.id, item.quantity - 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700">
-                            <MinusIcon className="h-4 w-4" />
-                          </button>
-                          <span className="w-8 text-center">{item.quantity}</span>
-                          <button onClick={() => updateItemQuantity(item.id, item.quantity + 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700">
-                            <PlusIcon className="h-4 w-4" />
-                          </button>
+                  {cartItems.map(item => {
+                    const itemKey = item.cartItemId || item.id;
+                    const hasVariantDetails = item.selectedVariant?.name || item.selectedColor || item.selectedSize || item.selectedWeight;
+                    return (
+                      <div key={itemKey} className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg">
+                        <img src={item.image} alt={item.name} className="w-20 h-20 object-contain bg-white dark:bg-slate-900 rounded-md p-1" />
+                        <div className="flex-grow min-w-0">
+                          <p className="font-semibold text-slate-800 dark:text-slate-100 truncate">{item.name}</p>
+                          {hasVariantDetails && (
+                            <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                              {item.selectedVariant?.name && <span>{item.selectedVariant.name}</span>}
+                              {item.selectedColor && <span>Color: <strong>{item.selectedColor}</strong></span>}
+                              {item.selectedSize && <span>Size: <strong>{item.selectedSize}</strong></span>}
+                              {item.selectedWeight && <span>Weight: <strong>{item.selectedWeight}</strong></span>}
+                            </div>
+                          )}
+                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mt-1">৳{item.price.toLocaleString()}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <button onClick={() => updateItemQuantity(itemKey, item.quantity - 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700">
+                              <MinusIcon className="h-4 w-4" />
+                            </button>
+                            <span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
+                            <button onClick={() => updateItemQuantity(itemKey, item.quantity + 1)} className="p-1 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700">
+                              <PlusIcon className="h-4 w-4" />
+                            </button>
+                          </div>
                         </div>
+                        <button onClick={() => removeItemFromCart(itemKey)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400 flex-shrink-0">
+                          <RemoveIcon className="h-5 w-5" />
+                        </button>
                       </div>
-                      <button onClick={() => removeItemFromCart(item.id)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">
-                        <RemoveIcon className="h-5 w-5" />
-                      </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="flex-grow flex items-center justify-center">

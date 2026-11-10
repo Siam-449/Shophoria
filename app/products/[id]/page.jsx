@@ -30,14 +30,12 @@ export async function generateMetadata({ params }) {
         openGraph: {
             title: `${product.name} | Shophoria`,
             description: product.description,
-            images: [
-                {
-                    url: product.image,
-                    width: 800,
-                    height: 600,
-                    alt: product.name,
-                },
-            ],
+            images: (product.images && product.images.length > 0 ? product.images : [product.image].filter(Boolean)).map(imgUrl => ({
+                url: imgUrl,
+                width: 800,
+                height: 600,
+                alt: product.name,
+            })),
         },
     };
 }
@@ -63,11 +61,13 @@ const ProductDetailPage = async ({ params }) => {
     // Ensure price is a number
     const numericPrice = typeof product.price === 'string' ? Number(product.price.replace(/[^0-9.-]+/g, "")) : (product.price || 0);
 
+    const productImages = (product.images && product.images.length > 0) ? product.images : (product.image ? [product.image] : ["https://www.shophoriabd.com/icon.svg"]);
+
     const productSchema = {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": product.name,
-        "image": product.image ? (Array.isArray(product.image) ? product.image : [product.image]) : ["https://www.shophoriabd.com/icon.svg"],
+        "image": productImages,
         "description": product.description || product.name,
         "sku": product.id,
         "brand": {
