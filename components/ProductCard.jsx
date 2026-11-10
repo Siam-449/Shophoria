@@ -241,52 +241,54 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                         )}
 
                         {/* Main Image Box */}
-                        <div className="flex-1 w-full bg-[#f8f9fb] dark:bg-[#141414] rounded-2xl sm:rounded-3xl p-6 sm:p-10 aspect-square flex items-center justify-center relative border border-slate-100 dark:border-neutral-800/80 shadow-xs">
+                        <div className="flex-1 w-full bg-[#f8f9fb] dark:bg-[#141414] rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col border border-slate-100 dark:border-neutral-800/80 shadow-xs">
                             {product.expiresAt && (
-                                <div className="absolute top-4 left-4 right-4 z-10">
+                                <div className="w-full flex-shrink-0">
                                     <CountdownTimer expiresAt={product.expiresAt} />
                                 </div>
                             )}
 
-                            {discountPercentage && (
-                                <div className="absolute top-4 left-4 bg-red-600 text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-full z-10 shadow-sm">
-                                    -{discountPercentage}%
-                                </div>
-                            )}
+                            <div className="relative p-6 sm:p-10 aspect-square flex items-center justify-center w-full flex-grow">
+                                {discountPercentage && (
+                                    <div className="absolute top-4 left-4 bg-red-600 text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-full z-10 shadow-sm">
+                                        -{discountPercentage}%
+                                    </div>
+                                )}
 
-                            {images.length > 1 && (
-                                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full z-10">
-                                    {selectedImageIndex + 1} / {images.length}
-                                </div>
-                            )}
+                                {images.length > 1 && (
+                                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full z-10">
+                                        {selectedImageIndex + 1} / {images.length}
+                                    </div>
+                                )}
 
-                            <img 
-                                src={images[selectedImageIndex] || product.image} 
-                                alt={product.name} 
-                                className="w-full h-full object-contain transition-all duration-300" 
-                            />
+                                <img 
+                                    src={images[selectedImageIndex] || product.image} 
+                                    alt={product.name} 
+                                    className="w-full h-full object-contain transition-all duration-300" 
+                                />
 
-                            {/* Left & Right navigation chevrons for multiple images */}
-                            {images.length > 1 && (
-                                <>
-                                    <button
-                                        type="button"
-                                        onClick={handlePrevImage}
-                                        aria-label="Previous product image"
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 dark:bg-neutral-800/90 hover:bg-white dark:hover:bg-neutral-700 text-slate-800 dark:text-white shadow-md transition-transform hover:scale-110 z-10"
-                                    >
-                                        <ChevronLeft className="h-5 w-5" />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleNextImage}
-                                        aria-label="Next product image"
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 dark:bg-neutral-800/90 hover:bg-white dark:hover:bg-neutral-700 text-slate-800 dark:text-white shadow-md transition-transform hover:scale-110 z-10"
-                                    >
-                                        <ChevronRight className="h-5 w-5" />
-                                    </button>
-                                </>
-                            )}
+                                {/* Left & Right navigation chevrons for multiple images */}
+                                {images.length > 1 && (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={handlePrevImage}
+                                            aria-label="Previous product image"
+                                            className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 dark:bg-neutral-800/90 hover:bg-white dark:hover:bg-neutral-700 text-slate-800 dark:text-white shadow-md transition-transform hover:scale-110 z-10"
+                                        >
+                                            <ChevronLeft className="h-5 w-5" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleNextImage}
+                                            aria-label="Next product image"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 dark:bg-neutral-800/90 hover:bg-white dark:hover:bg-neutral-700 text-slate-800 dark:text-white shadow-md transition-transform hover:scale-110 z-10"
+                                        >
+                                            <ChevronRight className="h-5 w-5" />
+                                        </button>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -475,12 +477,12 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                             type="button"
                             onClick={handleAddToCart}
                             disabled={currentQuantity <= 0 || isAdded}
-                            className={`w-full mt-5 py-3.5 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-md transition-all ${
+                            className={`w-full mt-5 py-3.5 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-sm transition-all ${
                                 isAdded
-                                    ? 'bg-green-600 text-white'
+                                    ? 'bg-neutral-900 text-white dark:bg-white dark:text-black'
                                     : currentQuantity <= 0
-                                    ? 'bg-slate-300 dark:bg-neutral-800 text-slate-500 dark:text-slate-400 cursor-not-allowed shadow-none'
-                                    : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white active:scale-[0.99]'
+                                    ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed shadow-none'
+                                    : 'bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800 active:scale-[0.99]'
                             } disabled:cursor-not-allowed`}
                         >
                             {isAdded ? (
