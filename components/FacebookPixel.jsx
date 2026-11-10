@@ -5,11 +5,15 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import Script from 'next/script';
 
 export default function FacebookPixel() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  let pathname = '';
+  let searchParams = null;
+  try {
+    pathname = usePathname();
+    searchParams = useSearchParams();
+  } catch (e) {}
 
   useEffect(() => {
-    if (typeof window.fbq !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof window.fbq !== 'undefined') {
       window.fbq('track', 'PageView');
     }
   }, [pathname, searchParams]);
