@@ -87,9 +87,9 @@ export default function HomePageClient() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="container mx-auto p-4 sm:p-6 lg:p-8 mb-8"
+          className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 mb-8"
         >
-          <div className="text-center my-12">
+          <div className="text-center my-8">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Limited Time Offers</h2>
             <p className="text-lg text-slate-600 dark:text-slate-400">Grab these amazing deals before they're gone!</p>
           </div>
@@ -124,7 +124,7 @@ export default function HomePageClient() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.7 }}
-        className="container mx-auto p-4 sm:p-6 lg:p-8"
+        className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12"
       >
          <div className="text-center my-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Our Collections</h2>

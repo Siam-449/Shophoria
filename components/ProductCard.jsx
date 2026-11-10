@@ -108,7 +108,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
             transition={{ duration: 0.5 }}
             className="bg-white dark:bg-slate-950 py-12 sm:py-16"
         >
-            <main className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <motion.div 
                         initial={{ opacity: 0, x: -30 }}

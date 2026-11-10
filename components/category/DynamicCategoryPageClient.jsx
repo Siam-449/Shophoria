@@ -52,7 +52,7 @@ export default function DynamicCategoryPageClient({ slug }) {
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950 min-h-[70vh] overflow-hidden">
-      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Breadcrumb */}
         <motion.nav 
           initial={{ opacity: 0, x: -10 }}
