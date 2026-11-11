@@ -145,52 +145,22 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
     }, [product.colors, colorVariants]);
 
     // Initial state: User MUST select a variant if variants exist
-    const [selectedSize, setSelectedSize] = useState(null);
-    const [selectedWeight, setSelectedWeight] = useState(null);
-    const [selectedColor, setSelectedColor] = useState(null);
     const [selectedVariantId, setSelectedVariantId] = useState(null);
 
     const hasVariants = variants.length > 0;
-    const hasSizeVariants = availableSizes.length > 0;
-    const hasWeightVariants = availableWeights.length > 0;
-    const hasColorVariants = availableColors.length > 0;
-    const hasOtherVariants = variants.some(
-      v => v.variantType !== 'size' && v.variantType !== 'weight' &&
-           !availableSizes.includes(v.size || v.name) &&
-           !availableWeights.includes(v.weight || v.name) &&
-           !availableColors.includes(v.color || v.name)
-    );
 
     // Resolve the active variant based on user selection
     const activeVariant = useMemo(() => {
       if (variants.length === 0) return null;
-      // Do not auto-select if no selection made
-      if (!selectedVariantId && !selectedSize && !selectedWeight && !selectedColor) return null;
-
-      if (selectedVariantId) {
-        const found = variants.find(v => v.id === selectedVariantId);
-        if (found) return found;
-      }
-
-      // Check if all selected attributes match a specific variant
-      const matched = variants.find(v => {
-        const matchSize = !selectedSize || v.size === selectedSize || v.name === selectedSize;
-        const matchWeight = !selectedWeight || v.weight === selectedWeight || v.name === selectedWeight;
-        const matchColor = !selectedColor || v.color === selectedColor;
-        return matchSize && matchWeight && matchColor;
-      });
-
-      return matched || null;
-    }, [variants, selectedVariantId, selectedSize, selectedWeight, selectedColor]);
+      if (!selectedVariantId) return null;
+      return variants.find(v => v.id === selectedVariantId) || null;
+    }, [variants, selectedVariantId]);
 
     // Validation: if product has variants, user must select a variant to add to cart
     const isVariantSelected = useMemo(() => {
       if (!hasVariants) return true;
-      if (hasSizeVariants && !selectedSize) return false;
-      if (hasWeightVariants && !selectedWeight) return false;
-      if (hasOtherVariants && !selectedVariantId) return false;
       return !!activeVariant;
-    }, [hasVariants, hasSizeVariants, selectedSize, hasWeightVariants, selectedWeight, hasOtherVariants, selectedVariantId, activeVariant]);
+    }, [hasVariants, activeVariant]);
 
     // Dynamic price, original price, and quantity
     const currentPrice = activeVariant?.price != null ? activeVariant.price : product.price;
@@ -243,71 +213,12 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       });
     };
 
-    const handleSizeSelect = (size, variant) => {
-      if (selectedSize === size) {
-        setSelectedSize(null);
-        setSelectedVariantId(null);
-      } else {
-        setSelectedSize(size);
-        setSelectedWeight(null);
-        setSelectedColor(null);
-        const targetVariant = variant || variants.find(v => v.size === size || (v.variantType === 'size' && v.name === size));
-        if (targetVariant) {
-          setSelectedVariantId(targetVariant.id);
-          if (targetVariant.image) {
-            syncImageFromVariant(targetVariant.image);
-          }
-        }
-      }
-    };
-
-    const handleWeightSelect = (weight, variant) => {
-      if (selectedWeight === weight) {
-        setSelectedWeight(null);
-        setSelectedVariantId(null);
-      } else {
-        setSelectedWeight(weight);
-        setSelectedSize(null);
-        setSelectedColor(null);
-        const targetVariant = variant || variants.find(v => v.weight === weight || (v.variantType === 'weight' && v.name === weight));
-        if (targetVariant) {
-          setSelectedVariantId(targetVariant.id);
-          if (targetVariant.image) {
-            syncImageFromVariant(targetVariant.image);
-          }
-        }
-      }
-    };
-
-    const handleColorSelect = (color) => {
-      if (selectedColor === color) {
-        setSelectedColor(null);
-        setSelectedVariantId(null);
-      } else {
-        setSelectedColor(color);
-        setSelectedSize(null);
-        setSelectedWeight(null);
-        const targetVariant = variants.find(v => v.color === color);
-        if (targetVariant) {
-          setSelectedVariantId(targetVariant.id);
-          if (targetVariant.image) {
-            syncImageFromVariant(targetVariant.image);
-          }
-        }
-      }
-    };
-
-    const handleVariantSelect = (variant) => {
+    const handleVariantOptionSelect = (variant) => {
+      if (!variant) return;
       if (selectedVariantId === variant.id) {
         setSelectedVariantId(null);
-        setSelectedColor(null);
-        setSelectedSize(null);
-        setSelectedWeight(null);
       } else {
         setSelectedVariantId(variant.id);
-        setSelectedColor(variant.color || null);
-        setSelectedSize(variant.size || null);
-        setSelectedWeight(variant.weight || null);
         if (variant.image) {
           syncImageFromVariant(variant.image);
         }
@@ -323,9 +234,9 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
         originalPrice: currentOriginalPrice,
         image: activeImage,
         selectedVariant: activeVariant,
-        selectedColor,
-        selectedSize: selectedSize || activeVariant?.size || (activeVariant?.variantType === 'size' ? activeVariant.name : null),
-        selectedWeight: selectedWeight || activeVariant?.weight || (activeVariant?.variantType === 'weight' ? activeVariant.name : null),
+        selectedColor: activeVariant?.color || null,
+        selectedSize: activeVariant?.size || (activeVariant?.variantType === 'size' ? activeVariant.name : null),
+        selectedWeight: activeVariant?.weight || (activeVariant?.variantType === 'weight' ? activeVariant.name : null),
       }, buyQuantity);
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 2000);
@@ -483,12 +394,13 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                 </label>
                                 <div className="flex flex-wrap gap-2">
                                     {availableColors.map((color) => {
-                                        const isSelected = selectedColor === color;
+                                        const matchedVariant = variants.find(v => v.color === color);
+                                        const isSelected = selectedVariantId === matchedVariant?.id;
                                         return (
                                             <button
                                                 key={color}
                                                 type="button"
-                                                onClick={() => handleColorSelect(color)}
+                                                onClick={() => handleVariantOptionSelect(matchedVariant)}
                                                 className={`min-h-[40px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all border-2 ${
                                                     isSelected
                                                         ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-xs font-semibold'
@@ -517,14 +429,14 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                 <div className="flex flex-wrap gap-2">
                                     {availableSizes.map((size) => {
                                         const matchedVariant = variants.find(v => v.size === size || (v.variantType === 'size' && v.name === size));
-                                        const isSelected = selectedSize === size || (activeVariant && (activeVariant.size === size || activeVariant.name === size || activeVariant.id === matchedVariant?.id));
+                                        const isSelected = selectedVariantId === matchedVariant?.id;
                                         const variantPrice = matchedVariant?.price != null ? matchedVariant.price : null;
                                         const variantImg = matchedVariant?.image || null;
                                         return (
                                             <button
                                                 key={size}
                                                 type="button"
-                                                onClick={() => handleSizeSelect(size, matchedVariant)}
+                                                onClick={() => handleVariantOptionSelect(matchedVariant)}
                                                 className={`min-h-[40px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-2 border-2 ${
                                                     isSelected
                                                         ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-xs font-semibold'
@@ -565,14 +477,14 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                 <div className="flex flex-wrap gap-2">
                                     {availableWeights.map((weight) => {
                                         const matchedVariant = variants.find(v => v.weight === weight || (v.variantType === 'weight' && v.name === weight));
-                                        const isSelected = selectedWeight === weight || (activeVariant && (activeVariant.weight === weight || activeVariant.name === weight || activeVariant.id === matchedVariant?.id));
+                                        const isSelected = selectedVariantId === matchedVariant?.id;
                                         const variantPrice = matchedVariant?.price != null ? matchedVariant.price : null;
                                         const variantImg = matchedVariant?.image || null;
                                         return (
                                             <button
                                                 key={weight}
                                                 type="button"
-                                                onClick={() => handleWeightSelect(weight, matchedVariant)}
+                                                onClick={() => handleVariantOptionSelect(matchedVariant)}
                                                 className={`min-h-[40px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-2 border-2 ${
                                                     isSelected
                                                         ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-xs font-semibold'
@@ -611,13 +523,13 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                     )}
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                    {variants.filter(v => v.variantType !== 'size' && v.variantType !== 'weight').map((variant) => {
-                                        const isSelected = activeVariant?.id === variant.id;
+                                    {variants.filter(v => v.variantType !== 'size' && v.variantType !== 'weight' && v.variantType !== 'color').map((variant) => {
+                                        const isSelected = selectedVariantId === variant.id;
                                         return (
                                             <button
                                                 key={variant.id}
                                                 type="button"
-                                                onClick={() => handleVariantSelect(variant)}
+                                                onClick={() => handleVariantOptionSelect(variant)}
                                                 className={`min-h-[40px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-2 border-2 ${
                                                     isSelected
                                                         ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-xs font-semibold'
