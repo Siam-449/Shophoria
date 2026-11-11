@@ -75,7 +75,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-white dark:bg-[#0d0c0b] text-slate-900 dark:text-slate-100 min-h-screen`}>
+      <body className={`${inter.className} bg-white dark:bg-[#0d0c0b] text-slate-900 dark:text-slate-100 min-h-screen`} suppressHydrationWarning>
         <GoogleAnalytics />
         <Suspense fallback={null}>
           <FacebookPixel />
