@@ -319,10 +319,10 @@ const CheckoutPageClient = () => {
                         <p className="font-semibold text-slate-800 dark:text-slate-100 leading-tight truncate">{item.name}</p>
                         {hasVariantDetails && (
                           <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                            {item.selectedVariant?.name && <span>{item.selectedVariant.name}</span>}
+                            {item.selectedVariant?.name && <span>{item.selectedVariant.variantType !== 'size' && item.selectedVariant.variantType !== 'weight' && item.selectedVariant.variantType !== 'color' ? item.selectedVariant.name : ''}</span>}
                             {item.selectedColor && <span>Color: <strong>{item.selectedColor}</strong></span>}
-                            {item.selectedSize && <span>Size: <strong>{item.selectedSize}</strong></span>}
-                            {item.selectedWeight && <span>Weight: <strong>{item.selectedWeight}</strong></span>}
+                            {item.selectedSize && <span>Size: <strong>{item.selectedSize} {item.selectedVariant?.sizeUnit || ''}</strong></span>}
+                            {item.selectedWeight && <span>Weight: <strong>{item.selectedWeight} {item.selectedVariant?.weightUnit || ''}</strong></span>}
                           </div>
                         )}
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">৳{(item.price * item.quantity).toLocaleString()}</p>

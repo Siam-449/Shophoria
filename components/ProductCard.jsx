@@ -170,17 +170,15 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
         if (found) return found;
       }
 
-      if (selectedSize || selectedWeight || selectedColor) {
-        const matched = variants.find(v => {
-          const matchSize = !selectedSize || v.size === selectedSize || v.name === selectedSize;
-          const matchWeight = !selectedWeight || v.weight === selectedWeight || v.name === selectedWeight;
-          const matchColor = !selectedColor || v.color === selectedColor;
-          return matchSize && matchWeight && matchColor;
-        });
-        if (matched) return matched;
-      }
+      // Check if all selected attributes match a specific variant
+      const matched = variants.find(v => {
+        const matchSize = !selectedSize || v.size === selectedSize || v.name === selectedSize;
+        const matchWeight = !selectedWeight || v.weight === selectedWeight || v.name === selectedWeight;
+        const matchColor = !selectedColor || v.color === selectedColor;
+        return matchSize && matchWeight && matchColor;
+      });
 
-      return null;
+      return matched || null;
     }, [variants, selectedVariantId, selectedSize, selectedWeight, selectedColor]);
 
     // Validation: if product has variants, user must select a variant to add to cart
@@ -244,45 +242,67 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
     };
 
     const handleSizeSelect = (size, variant) => {
-      setSelectedSize(size);
-      const targetVariant = variant || variants.find(v => v.size === size || (v.variantType === 'size' && v.name === size));
-      if (targetVariant) {
-        setSelectedVariantId(targetVariant.id);
-        if (targetVariant.image) {
-          syncImageFromVariant(targetVariant.image);
+      if (selectedSize === size) {
+        setSelectedSize(null);
+        setSelectedVariantId(null);
+      } else {
+        setSelectedSize(size);
+        const targetVariant = variant || variants.find(v => v.size === size || (v.variantType === 'size' && v.name === size));
+        if (targetVariant) {
+          setSelectedVariantId(targetVariant.id);
+          if (targetVariant.image) {
+            syncImageFromVariant(targetVariant.image);
+          }
         }
       }
     };
 
     const handleWeightSelect = (weight, variant) => {
-      setSelectedWeight(weight);
-      const targetVariant = variant || variants.find(v => v.weight === weight || (v.variantType === 'weight' && v.name === weight));
-      if (targetVariant) {
-        setSelectedVariantId(targetVariant.id);
-        if (targetVariant.image) {
-          syncImageFromVariant(targetVariant.image);
+      if (selectedWeight === weight) {
+        setSelectedWeight(null);
+        setSelectedVariantId(null);
+      } else {
+        setSelectedWeight(weight);
+        const targetVariant = variant || variants.find(v => v.weight === weight || (v.variantType === 'weight' && v.name === weight));
+        if (targetVariant) {
+          setSelectedVariantId(targetVariant.id);
+          if (targetVariant.image) {
+            syncImageFromVariant(targetVariant.image);
+          }
         }
       }
     };
 
     const handleColorSelect = (color) => {
-      setSelectedColor(color);
-      const targetVariant = variants.find(v => v.color === color);
-      if (targetVariant) {
-        setSelectedVariantId(targetVariant.id);
-        if (targetVariant.image) {
-          syncImageFromVariant(targetVariant.image);
+      if (selectedColor === color) {
+        setSelectedColor(null);
+        setSelectedVariantId(null);
+      } else {
+        setSelectedColor(color);
+        const targetVariant = variants.find(v => v.color === color);
+        if (targetVariant) {
+          setSelectedVariantId(targetVariant.id);
+          if (targetVariant.image) {
+            syncImageFromVariant(targetVariant.image);
+          }
         }
       }
     };
 
     const handleVariantSelect = (variant) => {
-      setSelectedVariantId(variant.id);
-      if (variant.color) setSelectedColor(variant.color);
-      if (variant.size) setSelectedSize(variant.size);
-      if (variant.weight) setSelectedWeight(variant.weight);
-      if (variant.image) {
-        syncImageFromVariant(variant.image);
+      if (selectedVariantId === variant.id) {
+        setSelectedVariantId(null);
+        setSelectedColor(null);
+        setSelectedSize(null);
+        setSelectedWeight(null);
+      } else {
+        setSelectedVariantId(variant.id);
+        if (variant.color) setSelectedColor(variant.color);
+        if (variant.size) setSelectedSize(variant.size);
+        if (variant.weight) setSelectedWeight(variant.weight);
+        if (variant.image) {
+          syncImageFromVariant(variant.image);
+        }
       }
     };
 
