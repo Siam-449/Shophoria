@@ -609,11 +609,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                 ) : currentQuantity <= 0 ? (
                                     'Out of Stock'
                                 ) : !isVariantSelected ? (
-                                    hasSizeVariants && !selectedSize
-                                        ? 'Select a Size'
-                                        : hasWeightVariants && !selectedWeight
-                                        ? 'Select a Weight'
-                                        : 'Select a Variant'
+                                    'Select an Option'
                                 ) : (
                                     <>
                                         <ShoppingCart className="h-5 w-5" /> Add to Cart
@@ -622,7 +618,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                             </button>
                             {!isVariantSelected && hasVariants && currentQuantity > 0 && (
                                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2 text-center font-medium">
-                                    Please select an option above to add this product to your cart
+                                    Please select an option to add this product to your cart
                                 </p>
                             )}
                         </div>
