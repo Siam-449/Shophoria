@@ -177,9 +177,6 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       const matched = variants.find(v => v.image === imgUrl);
       if (matched) {
         setSelectedVariantId(matched.id);
-        if (matched.size) setSelectedSize(matched.size);
-        if (matched.weight) setSelectedWeight(matched.weight);
-        if (matched.color) setSelectedColor(matched.color);
       }
     };
 
