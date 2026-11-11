@@ -15,6 +15,7 @@ import { CartIcon } from './icons/CartIcon.jsx';
 import { MenuIcon } from './icons/MenuIcon.jsx';
 import { CloseIcon } from './icons/CloseIcon.jsx';
 import SearchBar from './SearchBar.jsx';
+import CartCount from './CartCount.jsx';
 import { ChevronDown, MessageSquare, Home, Package, Grid, Search, ShoppingCart } from 'lucide-react';
 import { getOfferMessage } from '../lib/firebase.js';
 import { motion, AnimatePresence } from 'motion/react';
@@ -287,11 +288,7 @@ const Navbar = () => {
             </button>
             <button onClick={toggleCart} className="p-2 relative" aria-label="Open cart">
               <ShoppingCart className="h-6 w-6" />
-              {cartItems.length > 0 && (
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-black rounded-full">
-                  {cartItems.length}
-                </span>
-              )}
+              <CartCount cartItems={cartItems} />
             </button>
           </div>
 
@@ -341,11 +338,7 @@ const Navbar = () => {
             </button>
             <button onClick={toggleCart} aria-label="Open cart" className="relative p-2 text-black dark:text-white transition-colors">
               <CartIcon className="h-6 w-6" />
-              {cartItems.length > 0 && (
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 rounded-full">
-                  {cartItems.length}
-                </span>
-              )}
+              <CartCount cartItems={cartItems} />
             </button>
           </div>
           
