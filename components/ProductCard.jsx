@@ -164,6 +164,8 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
     // Resolve the active variant based on user selection
     const activeVariant = useMemo(() => {
       if (variants.length === 0) return null;
+      // Do not auto-select if no selection made
+      if (!selectedVariantId && !selectedSize && !selectedWeight && !selectedColor) return null;
 
       if (selectedVariantId) {
         const found = variants.find(v => v.id === selectedVariantId);
@@ -247,6 +249,8 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
         setSelectedVariantId(null);
       } else {
         setSelectedSize(size);
+        setSelectedWeight(null);
+        setSelectedColor(null);
         const targetVariant = variant || variants.find(v => v.size === size || (v.variantType === 'size' && v.name === size));
         if (targetVariant) {
           setSelectedVariantId(targetVariant.id);
@@ -263,6 +267,8 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
         setSelectedVariantId(null);
       } else {
         setSelectedWeight(weight);
+        setSelectedSize(null);
+        setSelectedColor(null);
         const targetVariant = variant || variants.find(v => v.weight === weight || (v.variantType === 'weight' && v.name === weight));
         if (targetVariant) {
           setSelectedVariantId(targetVariant.id);
@@ -279,6 +285,8 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
         setSelectedVariantId(null);
       } else {
         setSelectedColor(color);
+        setSelectedSize(null);
+        setSelectedWeight(null);
         const targetVariant = variants.find(v => v.color === color);
         if (targetVariant) {
           setSelectedVariantId(targetVariant.id);
@@ -297,9 +305,9 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
         setSelectedWeight(null);
       } else {
         setSelectedVariantId(variant.id);
-        if (variant.color) setSelectedColor(variant.color);
-        if (variant.size) setSelectedSize(variant.size);
-        if (variant.weight) setSelectedWeight(variant.weight);
+        setSelectedColor(variant.color || null);
+        setSelectedSize(variant.size || null);
+        setSelectedWeight(variant.weight || null);
         if (variant.image) {
           syncImageFromVariant(variant.image);
         }
