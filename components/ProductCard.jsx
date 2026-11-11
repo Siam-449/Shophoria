@@ -61,25 +61,34 @@ const ProductCard = ({ product }) => {
               {product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
             </p>
           </div>
-          <button 
-            onClick={handleAddToCart}
-            disabled={product.quantity <= 0 || isAdded}
-            className={`w-full py-2.5 px-3 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-1.5 ${
-              isAdded 
-              ? 'bg-green-600 text-white' 
-              : 'bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800'
-            } disabled:bg-slate-400 dark:disabled:bg-slate-700 disabled:cursor-not-allowed`}
-          >
-            {isAdded ? (
-                <>
-                    <CheckIcon className="h-4 w-4" /> Added!
-                </>
-            ) : product.quantity > 0 ? (
-                'Add to Cart'
-            ) : (
-                'Out of Stock'
-            )}
-          </button>
+          {product.variants && product.variants.length > 0 ? (
+            <Link
+              href={`/products/${product.slug}`}
+              className="w-full py-2.5 px-3 bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800 text-xs sm:text-sm font-medium rounded-lg text-center block transition-colors"
+            >
+              Select Options
+            </Link>
+          ) : (
+            <button 
+              onClick={handleAddToCart}
+              disabled={product.quantity <= 0 || isAdded}
+              className={`w-full py-2.5 px-3 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-1.5 ${
+                isAdded 
+                ? 'bg-green-600 text-white' 
+                : 'bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800'
+              } disabled:bg-slate-400 dark:disabled:bg-slate-700 disabled:cursor-not-allowed`}
+            >
+              {isAdded ? (
+                  <>
+                      <CheckIcon className="h-4 w-4" /> Added!
+                  </>
+              ) : product.quantity > 0 ? (
+                  'Add to Cart'
+              ) : (
+                  'Out of Stock'
+              )}
+            </button>
+          )}
         </div>
       </div>
     </motion.div>
@@ -135,12 +144,24 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       return Array.from(new Set(colorVariants.map(v => v.color).filter(Boolean)));
     }, [product.colors, colorVariants]);
 
-    const [selectedSize, setSelectedSize] = useState(() => availableSizes[0] || null);
-    const [selectedWeight, setSelectedWeight] = useState(() => availableWeights[0] || null);
-    const [selectedColor, setSelectedColor] = useState(() => availableColors[0] || null);
-    const [selectedVariantId, setSelectedVariantId] = useState(() => variants[0]?.id || null);
+    // Initial state: User MUST select a variant if variants exist
+    const [selectedSize, setSelectedSize] = useState(null);
+    const [selectedWeight, setSelectedWeight] = useState(null);
+    const [selectedColor, setSelectedColor] = useState(null);
+    const [selectedVariantId, setSelectedVariantId] = useState(null);
 
-    // Resolve the active variant based on direct ID or matching size/weight/color
+    const hasVariants = variants.length > 0;
+    const hasSizeVariants = availableSizes.length > 0;
+    const hasWeightVariants = availableWeights.length > 0;
+    const hasColorVariants = availableColors.length > 0;
+    const hasOtherVariants = variants.some(
+      v => v.variantType !== 'size' && v.variantType !== 'weight' &&
+           !availableSizes.includes(v.size || v.name) &&
+           !availableWeights.includes(v.weight || v.name) &&
+           !availableColors.includes(v.color || v.name)
+    );
+
+    // Resolve the active variant based on user selection
     const activeVariant = useMemo(() => {
       if (variants.length === 0) return null;
 
@@ -149,15 +170,27 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
         if (found) return found;
       }
 
-      const matched = variants.find(v => {
-        const matchSize = !selectedSize || v.size === selectedSize || v.name === selectedSize;
-        const matchWeight = !selectedWeight || v.weight === selectedWeight || v.name === selectedWeight;
-        const matchColor = !selectedColor || v.color === selectedColor;
-        return matchSize && matchWeight && matchColor;
-      });
+      if (selectedSize || selectedWeight || selectedColor) {
+        const matched = variants.find(v => {
+          const matchSize = !selectedSize || v.size === selectedSize || v.name === selectedSize;
+          const matchWeight = !selectedWeight || v.weight === selectedWeight || v.name === selectedWeight;
+          const matchColor = !selectedColor || v.color === selectedColor;
+          return matchSize && matchWeight && matchColor;
+        });
+        if (matched) return matched;
+      }
 
-      return matched || variants[0];
+      return null;
     }, [variants, selectedVariantId, selectedSize, selectedWeight, selectedColor]);
+
+    // Validation: if product has variants, user must select a variant to add to cart
+    const isVariantSelected = useMemo(() => {
+      if (!hasVariants) return true;
+      if (hasSizeVariants && !selectedSize) return false;
+      if (hasWeightVariants && !selectedWeight) return false;
+      if (hasOtherVariants && !selectedVariantId) return false;
+      return !!activeVariant;
+    }, [hasVariants, hasSizeVariants, selectedSize, hasWeightVariants, selectedWeight, hasOtherVariants, selectedVariantId, activeVariant]);
 
     // Dynamic price, original price, and quantity
     const currentPrice = activeVariant?.price != null ? activeVariant.price : product.price;
@@ -168,12 +201,46 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       ? Math.round(((currentOriginalPrice - currentPrice) / currentOriginalPrice) * 100)
       : null;
 
-    const syncVariantImage = (imgUrl) => {
+    // Cross Connection: sync variant button when image changes
+    const syncVariantFromImage = (imgUrl) => {
+      if (!imgUrl || variants.length === 0) return;
+      const matched = variants.find(v => v.image === imgUrl);
+      if (matched) {
+        setSelectedVariantId(matched.id);
+        if (matched.size) setSelectedSize(matched.size);
+        if (matched.weight) setSelectedWeight(matched.weight);
+        if (matched.color) setSelectedColor(matched.color);
+      }
+    };
+
+    // Cross Connection: sync gallery image when variant is selected
+    const syncImageFromVariant = (imgUrl) => {
       if (!imgUrl) return;
       const idx = images.indexOf(imgUrl);
       if (idx !== -1) {
         setSelectedImageIndex(idx);
       }
+    };
+
+    const handleThumbnailClick = (idx) => {
+      setSelectedImageIndex(idx);
+      syncVariantFromImage(images[idx]);
+    };
+
+    const handlePrevImage = () => {
+      setSelectedImageIndex(prev => {
+        const nextIdx = prev === 0 ? images.length - 1 : prev - 1;
+        syncVariantFromImage(images[nextIdx]);
+        return nextIdx;
+      });
+    };
+
+    const handleNextImage = () => {
+      setSelectedImageIndex(prev => {
+        const nextIdx = prev === images.length - 1 ? 0 : prev + 1;
+        syncVariantFromImage(images[nextIdx]);
+        return nextIdx;
+      });
     };
 
     const handleSizeSelect = (size, variant) => {
@@ -182,7 +249,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       if (targetVariant) {
         setSelectedVariantId(targetVariant.id);
         if (targetVariant.image) {
-          syncVariantImage(targetVariant.image);
+          syncImageFromVariant(targetVariant.image);
         }
       }
     };
@@ -193,7 +260,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       if (targetVariant) {
         setSelectedVariantId(targetVariant.id);
         if (targetVariant.image) {
-          syncVariantImage(targetVariant.image);
+          syncImageFromVariant(targetVariant.image);
         }
       }
     };
@@ -204,7 +271,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       if (targetVariant) {
         setSelectedVariantId(targetVariant.id);
         if (targetVariant.image) {
-          syncVariantImage(targetVariant.image);
+          syncImageFromVariant(targetVariant.image);
         }
       }
     };
@@ -215,19 +282,12 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       if (variant.size) setSelectedSize(variant.size);
       if (variant.weight) setSelectedWeight(variant.weight);
       if (variant.image) {
-        syncVariantImage(variant.image);
+        syncImageFromVariant(variant.image);
       }
     };
 
-    const handlePrevImage = () => {
-      setSelectedImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
-    };
-
-    const handleNextImage = () => {
-      setSelectedImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
-    };
-
     const handleAddToCart = () => {
+      if (!isVariantSelected) return;
       const activeImage = images[selectedImageIndex] || activeVariant?.image || product.image;
       addItemToCart({
         ...product,
@@ -280,10 +340,10 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                     <button
                                         key={img + idx}
                                         type="button"
-                                        onClick={() => setSelectedImageIndex(idx)}
+                                        onClick={() => handleThumbnailClick(idx)}
                                         className={`relative w-16 h-16 sm:w-20 sm:h-20 aspect-square rounded-xl overflow-hidden border-2 transition-all p-1.5 bg-white dark:bg-[#141414] flex items-center justify-center flex-shrink-0 ${
                                             selectedImageIndex === idx
-                                                ? 'border-orange-500 shadow-sm ring-2 ring-orange-500/20'
+                                                ? 'border-black dark:border-white shadow-sm ring-2 ring-black/20 dark:ring-white/30'
                                                 : 'border-slate-200 dark:border-neutral-800 opacity-70 hover:opacity-100 hover:border-slate-400'
                                         }`}
                                     >
@@ -391,7 +451,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                         {availableColors.length > 0 && (
                             <div className="mt-5">
                                 <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                                    Color: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedColor || 'Select'}</span>
+                                    Color: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedColor || 'Select a color'}</span>
                                 </label>
                                 <div className="flex flex-wrap gap-2">
                                     {availableColors.map((color) => {
@@ -401,10 +461,10 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                                 key={color}
                                                 type="button"
                                                 onClick={() => handleColorSelect(color)}
-                                                className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all ${
+                                                className={`min-h-[40px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all border-2 ${
                                                     isSelected
-                                                        ? 'bg-orange-500 text-white font-semibold shadow-sm ring-2 ring-orange-500/20'
-                                                        : 'bg-slate-50 dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 text-slate-800 dark:text-slate-200 hover:border-slate-400 font-medium'
+                                                        ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-xs font-semibold'
+                                                        : 'bg-white dark:bg-[#141414] border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 hover:border-black dark:hover:border-white font-medium'
                                                 }`}
                                             >
                                                 {color}
@@ -418,28 +478,41 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                         {/* Size Selector (if available) */}
                         {availableSizes.length > 0 && (
                             <div className="mt-4">
-                                <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                                    Size: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedSize || activeVariant?.size || 'Select'}</span>
-                                </label>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
+                                        Size: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedSize || 'Select a size'}</span>
+                                    </label>
+                                    {!selectedSize && hasVariants && (
+                                        <span className="text-[11px] text-neutral-500 font-medium">Required</span>
+                                    )}
+                                </div>
                                 <div className="flex flex-wrap gap-2">
                                     {availableSizes.map((size) => {
                                         const matchedVariant = variants.find(v => v.size === size || (v.variantType === 'size' && v.name === size));
                                         const isSelected = selectedSize === size || (activeVariant && (activeVariant.size === size || activeVariant.name === size || activeVariant.id === matchedVariant?.id));
                                         const variantPrice = matchedVariant?.price != null ? matchedVariant.price : null;
+                                        const variantImg = matchedVariant?.image || null;
                                         return (
                                             <button
                                                 key={size}
                                                 type="button"
                                                 onClick={() => handleSizeSelect(size, matchedVariant)}
-                                                className={`min-w-[48px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-1.5 ${
+                                                className={`min-h-[40px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-2 border-2 ${
                                                     isSelected
-                                                        ? 'bg-orange-500 text-white font-semibold shadow-sm ring-2 ring-orange-500/20'
-                                                        : 'bg-slate-50 dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 text-slate-800 dark:text-slate-200 hover:border-slate-400 font-medium'
+                                                        ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-xs font-semibold'
+                                                        : 'bg-white dark:bg-[#141414] border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 hover:border-black dark:hover:border-white font-medium'
                                                 }`}
                                             >
+                                                {variantImg && (
+                                                    <img 
+                                                        src={variantImg} 
+                                                        alt={size} 
+                                                        className="w-5 h-5 rounded object-contain bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 flex-shrink-0" 
+                                                    />
+                                                )}
                                                 <span>{size}</span>
                                                 {variantPrice != null && variantPrice !== product.price && (
-                                                    <span className={`text-[11px] ${isSelected ? 'text-white/90' : 'text-slate-500 dark:text-slate-400'}`}>
+                                                    <span className={`text-[11px] ${isSelected ? 'text-neutral-300 dark:text-neutral-600' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                                         (৳{variantPrice.toLocaleString()})
                                                     </span>
                                                 )}
@@ -453,28 +526,41 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                         {/* Weight Selector (if available) */}
                         {availableWeights.length > 0 && (
                             <div className="mt-4">
-                                <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                                    Weight: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedWeight || activeVariant?.weight || 'Select'}</span>
-                                </label>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
+                                        Weight: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedWeight || 'Select a weight'}</span>
+                                    </label>
+                                    {!selectedWeight && hasVariants && (
+                                        <span className="text-[11px] text-neutral-500 font-medium">Required</span>
+                                    )}
+                                </div>
                                 <div className="flex flex-wrap gap-2">
                                     {availableWeights.map((weight) => {
                                         const matchedVariant = variants.find(v => v.weight === weight || (v.variantType === 'weight' && v.name === weight));
                                         const isSelected = selectedWeight === weight || (activeVariant && (activeVariant.weight === weight || activeVariant.name === weight || activeVariant.id === matchedVariant?.id));
                                         const variantPrice = matchedVariant?.price != null ? matchedVariant.price : null;
+                                        const variantImg = matchedVariant?.image || null;
                                         return (
                                             <button
                                                 key={weight}
                                                 type="button"
                                                 onClick={() => handleWeightSelect(weight, matchedVariant)}
-                                                className={`min-w-[48px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-1.5 ${
+                                                className={`min-h-[40px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-2 border-2 ${
                                                     isSelected
-                                                        ? 'bg-orange-500 text-white font-semibold shadow-sm ring-2 ring-orange-500/20'
-                                                        : 'bg-slate-50 dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 text-slate-800 dark:text-slate-200 hover:border-slate-400 font-medium'
+                                                        ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-xs font-semibold'
+                                                        : 'bg-white dark:bg-[#141414] border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 hover:border-black dark:hover:border-white font-medium'
                                                 }`}
                                             >
+                                                {variantImg && (
+                                                    <img 
+                                                        src={variantImg} 
+                                                        alt={weight} 
+                                                        className="w-5 h-5 rounded object-contain bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 flex-shrink-0" 
+                                                    />
+                                                )}
                                                 <span>{weight}</span>
                                                 {variantPrice != null && variantPrice !== product.price && (
-                                                    <span className={`text-[11px] ${isSelected ? 'text-white/90' : 'text-slate-500 dark:text-slate-400'}`}>
+                                                    <span className={`text-[11px] ${isSelected ? 'text-neutral-300 dark:text-neutral-600' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                                         (৳{variantPrice.toLocaleString()})
                                                     </span>
                                                 )}
@@ -488,9 +574,14 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                         {/* Variant Selector (for any other variant types not covered by Size or Weight) */}
                         {variants.length > 1 && variants.some(v => v.variantType !== 'size' && v.variantType !== 'weight' && !availableSizes.includes(v.size || v.name) && !availableWeights.includes(v.weight || v.name) && !availableColors.includes(v.color || v.name)) && (
                             <div className="mt-4">
-                                <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                                    Variant: <span className="font-normal text-slate-600 dark:text-slate-400">{activeVariant?.name || 'Select'}</span>
-                                </label>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
+                                        Variant: <span className="font-normal text-slate-600 dark:text-slate-400">{activeVariant?.name || 'Select a variant'}</span>
+                                    </label>
+                                    {!selectedVariantId && hasVariants && (
+                                        <span className="text-[11px] text-neutral-500 font-medium">Required</span>
+                                    )}
+                                </div>
                                 <div className="flex flex-wrap gap-2">
                                     {variants.filter(v => v.variantType !== 'size' && v.variantType !== 'weight').map((variant) => {
                                         const isSelected = activeVariant?.id === variant.id;
@@ -499,13 +590,25 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                                 key={variant.id}
                                                 type="button"
                                                 onClick={() => handleVariantSelect(variant)}
-                                                className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all ${
+                                                className={`min-h-[40px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-2 border-2 ${
                                                     isSelected
-                                                        ? 'bg-orange-500 text-white font-semibold shadow-sm ring-2 ring-orange-500/20'
-                                                        : 'bg-slate-50 dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 text-slate-800 dark:text-slate-200 hover:border-slate-400 font-medium'
+                                                        ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white shadow-xs font-semibold'
+                                                        : 'bg-white dark:bg-[#141414] border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 hover:border-black dark:hover:border-white font-medium'
                                                 }`}
                                             >
-                                                {variant.name} {variant.price != null && variant.price !== product.price ? `(৳${variant.price.toLocaleString()})` : ''}
+                                                {variant.image && (
+                                                    <img 
+                                                        src={variant.image} 
+                                                        alt={variant.name} 
+                                                        className="w-5 h-5 rounded object-contain bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 flex-shrink-0" 
+                                                    />
+                                                )}
+                                                <span>{variant.name}</span>
+                                                {variant.price != null && variant.price !== product.price && (
+                                                    <span className={`text-[11px] ${isSelected ? 'text-neutral-300 dark:text-neutral-600' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                                                        (৳{variant.price.toLocaleString()})
+                                                    </span>
+                                                )}
                                             </button>
                                         );
                                     })}
@@ -543,31 +646,46 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                             </div>
                         </div>
 
-                        {/* Action CTA Button (Add to Cart / Out of Stock) */}
-                        <button
-                            type="button"
-                            onClick={handleAddToCart}
-                            disabled={currentQuantity <= 0 || isAdded}
-                            className={`w-full mt-5 py-3.5 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-sm transition-all ${
-                                isAdded
-                                    ? 'bg-neutral-900 text-white dark:bg-white dark:text-black'
-                                    : currentQuantity <= 0
-                                    ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed shadow-none'
-                                    : 'bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800 active:scale-[0.99]'
-                            } disabled:cursor-not-allowed`}
-                        >
-                            {isAdded ? (
-                                <>
-                                    <Check className="h-5 w-5" /> Added to Cart!
-                                </>
-                            ) : currentQuantity > 0 ? (
-                                <>
-                                    <ShoppingCart className="h-5 w-5" /> Add to Cart
-                                </>
-                            ) : (
-                                'Out of Stock'
+                        {/* Action CTA Button (Add to Cart / Out of Stock / Selection Required) */}
+                        <div className="mt-5">
+                            <button
+                                type="button"
+                                onClick={handleAddToCart}
+                                disabled={currentQuantity <= 0 || isAdded || !isVariantSelected}
+                                className={`w-full py-3.5 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-sm transition-all ${
+                                    isAdded
+                                        ? 'bg-neutral-900 text-white dark:bg-white dark:text-black'
+                                        : currentQuantity <= 0
+                                        ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed shadow-none'
+                                        : !isVariantSelected
+                                        ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-700 cursor-not-allowed shadow-none'
+                                        : 'bg-black dark:bg-[#1c1b1a] dark:border dark:border-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800 active:scale-[0.99] cursor-pointer'
+                                } disabled:cursor-not-allowed`}
+                            >
+                                {isAdded ? (
+                                    <>
+                                        <Check className="h-5 w-5" /> Added to Cart!
+                                    </>
+                                ) : currentQuantity <= 0 ? (
+                                    'Out of Stock'
+                                ) : !isVariantSelected ? (
+                                    hasSizeVariants && !selectedSize
+                                        ? 'Select a Size'
+                                        : hasWeightVariants && !selectedWeight
+                                        ? 'Select a Weight'
+                                        : 'Select a Variant'
+                                ) : (
+                                    <>
+                                        <ShoppingCart className="h-5 w-5" /> Add to Cart
+                                    </>
+                                )}
+                            </button>
+                            {!isVariantSelected && hasVariants && currentQuantity > 0 && (
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2 text-center font-medium">
+                                    Please select an option above to add this product to your cart
+                                </p>
                             )}
-                        </button>
+                        </div>
                     </div>
                 </div>
 
