@@ -390,7 +390,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                         {availableColors.length > 0 && (
                             <div className="mt-5">
                                 <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                                    Color: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedColor || 'Select a color'}</span>
+                                    Color: <span className="font-normal text-slate-600 dark:text-slate-400">{activeVariant?.color || 'Select a color'}</span>
                                 </label>
                                 <div className="flex flex-wrap gap-2">
                                     {availableColors.map((color) => {
@@ -420,9 +420,9 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                             <div className="mt-4">
                                 <div className="flex items-center justify-between mb-2">
                                     <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
-                                        Size: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedSize || 'Select a size'}</span>
+                                        Size: <span className="font-normal text-slate-600 dark:text-slate-400">{activeVariant?.size || 'Select a size'}</span>
                                     </label>
-                                    {!selectedSize && hasVariants && (
+                                    {!activeVariant?.size && hasVariants && (
                                         <span className="text-[11px] text-neutral-500 font-medium">Required</span>
                                     )}
                                 </div>
@@ -468,9 +468,9 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                             <div className="mt-4">
                                 <div className="flex items-center justify-between mb-2">
                                     <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
-                                        Weight: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedWeight || 'Select a weight'}</span>
+                                        Weight: <span className="font-normal text-slate-600 dark:text-slate-400">{activeVariant?.weight || 'Select a weight'}</span>
                                     </label>
-                                    {!selectedWeight && hasVariants && (
+                                    {!activeVariant?.weight && hasVariants && (
                                         <span className="text-[11px] text-neutral-500 font-medium">Required</span>
                                     )}
                                 </div>
