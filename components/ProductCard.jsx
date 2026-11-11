@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useCart } from '../context/CartContext.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
@@ -93,41 +93,71 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
     const [isAdded, setIsAdded] = useState(false);
     const [buyQuantity, setBuyQuantity] = useState(1);
 
-    // Multi-image handling
-    const images = (product.images && product.images.length > 0)
-      ? product.images
-      : [product.image].filter(Boolean);
+    // Variants and attributes handling
+    const variants = useMemo(() => (Array.isArray(product.variants) ? product.variants : []), [product.variants]);
+
+    // Multi-image handling: product images + variant images
+    const images = useMemo(() => {
+      const list = [];
+      const add = (url) => {
+        if (url && typeof url === 'string' && url.trim() && !list.includes(url.trim())) {
+          list.push(url.trim());
+        }
+      };
+      if (Array.isArray(product.images)) {
+        product.images.forEach(add);
+      }
+      if (product.image) add(product.image);
+      variants.forEach(v => {
+        if (v && v.image) add(v.image);
+      });
+      return list.length > 0 ? list : ['/shophoria.jpeg'];
+    }, [product.images, product.image, variants]);
+
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-    // Variants and attributes handling
-    const variants = Array.isArray(product.variants) ? product.variants : [];
+    const sizeVariants = useMemo(() => variants.filter(v => v.variantType === 'size' || v.size), [variants]);
+    const weightVariants = useMemo(() => variants.filter(v => v.variantType === 'weight' || v.weight), [variants]);
+    const colorVariants = useMemo(() => variants.filter(v => v.variantType === 'color' || v.color), [variants]);
 
-    const availableColors = (product.colors && product.colors.length > 0)
-      ? product.colors
-      : Array.from(new Set(variants.map(v => v.color).filter(Boolean)));
+    const availableSizes = useMemo(() => {
+      if (product.sizes && product.sizes.length > 0) return product.sizes;
+      return Array.from(new Set(sizeVariants.map(v => v.size || v.name).filter(Boolean)));
+    }, [product.sizes, sizeVariants]);
 
-    const availableSizes = (product.sizes && product.sizes.length > 0)
-      ? product.sizes
-      : Array.from(new Set(variants.map(v => v.size).filter(Boolean)));
+    const availableWeights = useMemo(() => {
+      if (product.weights && product.weights.length > 0) return product.weights;
+      return Array.from(new Set(weightVariants.map(v => v.weight || v.name).filter(Boolean)));
+    }, [product.weights, weightVariants]);
 
-    const availableWeights = (product.weights && product.weights.length > 0)
-      ? product.weights
-      : Array.from(new Set(variants.map(v => v.weight).filter(Boolean)));
+    const availableColors = useMemo(() => {
+      if (product.colors && product.colors.length > 0) return product.colors;
+      return Array.from(new Set(colorVariants.map(v => v.color).filter(Boolean)));
+    }, [product.colors, colorVariants]);
 
-    const [selectedColor, setSelectedColor] = useState(availableColors[0] || null);
-    const [selectedSize, setSelectedSize] = useState(availableSizes[0] || null);
-    const [selectedWeight, setSelectedWeight] = useState(availableWeights[0] || null);
-    const [selectedVariantId, setSelectedVariantId] = useState(variants[0]?.id || null);
+    const [selectedSize, setSelectedSize] = useState(() => availableSizes[0] || null);
+    const [selectedWeight, setSelectedWeight] = useState(() => availableWeights[0] || null);
+    const [selectedColor, setSelectedColor] = useState(() => availableColors[0] || null);
+    const [selectedVariantId, setSelectedVariantId] = useState(() => variants[0]?.id || null);
 
-    // Resolve the active variant based on user selection or explicit variant
-    const activeVariant = variants.length > 0
-      ? (variants.find(v => {
-          const matchColor = !selectedColor || !v.color || v.color === selectedColor;
-          const matchSize = !selectedSize || !v.size || v.size === selectedSize;
-          const matchWeight = !selectedWeight || !v.weight || v.weight === selectedWeight;
-          return matchColor && matchSize && matchWeight;
-        }) || variants.find(v => v.id === selectedVariantId) || variants[0])
-      : null;
+    // Resolve the active variant based on direct ID or matching size/weight/color
+    const activeVariant = useMemo(() => {
+      if (variants.length === 0) return null;
+
+      if (selectedVariantId) {
+        const found = variants.find(v => v.id === selectedVariantId);
+        if (found) return found;
+      }
+
+      const matched = variants.find(v => {
+        const matchSize = !selectedSize || v.size === selectedSize || v.name === selectedSize;
+        const matchWeight = !selectedWeight || v.weight === selectedWeight || v.name === selectedWeight;
+        const matchColor = !selectedColor || v.color === selectedColor;
+        return matchSize && matchWeight && matchColor;
+      });
+
+      return matched || variants[0];
+    }, [variants, selectedVariantId, selectedSize, selectedWeight, selectedColor]);
 
     // Dynamic price, original price, and quantity
     const currentPrice = activeVariant?.price != null ? activeVariant.price : product.price;
@@ -138,13 +168,43 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       ? Math.round(((currentOriginalPrice - currentPrice) / currentOriginalPrice) * 100)
       : null;
 
+    const syncVariantImage = (imgUrl) => {
+      if (!imgUrl) return;
+      const idx = images.indexOf(imgUrl);
+      if (idx !== -1) {
+        setSelectedImageIndex(idx);
+      }
+    };
+
+    const handleSizeSelect = (size, variant) => {
+      setSelectedSize(size);
+      const targetVariant = variant || variants.find(v => v.size === size || (v.variantType === 'size' && v.name === size));
+      if (targetVariant) {
+        setSelectedVariantId(targetVariant.id);
+        if (targetVariant.image) {
+          syncVariantImage(targetVariant.image);
+        }
+      }
+    };
+
+    const handleWeightSelect = (weight, variant) => {
+      setSelectedWeight(weight);
+      const targetVariant = variant || variants.find(v => v.weight === weight || (v.variantType === 'weight' && v.name === weight));
+      if (targetVariant) {
+        setSelectedVariantId(targetVariant.id);
+        if (targetVariant.image) {
+          syncVariantImage(targetVariant.image);
+        }
+      }
+    };
+
     const handleColorSelect = (color) => {
       setSelectedColor(color);
-      const matchedVariant = variants.find(v => v.color === color && v.image);
-      if (matchedVariant?.image) {
-        const imgIndex = images.indexOf(matchedVariant.image);
-        if (imgIndex !== -1) {
-          setSelectedImageIndex(imgIndex);
+      const targetVariant = variants.find(v => v.color === color);
+      if (targetVariant) {
+        setSelectedVariantId(targetVariant.id);
+        if (targetVariant.image) {
+          syncVariantImage(targetVariant.image);
         }
       }
     };
@@ -155,10 +215,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       if (variant.size) setSelectedSize(variant.size);
       if (variant.weight) setSelectedWeight(variant.weight);
       if (variant.image) {
-        const imgIndex = images.indexOf(variant.image);
-        if (imgIndex !== -1) {
-          setSelectedImageIndex(imgIndex);
-        }
+        syncVariantImage(variant.image);
       }
     };
 
@@ -171,7 +228,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
     };
 
     const handleAddToCart = () => {
-      const activeImage = images[selectedImageIndex] || product.image;
+      const activeImage = images[selectedImageIndex] || activeVariant?.image || product.image;
       addItemToCart({
         ...product,
         price: currentPrice,
@@ -179,8 +236,8 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
         image: activeImage,
         selectedVariant: activeVariant,
         selectedColor,
-        selectedSize,
-        selectedWeight,
+        selectedSize: selectedSize || activeVariant?.size || (activeVariant?.variantType === 'size' ? activeVariant.name : null),
+        selectedWeight: selectedWeight || activeVariant?.weight || (activeVariant?.variantType === 'weight' ? activeVariant.name : null),
       }, buyQuantity);
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 2000);
@@ -362,23 +419,30 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                         {availableSizes.length > 0 && (
                             <div className="mt-4">
                                 <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                                    Size: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedSize || 'Select'}</span>
+                                    Size: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedSize || activeVariant?.size || 'Select'}</span>
                                 </label>
                                 <div className="flex flex-wrap gap-2">
                                     {availableSizes.map((size) => {
-                                        const isSelected = selectedSize === size;
+                                        const matchedVariant = variants.find(v => v.size === size || (v.variantType === 'size' && v.name === size));
+                                        const isSelected = selectedSize === size || (activeVariant && (activeVariant.size === size || activeVariant.name === size || activeVariant.id === matchedVariant?.id));
+                                        const variantPrice = matchedVariant?.price != null ? matchedVariant.price : null;
                                         return (
                                             <button
                                                 key={size}
                                                 type="button"
-                                                onClick={() => setSelectedSize(size)}
-                                                className={`min-w-[44px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all ${
+                                                onClick={() => handleSizeSelect(size, matchedVariant)}
+                                                className={`min-w-[48px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-1.5 ${
                                                     isSelected
                                                         ? 'bg-orange-500 text-white font-semibold shadow-sm ring-2 ring-orange-500/20'
                                                         : 'bg-slate-50 dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 text-slate-800 dark:text-slate-200 hover:border-slate-400 font-medium'
                                                 }`}
                                             >
-                                                {size}
+                                                <span>{size}</span>
+                                                {variantPrice != null && variantPrice !== product.price && (
+                                                    <span className={`text-[11px] ${isSelected ? 'text-white/90' : 'text-slate-500 dark:text-slate-400'}`}>
+                                                        (৳{variantPrice.toLocaleString()})
+                                                    </span>
+                                                )}
                                             </button>
                                         );
                                     })}
@@ -390,23 +454,30 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                         {availableWeights.length > 0 && (
                             <div className="mt-4">
                                 <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                                    Weight: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedWeight || 'Select'}</span>
+                                    Weight: <span className="font-normal text-slate-600 dark:text-slate-400">{selectedWeight || activeVariant?.weight || 'Select'}</span>
                                 </label>
                                 <div className="flex flex-wrap gap-2">
                                     {availableWeights.map((weight) => {
-                                        const isSelected = selectedWeight === weight;
+                                        const matchedVariant = variants.find(v => v.weight === weight || (v.variantType === 'weight' && v.name === weight));
+                                        const isSelected = selectedWeight === weight || (activeVariant && (activeVariant.weight === weight || activeVariant.name === weight || activeVariant.id === matchedVariant?.id));
+                                        const variantPrice = matchedVariant?.price != null ? matchedVariant.price : null;
                                         return (
                                             <button
                                                 key={weight}
                                                 type="button"
-                                                onClick={() => setSelectedWeight(weight)}
-                                                className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all ${
+                                                onClick={() => handleWeightSelect(weight, matchedVariant)}
+                                                className={`min-w-[48px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-1.5 ${
                                                     isSelected
                                                         ? 'bg-orange-500 text-white font-semibold shadow-sm ring-2 ring-orange-500/20'
                                                         : 'bg-slate-50 dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 text-slate-800 dark:text-slate-200 hover:border-slate-400 font-medium'
                                                 }`}
                                             >
-                                                {weight}
+                                                <span>{weight}</span>
+                                                {variantPrice != null && variantPrice !== product.price && (
+                                                    <span className={`text-[11px] ${isSelected ? 'text-white/90' : 'text-slate-500 dark:text-slate-400'}`}>
+                                                        (৳{variantPrice.toLocaleString()})
+                                                    </span>
+                                                )}
                                             </button>
                                         );
                                     })}
@@ -414,14 +485,14 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                             </div>
                         )}
 
-                        {/* Variant Selector (if available) */}
-                        {variants.length > 1 && variants.some(v => v.name && !availableColors.includes(v.name) && !availableSizes.includes(v.name) && !availableWeights.includes(v.name)) && (
+                        {/* Variant Selector (for any other variant types not covered by Size or Weight) */}
+                        {variants.length > 1 && variants.some(v => v.variantType !== 'size' && v.variantType !== 'weight' && !availableSizes.includes(v.size || v.name) && !availableWeights.includes(v.weight || v.name) && !availableColors.includes(v.color || v.name)) && (
                             <div className="mt-4">
                                 <label className="block text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
                                     Variant: <span className="font-normal text-slate-600 dark:text-slate-400">{activeVariant?.name || 'Select'}</span>
                                 </label>
                                 <div className="flex flex-wrap gap-2">
-                                    {variants.map((variant) => {
+                                    {variants.filter(v => v.variantType !== 'size' && v.variantType !== 'weight').map((variant) => {
                                         const isSelected = activeVariant?.id === variant.id;
                                         return (
                                             <button
@@ -434,7 +505,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                                         : 'bg-slate-50 dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 text-slate-800 dark:text-slate-200 hover:border-slate-400 font-medium'
                                                 }`}
                                             >
-                                                {variant.name} {variant.price != null && variant.price !== product.price ? `(৳${variant.price})` : ''}
+                                                {variant.name} {variant.price != null && variant.price !== product.price ? `(৳${variant.price.toLocaleString()})` : ''}
                                             </button>
                                         );
                                     })}
