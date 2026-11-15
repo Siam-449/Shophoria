@@ -125,6 +125,21 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
 
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
+    // Per-image Product Name / title resolution (fallback to main product.name)
+    const currentImage = images[selectedImageIndex] || product.image;
+    const customImageTitle = useMemo(() => {
+      if (!currentImage) return '';
+      const byUrl = product.imageTitles?.[currentImage];
+      if (typeof byUrl === 'string' && byUrl.trim()) return byUrl.trim();
+      const imgIdxInProduct = Array.isArray(product.images) ? product.images.indexOf(currentImage) : -1;
+      const idxToCheck = imgIdxInProduct !== -1 ? imgIdxInProduct : selectedImageIndex;
+      const byIndex = product.imageTitlesByIndex?.[idxToCheck];
+      if (typeof byIndex === 'string' && byIndex.trim()) return byIndex.trim();
+      return '';
+    }, [currentImage, product.imageTitles, product.images, product.imageTitlesByIndex, selectedImageIndex]);
+
+    const activeProductName = customImageTitle || product.name;
+
     const sizeVariants = useMemo(() => variants.filter(v => v.variantType === 'size' || v.size), [variants]);
     const weightVariants = useMemo(() => variants.filter(v => v.variantType === 'weight' || v.weight), [variants]);
     const colorVariants = useMemo(() => variants.filter(v => v.variantType === 'color' || v.color), [variants]);
@@ -227,6 +242,8 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       const activeImage = images[selectedImageIndex] || activeVariant?.image || product.image;
       addItemToCart({
         ...product,
+        name: activeProductName,
+        selectedImageTitle: customImageTitle || null,
         price: currentPrice,
         originalPrice: currentOriginalPrice,
         image: activeImage,
@@ -262,7 +279,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                     )}
                     <span>/</span>
                     <span className="text-slate-800 dark:text-slate-200 font-medium truncate max-w-[200px] sm:max-w-md">
-                        {product.name}
+                        {activeProductName}
                     </span>
                 </nav>
 
@@ -285,7 +302,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                                     >
                                         <img 
                                             src={img} 
-                                            alt={`${product.name} thumbnail ${idx + 1}`} 
+                                            alt={`${(product.imageTitles?.[img] || product.imageTitlesByIndex?.[idx] || product.name)} thumbnail ${idx + 1}`} 
                                             className="w-full h-full object-contain" 
                                         />
                                     </button>
@@ -316,7 +333,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
 
                                 <img 
                                     src={images[selectedImageIndex] || product.image} 
-                                    alt={product.name} 
+                                    alt={activeProductName} 
                                     className="w-full h-full object-contain transition-all duration-300" 
                                 />
 
@@ -349,7 +366,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
                     <div className="lg:col-span-6 flex flex-col">
                         {/* Title */}
                         <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
-                            {product.name}
+                            {activeProductName}
                         </h1>
 
                         {/* Stock Badge with Dot Indicator */}

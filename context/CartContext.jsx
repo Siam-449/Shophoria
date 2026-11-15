@@ -60,6 +60,9 @@ export const CartProvider = ({ children }) => {
       product.selectedSize || '',
       product.selectedWeight || ''
     ];
+    if (product.selectedImageTitle) {
+      parts.push(product.selectedImageTitle);
+    }
     return parts.join('_');
   };
 
