@@ -243,10 +243,12 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
       addItemToCart({
         ...product,
         name: activeProductName,
+        baseProductName: product.name,
         selectedImageTitle: customImageTitle || null,
         price: currentPrice,
         originalPrice: currentOriginalPrice,
         image: activeImage,
+        selectedImage: activeImage,
         selectedVariant: activeVariant,
         selectedColor: activeVariant?.color || null,
         selectedSize: activeVariant?.size || (activeVariant?.variantType === 'size' ? activeVariant.name : null),

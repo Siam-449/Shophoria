@@ -31,12 +31,32 @@ const extractImageUrl = (val) => {
   return '';
 };
 
+const resolveItemName = (item) => {
+  if (!item) return 'Product';
+  const candidates = [
+    item.selectedImageTitle,
+    item.name,
+    item.productName,
+    item.title,
+  ];
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+  return 'Product';
+};
+
 const resolveItemImage = (item) => {
   if (!item) return FALLBACK_IMAGE;
   const candidates = [
     extractImageUrl(item.image),
+    extractImageUrl(item.selectedImage),
+    extractImageUrl(item.picture),
     extractImageUrl(item.selectedVariant?.image),
     extractImageUrl(item.selectedVariant?.imageLink),
+    extractImageUrl(item.selectedVariant?.imageUrl),
+    extractImageUrl(item.selectedVariant?.photo),
     extractImageUrl(item.imageLink),
     ...(Array.isArray(item.images) ? item.images.map(extractImageUrl) : []),
   ].filter(Boolean);
@@ -130,34 +150,79 @@ const CheckoutPageClient = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (cartItems.length === 0) return;
+
     setIsSubmitting(true);
     setSubmissionError(null);
 
     const formData = new FormData(e.target);
-    const orderData = {
-      customerName: formData.get('customerName'),
-      address: formData.get('address'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      deliveryLocation: formData.get('deliveryLocation'),
-      items: cartItems.map(item => ({
-        id: item.id,
-        cartItemId: item.cartItemId || item.id,
-        name: item.name,
-        price: item.price,
-        originalPrice: item.originalPrice || null,
-        quantity: item.quantity,
-        image: resolveItemImage(item),
+    const customerName = String(formData.get('customerName') || '').trim();
+    const address = String(formData.get('address') || '').trim();
+    const email = String(formData.get('email') || '').trim();
+    const phone = String(formData.get('phone') || '').trim();
+    const deliveryLocation = String(formData.get('deliveryLocation') || '').trim();
+
+    const orderItems = cartItems.map(item => {
+      const exactName = resolveItemName(item);
+      const exactImage = resolveItemImage(item);
+      const unitPrice = Number(item.price) || 0;
+      const qty = Number(item.quantity) || 1;
+      const originalUnitPrice =
+        item.originalPrice != null && !isNaN(Number(item.originalPrice))
+          ? Number(item.originalPrice)
+          : null;
+
+      return {
+        id: item.id ?? null,
+        cartItemId: item.cartItemId || item.id || null,
+        name: exactName,
+        productName: exactName,
+        mainProductName:
+          (typeof item.baseProductName === 'string' && item.baseProductName.trim()) ||
+          exactName,
+        selectedImageTitle: item.selectedImageTitle || null,
+        price: unitPrice,
+        originalPrice: originalUnitPrice,
+        quantity: qty,
+        lineTotal: unitPrice * qty,
+        image: exactImage,
+        picture: exactImage,
+        imageLink: exactImage,
+        slug: item.slug || null,
+        category: item.category || null,
+        barcode: item.barcode || '',
         variant: item.selectedVariant?.name || null,
+        variantId: item.selectedVariant?.id || null,
         variantType: item.selectedVariant?.variantType || null,
         color: item.selectedColor || null,
         size: item.selectedSize || null,
+        sizeUnit: item.selectedVariant?.sizeUnit || null,
         weight: item.selectedWeight || null,
-      })),
-      subtotal: total,
-      shippingCost,
-      coupon: appliedCoupon ? { code: appliedCoupon.code, discountAmount: discountAmount } : null,
-      grandTotal,
+        weightUnit: item.selectedVariant?.weightUnit || null,
+      };
+    });
+
+    const orderData = {
+      customerName,
+      address,
+      email,
+      phone,
+      deliveryLocation,
+      items: orderItems,
+      totalQuantity,
+      subtotal: Number(total) || 0,
+      shippingCost: Number(shippingCost) || 0,
+      isFreeShipping: Boolean(isFreeShipping),
+      discountAmount: Number(discountAmount) || 0,
+      coupon: appliedCoupon
+        ? {
+            code: appliedCoupon.code,
+            discountPercentage: Number(appliedCoupon.discountPercentage) || 0,
+            discountAmount: Number(discountAmount) || 0,
+          }
+        : null,
+      grandTotal: Number(grandTotal) || 0,
+      paymentMethod: 'Cash on Delivery',
       status: 'Pending',
     };
 
@@ -470,6 +535,7 @@ const CheckoutPageClient = () => {
             <div className="space-y-4 max-h-80 overflow-y-auto pr-1">
               {cartItems.map(item => {
                 const itemKey = item.cartItemId || item.id;
+                const resolvedName = resolveItemName(item);
                 const resolvedImage = resolveItemImage(item);
                 const hasVariantDetails = item.selectedVariant?.name || item.selectedColor || item.selectedSize || item.selectedWeight;
                 const showGenericVariantName =
@@ -483,19 +549,19 @@ const CheckoutPageClient = () => {
                     key={itemKey}
                     className="flex items-start gap-3.5 pb-4 border-b border-neutral-200/80 dark:border-neutral-800/80 last:border-b-0 last:pb-0"
                   >
-                    <CheckoutItemImage src={resolvedImage} alt={item.name} />
+                    <CheckoutItemImage src={resolvedImage} alt={resolvedName} />
 
                     <div className="flex-grow min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 leading-snug line-clamp-2">
-                          {item.name}
+                          {resolvedName}
                         </p>
                         <button
                           type="button"
                           onClick={() => removeItemFromCart(itemKey)}
                           className="text-neutral-400 hover:text-red-500 dark:hover:text-red-400 transition-colors p-0.5 flex-shrink-0 disabled:opacity-50"
                           disabled={isSubmitting}
-                          aria-label={`Remove ${item.name}`}
+                          aria-label={`Remove ${resolvedName}`}
                         >
                           <RemoveIcon className="h-4 w-4" />
                         </button>
