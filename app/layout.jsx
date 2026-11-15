@@ -15,6 +15,7 @@ import StructuredData from '../components/StructuredData.jsx';
 import FacebookPixel from '../components/FacebookPixel.jsx';
 import GoogleAnalytics from '../components/GoogleAnalytics.jsx';
 import { Suspense } from 'react';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -76,6 +77,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-white dark:bg-[#0d0c0b] text-slate-900 dark:text-slate-100 min-h-screen`} suppressHydrationWarning>
+        <Script id="shophoria-theme-init" strategy="beforeInteractive">
+          {`try{var t=localStorage.getItem('shophoria-theme');if(t==='dark'){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';}else{document.documentElement.classList.remove('dark');document.documentElement.style.colorScheme='light';}}catch(e){}`}
+        </Script>
         <GoogleAnalytics />
         <Suspense fallback={null}>
           <FacebookPixel />

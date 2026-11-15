@@ -11,24 +11,29 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState(() => {
-    // This function now runs only on the client-side, preventing hydration issues.
-    if (typeof window === 'undefined') {
-      return [];
-    }
-    try {
-      const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-      return storedCart ? JSON.parse(storedCart) : [];
-    } catch (error) {
-      console.error("Error reading cart from localStorage:", error);
-      return [];
-    }
-  });
-  
+  const [cartItems, setCartItems] = useState([]);
+  const [isCartHydrated, setIsCartHydrated] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
-    // This effect runs only on the client-side, where localStorage is available.
+    try {
+      const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+      if (storedCart) {
+        const parsed = JSON.parse(storedCart);
+        if (Array.isArray(parsed)) {
+          setCartItems(parsed);
+        }
+      }
+    } catch (error) {
+      console.error("Error reading cart from localStorage:", error);
+    } finally {
+      setIsCartHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isCartHydrated) return;
+    // This effect runs only on the client-side after hydration, so localStorage is never overwritten with [].
     try {
       const safeStringify = (obj) => {
         let cache = [];
@@ -44,7 +49,7 @@ export const CartProvider = ({ children }) => {
     } catch (error) {
       console.error("Error saving cart to localStorage:", error);
     }
-  }, [cartItems]);
+  }, [cartItems, isCartHydrated]);
 
 
   const toggleCart = () => {
@@ -117,6 +122,7 @@ export const CartProvider = ({ children }) => {
 
   const value = {
     cartItems,
+    isCartHydrated,
     isCartOpen,
     toggleCart,
     addItemToCart,

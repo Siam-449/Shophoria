@@ -89,7 +89,7 @@ const CheckoutItemImage = ({ src, alt }) => {
 };
 
 const CheckoutPageClient = () => {
-  const { cartItems, total, clearCart, isCartOpen, toggleCart, updateItemQuantity, removeItemFromCart } = useCart();
+  const { cartItems, isCartHydrated, total, clearCart, isCartOpen, toggleCart, updateItemQuantity, removeItemFromCart } = useCart();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -328,6 +328,18 @@ const CheckoutPageClient = () => {
           </Link>
         </div>
       </motion.div>
+    );
+  }
+
+  if (!isCartHydrated && !submitted) {
+    return (
+      <div className="bg-white dark:bg-[#0a0a0a] text-neutral-900 dark:text-neutral-100 min-h-[70vh] flex items-center justify-center px-4 py-16">
+        <div className="max-w-md w-full text-center bg-[#f8f9fb] dark:bg-[#141414] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-8 sm:p-10 shadow-sm">
+          <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+            Loading your order...
+          </p>
+        </div>
+      </div>
     );
   }
 
