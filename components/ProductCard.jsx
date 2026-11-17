@@ -140,6 +140,29 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
 
     const activeProductName = customImageTitle || product.name;
 
+    // Per-image Product Price resolution (fallback to variant price or main product.price)
+    const customImagePrice = useMemo(() => {
+      if (!currentImage) return null;
+      const byUrl = product.imagePrices?.[currentImage];
+      if (byUrl != null && !isNaN(Number(byUrl))) return Number(byUrl);
+      const imgIdxInProduct = Array.isArray(product.images) ? product.images.indexOf(currentImage) : -1;
+      const idxToCheck = imgIdxInProduct !== -1 ? imgIdxInProduct : selectedImageIndex;
+      const byIndex = product.imagePricesByIndex?.[idxToCheck];
+      if (byIndex != null && !isNaN(Number(byIndex))) return Number(byIndex);
+      return null;
+    }, [currentImage, product.imagePrices, product.images, product.imagePricesByIndex, selectedImageIndex]);
+
+    const customImageOriginalPrice = useMemo(() => {
+      if (!currentImage) return null;
+      const byUrl = product.imageOriginalPrices?.[currentImage];
+      if (byUrl != null && !isNaN(Number(byUrl))) return Number(byUrl);
+      const imgIdxInProduct = Array.isArray(product.images) ? product.images.indexOf(currentImage) : -1;
+      const idxToCheck = imgIdxInProduct !== -1 ? imgIdxInProduct : selectedImageIndex;
+      const byIndex = product.imageOriginalPricesByIndex?.[idxToCheck];
+      if (byIndex != null && !isNaN(Number(byIndex))) return Number(byIndex);
+      return null;
+    }, [currentImage, product.imageOriginalPrices, product.images, product.imageOriginalPricesByIndex, selectedImageIndex]);
+
     const sizeVariants = useMemo(() => variants.filter(v => v.variantType === 'size' || v.size), [variants]);
     const weightVariants = useMemo(() => variants.filter(v => v.variantType === 'weight' || v.weight), [variants]);
     const colorVariants = useMemo(() => variants.filter(v => v.variantType === 'color' || v.color), [variants]);
@@ -178,8 +201,14 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
     }, [hasVariants, activeVariant]);
 
     // Dynamic price, original price, and quantity
-    const currentPrice = activeVariant?.price != null ? activeVariant.price : product.price;
-    const currentOriginalPrice = activeVariant?.originalPrice != null ? activeVariant.originalPrice : product.originalPrice;
+    const basePrice = activeVariant?.price != null ? activeVariant.price : product.price;
+    const currentPrice = customImagePrice != null ? customImagePrice : basePrice;
+
+    const baseOriginalPrice = activeVariant?.originalPrice != null ? activeVariant.originalPrice : product.originalPrice;
+    const currentOriginalPrice = customImageOriginalPrice != null
+      ? customImageOriginalPrice
+      : (customImagePrice != null && customImagePrice !== basePrice ? null : baseOriginalPrice);
+
     const currentQuantity = activeVariant?.quantity != null ? activeVariant.quantity : (product.quantity || 0);
 
     const discountPercentage = currentOriginalPrice && currentOriginalPrice > currentPrice
@@ -245,6 +274,7 @@ export const ProductDetailClient = ({ product, relatedProducts }) => {
         name: activeProductName,
         baseProductName: product.name,
         selectedImageTitle: customImageTitle || null,
+        selectedImagePrice: customImagePrice != null ? customImagePrice : null,
         price: currentPrice,
         originalPrice: currentOriginalPrice,
         image: activeImage,

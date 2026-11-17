@@ -181,6 +181,7 @@ const CheckoutPageClient = () => {
           (typeof item.baseProductName === 'string' && item.baseProductName.trim()) ||
           exactName,
         selectedImageTitle: item.selectedImageTitle || null,
+        selectedImagePrice: item.selectedImagePrice != null ? Number(item.selectedImagePrice) : null,
         price: unitPrice,
         originalPrice: originalUnitPrice,
         quantity: qty,

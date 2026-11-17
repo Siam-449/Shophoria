@@ -68,6 +68,9 @@ export const CartProvider = ({ children }) => {
     if (product.selectedImageTitle) {
       parts.push(product.selectedImageTitle);
     }
+    if (product.selectedImagePrice != null) {
+      parts.push(`p-${product.selectedImagePrice}`);
+    }
     return parts.join('_');
   };
 
